@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Hosting Murah</title>
+</head>
+<body>
+
+<h1>Paket Hosting</h1>
+
+<select id="paket">
+  <option value="Basic">Basic - 50k</option>
+  <option value="Pro">Pro - 100k</option>
+</select>
+
+<input type="text" id="nama" placeholder="Nama">
+<input type="email" id="email" placeholder="Email">
+<input type="text" id="hp" placeholder="No HP">
+
+<input type="text" id="bukti" placeholder="Link bukti transfer">
+
+<button onclick="kirim()">Pesan</button>
+
+<script>
+const API = "PASTE_URL_WEB_APP";
+
+function kirim() {
+  fetch(API, {
+    method: "POST",
+    body: JSON.stringify({
+      nama: document.getElementById("nama").value,
+      email: document.getElementById("email").value,
+      no_hp: document.getElementById("hp").value,
+      paket: document.getElementById("paket").value,
+      harga: document.getElementById("paket").value === "Basic" ? 50000 : 100000,
+      bukti: document.getElementById("bukti").value
+    })
+  })
+  .then(res => res.json())
+  .then(res => {
+    alert("Pesanan berhasil! ID: " + res.id);
+  });
+}
+</script>
+
+</body>
+</html>
