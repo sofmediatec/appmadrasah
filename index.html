@@ -10,18 +10,45 @@
 
 <div class="container py-5">
 
+  <!-- HERO -->
   <div class="hero text-center mb-5">
     <h1>CBT Online Madrasah</h1>
     <p>Solusi ujian online cepat & profesional</p>
     <a href="form.html" class="btn btn-light btn-lg mt-3">Ajukan Sekarang</a>
   </div>
 
-  <div class="row" id="paketList"></div>
+  <!-- PAKET -->
+  <h4 class="mb-3">Paket CBT</h4>
+  <div class="row mb-5" id="paketList"></div>
+
+  <!-- DAFTAR PENGGUNA -->
+  <h4 class="mb-3">Daftar Pengguna CBT</h4>
+  <div class="table-responsive">
+    <table class="table table-bordered table-striped">
+      <thead class="table-dark">
+        <tr>
+          <th>No</th>
+          <th>Madrasah</th>
+          <th>Kabupaten</th>
+          <th>Paket</th>
+          <th>Status</th>
+          <th>CBT</th>
+        </tr>
+      </thead>
+      <tbody id="userList">
+        <tr><td colspan="6" class="text-center">Loading...</td></tr>
+      </tbody>
+    </table>
+  </div>
 
 </div>
 
 <script src="assets/app.js"></script>
+
 <script>
+// ===================
+// LOAD PAKET
+// ===================
 get("paket").then(res => {
   let html = "";
   res.data.slice(1).forEach(p => {
@@ -30,11 +57,59 @@ get("paket").then(res => {
       <div class="card card-hover shadow text-center p-3">
         <h4>${p[1]}</h4>
         <p>${p[3]} peserta</p>
-        <h5>Rp ${p[2]}</h5>
+        <h5>Rp ${Number(p[2]).toLocaleString()}</h5>
       </div>
     </div>`;
   });
   document.getElementById("paketList").innerHTML = html;
+});
+
+// ===================
+// LOAD DATA USER
+// ===================
+get("pendaftaran").then(res => {
+
+  let html = "";
+  let no = 1;
+
+  res.data.slice(1).reverse().forEach(r => {
+
+    // kolom mapping sesuai database
+    const nama = r[3];
+    const kab = r[6];
+    const paket = r[12];
+    const status = r[14];
+    const link = r[16];
+
+    // label status
+    let badge = "secondary";
+    if(status == "pending") badge = "warning";
+    if(status == "disetujui") badge = "success";
+    if(status == "ditolak") badge = "danger";
+
+    html += `
+    <tr>
+      <td>${no++}</td>
+      <td>${nama}</td>
+      <td>${kab}</td>
+      <td>${paket}</td>
+      <td><span class="badge bg-${badge}">${status}</span></td>
+      <td>
+        ${link ? `<a href="${link}" target="_blank" class="btn btn-sm btn-primary">Masuk CBT</a>` : '-'}
+      </td>
+    </tr>
+    `;
+  });
+
+  if(html === ""){
+    html = `<tr><td colspan="6" class="text-center">Belum ada data</td></tr>`;
+  }
+
+  document.getElementById("userList").innerHTML = html;
+
+}).catch(() => {
+  document.getElementById("userList").innerHTML =
+    `<tr><td colspan="6" class="text-center text-danger">Gagal load data</td></tr>`;
 });
 </script>
 
