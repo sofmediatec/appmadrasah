@@ -1,45 +1,41 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <title>Hosting Murah</title>
+  <title>CBT Online</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="assets/style.css">
 </head>
+
 <body>
 
-<h1>Paket Hosting</h1>
+<div class="container py-5">
 
-<select id="paket">
-  <option value="Basic">Basic - 50k</option>
-  <option value="Pro">Pro - 100k</option>
-</select>
+  <div class="hero text-center mb-5">
+    <h1>CBT Online Madrasah</h1>
+    <p>Solusi ujian online cepat & profesional</p>
+    <a href="form.html" class="btn btn-light btn-lg mt-3">Ajukan Sekarang</a>
+  </div>
 
-<input type="text" id="nama" placeholder="Nama">
-<input type="email" id="email" placeholder="Email">
-<input type="text" id="hp" placeholder="No HP">
+  <div class="row" id="paketList"></div>
 
-<input type="text" id="bukti" placeholder="Link bukti transfer">
+</div>
 
-<button onclick="kirim()">Pesan</button>
-
+<script src="assets/app.js"></script>
 <script>
-const API = "https://script.google.com/macros/s/AKfycbx_0KnTJot31FsnJCgLxQ32RmNvZAOqyBAetLjotDS9l_itKha5xHyMymlK6Xp8GqQQ/exec";
-
-function kirim() {
-  fetch(API, {
-    method: "POST",
-    body: JSON.stringify({
-      nama: document.getElementById("nama").value,
-      email: document.getElementById("email").value,
-      no_hp: document.getElementById("hp").value,
-      paket: document.getElementById("paket").value,
-      harga: document.getElementById("paket").value === "Basic" ? 50000 : 100000,
-      bukti: document.getElementById("bukti").value
-    })
-  })
-  .then(res => res.json())
-  .then(res => {
-    alert("Pesanan berhasil! ID: " + res.id);
+get("paket").then(res => {
+  let html = "";
+  res.data.slice(1).forEach(p => {
+    html += `
+    <div class="col-md-4 mb-3">
+      <div class="card card-hover shadow text-center p-3">
+        <h4>${p[1]}</h4>
+        <p>${p[3]} peserta</p>
+        <h5>Rp ${p[2]}</h5>
+      </div>
+    </div>`;
   });
-}
+  document.getElementById("paketList").innerHTML = html;
+});
 </script>
 
 </body>
