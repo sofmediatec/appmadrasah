@@ -1,4 +1,4 @@
-const API_URL = "ISI_URL_APPS_SCRIPT_KAMU";
+const API_URL = "https://script.google.com/macros/s/AKfycbxUexWANnqC_zPN2-08j1iOGqokmFnRo14DqwjBp5AA0tq30Nu5uaPUAODvVkH7fEbfPg/exec";
 
 /* ========= HELPER ========= */
 function post(action, data, token=""){
