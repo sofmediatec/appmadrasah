@@ -18,10 +18,28 @@ function post(action, data = {}, token = "") {
 
   return fetchWithTimeout(url, {
     method: "POST",
-    headers: {
-      "Content-Type": "application/json"
-    },
-    body: JSON.stringify(data)
+    function post(action, data = {}, token = "") {
+  const formData = new URLSearchParams();
+
+  for (let key in data) {
+    formData.append(key, data[key]);
+  }
+
+  const url = `${API_URL}?action=${action}&token=${token}`;
+
+  return fetch(url, {
+    method: "POST",
+    body: formData
+  })
+  .then(res => res.json())
+  .catch(err => {
+    console.error("POST ERROR:", err);
+    return {
+      status: "error",
+      message: "Gagal koneksi ke server"
+    };
+  });
+}
   })
   .then(async res => {
     const text = await res.text();
