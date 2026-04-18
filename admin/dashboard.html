@@ -7,12 +7,8 @@
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
 
   <style>
-    body {
-      background: #f5f7fa;
-    }
-    .card {
-      border-radius: 12px;
-    }
+    body { background: #f5f7fa; }
+    .card { border-radius: 12px; }
   </style>
 </head>
 
@@ -73,13 +69,30 @@ if(!token){
 // ===================
 // LOAD DATA
 // ===================
-function loadData(){
-  get("pendaftaran").then(res => {
+async function loadData(){
+
+  document.querySelector("#table tbody").innerHTML =
+    `<tr><td colspan="7" class="text-center">Loading...</td></tr>`;
+
+  try{
+    const res = await get("pendaftaran");
+
+    if(res.status === "error"){
+      throw new Error(res.message);
+    }
 
     let html = "";
     let total=0, pending=0, approved=0, paid=0;
 
-    res.data.slice(1).forEach(r => {
+    const rows = res.data || [];
+
+    if(rows.length <= 1){
+      document.querySelector("#table tbody").innerHTML =
+        `<tr><td colspan="7" class="text-center">Tidak ada data</td></tr>`;
+      return;
+    }
+
+    rows.slice(1).forEach(r => {
 
       total++;
 
@@ -90,32 +103,48 @@ function loadData(){
       const bayar = r[15];
       const link = r[16];
 
-      if(status == "pending") pending++;
-      if(status == "disetujui") approved++;
-      if(bayar == "lunas") paid++;
+      if(status === "pending") pending++;
+      if(status === "disetujui") approved++;
+      if(bayar === "lunas") paid++;
 
       const statusBadge =
-        status == "pending" ? "warning" :
-        status == "disetujui" ? "success" :
-        "secondary";
+        status === "pending" ? "warning" :
+        status === "disetujui" ? "success" : "secondary";
 
       const bayarBadge =
-        bayar == "lunas" ? "success" :
-        bayar == "menunggu_verifikasi" ? "warning" :
-        bayar == "ditolak" ? "danger" :
-        "secondary";
+        bayar === "lunas" ? "success" :
+        bayar === "menunggu_verifikasi" ? "warning" :
+        bayar === "ditolak" ? "danger" : "secondary";
 
       html += `
       <tr>
         <td>${id}</td>
         <td>${nama}</td>
         <td>${hp}</td>
-        <td><span class="badge bg-${statusBadge}">${status}</span></td>
-        <td><span class="badge bg-${bayarBadge}">${bayar}</span></td>
-        <td>${link ? `<a href="${link}" target="_blank" class="btn btn-sm btn-primary">Buka</a>` : '-'}</td>
+
         <td>
-          <button class="btn btn-success btn-sm" onclick="approve('${id}')">Approve</button>
-          <button class="btn btn-warning btn-sm" onclick="verifikasi('${id}')">Verifikasi</button>
+          <span class="badge bg-${statusBadge}">${status}</span><br>
+          <button class="btn btn-sm btn-outline-primary mt-1"
+            onclick="updateStatus('${id}')">Ubah</button>
+        </td>
+
+        <td>
+          <span class="badge bg-${bayarBadge}">${bayar}</span><br>
+          <button class="btn btn-sm btn-outline-warning mt-1"
+            onclick="verifikasi('${id}')">Verifikasi</button>
+        </td>
+
+        <td>
+          ${link 
+            ? `<a href="${link}" target="_blank" class="btn btn-sm btn-primary">Buka</a>`
+            : `<button class="btn btn-sm btn-outline-secondary" onclick="setLink('${id}')">Isi Link</button>`
+          }
+        </td>
+
+        <td>
+          <button class="btn btn-success btn-sm" onclick="approve('${id}')">
+            Approve
+          </button>
         </td>
       </tr>
       `;
@@ -123,13 +152,15 @@ function loadData(){
 
     document.querySelector("#table tbody").innerHTML = html;
 
-    // update stats
     totalEl.innerText = total;
     pendingEl.innerText = pending;
     approvedEl.innerText = approved;
     paidEl.innerText = paid;
 
-  });
+  }catch(err){
+    document.querySelector("#table tbody").innerHTML =
+      `<tr><td colspan="7" class="text-danger text-center">${err.message}</td></tr>`;
+  }
 }
 
 const totalEl = document.getElementById("total");
@@ -138,7 +169,45 @@ const approvedEl = document.getElementById("approved");
 const paidEl = document.getElementById("paid");
 
 // ===================
-// APPROVE ORDER
+// UPDATE STATUS ORDER
+// ===================
+function updateStatus(id){
+  const status = prompt("Status order (pending / disetujui)");
+
+  if(!status) return;
+
+  post("update_status", {id, status}, token)
+    .then(res => {
+      if(res.status !== "success"){
+        alert(res.message);
+        return;
+      }
+      alert("Status diupdate");
+      loadData();
+    });
+}
+
+// ===================
+// SET LINK CBT
+// ===================
+function setLink(id){
+  const link = prompt("Masukkan link CBT");
+
+  if(!link) return;
+
+  post("set_link", {id, link_cbt:link}, token)
+    .then(res => {
+      if(res.status !== "success"){
+        alert(res.message);
+        return;
+      }
+      alert("Link disimpan");
+      loadData();
+    });
+}
+
+// ===================
+// APPROVE
 // ===================
 function approve(id){
   const link = prompt("Masukkan link CBT");
@@ -151,7 +220,7 @@ function approve(id){
         alert(res.message);
         return;
       }
-      alert("Disetujui");
+      alert("Order disetujui");
       loadData();
     });
 }
@@ -162,13 +231,11 @@ function approve(id){
 function verifikasi(id){
 
   const status = prompt("Status (valid / ditolak)");
-
   if(!status) return;
 
-  // cari pembayaran berdasarkan pendaftaran
   get("pembayaran").then(res => {
 
-    const data = res.data.find(r => String(r[1]) === String(id));
+    const data = (res.data || []).find(r => String(r[1]) === String(id));
 
     if(!data){
       alert("Belum ada pembayaran");
@@ -177,7 +244,7 @@ function verifikasi(id){
 
     post("verifikasi", {
       id: data[0],
-      status: status
+      status
     }, token).then(res => {
 
       if(res.status !== "success"){
