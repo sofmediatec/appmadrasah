@@ -14,11 +14,6 @@ function fetchWithTimeout(resource, options = {}, timeout = 15000) {
 
 // POST
 function post(action, data = {}, token = "") {
-  const url = `${API_URL}?action=${action}&token=${token}`;
-
-  return fetchWithTimeout(url, {
-    method: "POST",
-    function post(action, data = {}, token = "") {
   const formData = new URLSearchParams();
 
   for (let key in data) {
@@ -27,19 +22,9 @@ function post(action, data = {}, token = "") {
 
   const url = `${API_URL}?action=${action}&token=${token}`;
 
-  return fetch(url, {
+  return fetchWithTimeout(url, {
     method: "POST",
     body: formData
-  })
-  .then(res => res.json())
-  .catch(err => {
-    console.error("POST ERROR:", err);
-    return {
-      status: "error",
-      message: "Gagal koneksi ke server"
-    };
-  });
-}
   })
   .then(async res => {
     const text = await res.text();
@@ -59,7 +44,6 @@ function post(action, data = {}, token = "") {
     };
   });
 }
-
 // GET
 function get(action) {
   const url = `${API_URL}?action=${action}`;
