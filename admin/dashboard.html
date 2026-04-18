@@ -1,43 +1,206 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <title>Admin</title>
+  <title>Dashboard Admin CBT</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+
+  <style>
+    body {
+      background: #f5f7fa;
+    }
+    .card {
+      border-radius: 12px;
+    }
+  </style>
 </head>
 
-<body class="container py-5">
+<body>
 
-<h3>Dashboard Admin</h3>
+<div class="container py-4">
 
-<table class="table" id="table"></table>
+  <!-- HEADER -->
+  <div class="d-flex justify-content-between align-items-center mb-4">
+    <h4>Dashboard Admin</h4>
+    <button class="btn btn-danger btn-sm" onclick="logout()">Logout</button>
+  </div>
+
+  <!-- STATS -->
+  <div class="row mb-4 text-center">
+    <div class="col-md-3"><div class="card p-3">Total<br><h5 id="total">0</h5></div></div>
+    <div class="col-md-3"><div class="card p-3">Pending<br><h5 id="pending">0</h5></div></div>
+    <div class="col-md-3"><div class="card p-3">Disetujui<br><h5 id="approved">0</h5></div></div>
+    <div class="col-md-3"><div class="card p-3">Lunas<br><h5 id="paid">0</h5></div></div>
+  </div>
+
+  <!-- TABLE -->
+  <div class="card p-3">
+    <div class="table-responsive">
+      <table class="table table-bordered table-striped align-middle" id="table">
+        <thead class="table-dark">
+          <tr>
+            <th>ID</th>
+            <th>Madrasah</th>
+            <th>HP</th>
+            <th>Status Order</th>
+            <th>Pembayaran</th>
+            <th>CBT</th>
+            <th>Aksi</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr><td colspan="7" class="text-center">Loading...</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+</div>
 
 <script src="../assets/app.js"></script>
+
 <script>
 const token = localStorage.token;
 
-get("pendaftaran").then(res => {
-  let html = "<tr><th>ID</th><th>Nama</th><th>Status</th><th>Aksi</th></tr>";
+// ===================
+// PROTEKSI LOGIN
+// ===================
+if(!token){
+  location = "login.html";
+}
 
-  res.data.slice(1).forEach(r => {
-    html += `<tr>
-      <td>${r[0]}</td>
-      <td>${r[3]}</td>
-      <td>${r[14]}</td>
-      <td>
-        <button onclick="approve('${r[0]}')">Approve</button>
-      </td>
-    </tr>`;
+// ===================
+// LOAD DATA
+// ===================
+function loadData(){
+  get("pendaftaran").then(res => {
+
+    let html = "";
+    let total=0, pending=0, approved=0, paid=0;
+
+    res.data.slice(1).forEach(r => {
+
+      total++;
+
+      const id = r[0];
+      const nama = r[3];
+      const hp = r[9];
+      const status = r[14];
+      const bayar = r[15];
+      const link = r[16];
+
+      if(status == "pending") pending++;
+      if(status == "disetujui") approved++;
+      if(bayar == "lunas") paid++;
+
+      const statusBadge =
+        status == "pending" ? "warning" :
+        status == "disetujui" ? "success" :
+        "secondary";
+
+      const bayarBadge =
+        bayar == "lunas" ? "success" :
+        bayar == "menunggu_verifikasi" ? "warning" :
+        bayar == "ditolak" ? "danger" :
+        "secondary";
+
+      html += `
+      <tr>
+        <td>${id}</td>
+        <td>${nama}</td>
+        <td>${hp}</td>
+        <td><span class="badge bg-${statusBadge}">${status}</span></td>
+        <td><span class="badge bg-${bayarBadge}">${bayar}</span></td>
+        <td>${link ? `<a href="${link}" target="_blank" class="btn btn-sm btn-primary">Buka</a>` : '-'}</td>
+        <td>
+          <button class="btn btn-success btn-sm" onclick="approve('${id}')">Approve</button>
+          <button class="btn btn-warning btn-sm" onclick="verifikasi('${id}')">Verifikasi</button>
+        </td>
+      </tr>
+      `;
+    });
+
+    document.querySelector("#table tbody").innerHTML = html;
+
+    // update stats
+    totalEl.innerText = total;
+    pendingEl.innerText = pending;
+    approvedEl.innerText = approved;
+    paidEl.innerText = paid;
+
   });
+}
 
-  table.innerHTML = html;
-});
+const totalEl = document.getElementById("total");
+const pendingEl = document.getElementById("pending");
+const approvedEl = document.getElementById("approved");
+const paidEl = document.getElementById("paid");
 
+// ===================
+// APPROVE ORDER
+// ===================
 function approve(id){
   const link = prompt("Masukkan link CBT");
 
-  post("approve", {id:id, link_cbt:link}, token)
-    .then(() => alert("Disetujui"));
+  if(!link) return;
+
+  post("approve", {id, link_cbt:link}, token)
+    .then(res => {
+      if(res.status !== "success"){
+        alert(res.message);
+        return;
+      }
+      alert("Disetujui");
+      loadData();
+    });
 }
+
+// ===================
+// VERIFIKASI PEMBAYARAN
+// ===================
+function verifikasi(id){
+
+  const status = prompt("Status (valid / ditolak)");
+
+  if(!status) return;
+
+  // cari pembayaran berdasarkan pendaftaran
+  get("pembayaran").then(res => {
+
+    const data = res.data.find(r => String(r[1]) === String(id));
+
+    if(!data){
+      alert("Belum ada pembayaran");
+      return;
+    }
+
+    post("verifikasi", {
+      id: data[0],
+      status: status
+    }, token).then(res => {
+
+      if(res.status !== "success"){
+        alert(res.message);
+        return;
+      }
+
+      alert("Berhasil verifikasi");
+      loadData();
+    });
+  });
+}
+
+// ===================
+// LOGOUT
+// ===================
+function logout(){
+  localStorage.clear();
+  location = "login.html";
+}
+
+// init
+loadData();
 </script>
 
 </body>
