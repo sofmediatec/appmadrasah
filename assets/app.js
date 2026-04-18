@@ -14,7 +14,7 @@ function fetchWithTimeout(resource, options = {}, timeout = 15000) {
   ]);
 }
 
-// parse response aman
+// parse JSON aman
 async function parseJSON(res) {
   const text = await res.text();
 
@@ -26,8 +26,16 @@ async function parseJSON(res) {
   }
 }
 
+// helper query builder
+function buildQuery(params = {}) {
+  return Object.keys(params)
+    .filter(k => params[k] !== undefined && params[k] !== null && params[k] !== "")
+    .map(k => `${encodeURIComponent(k)}=${encodeURIComponent(params[k])}`)
+    .join("&");
+}
+
 /* =========================
-   POST
+   POST (SUPER STABLE)
 ========================= */
 
 function post(action, data = {}, token = "") {
@@ -39,15 +47,15 @@ function post(action, data = {}, token = "") {
     });
   }
 
-  // build URL
+  // 👉 kirim action & token di URL (fallback)
   let url = `${API_URL}?action=${encodeURIComponent(action)}`;
+  if (token) url += `&token=${encodeURIComponent(token)}`;
 
-  if (token) {
-    url += `&token=${encodeURIComponent(token)}`;
-  }
-
-  // form body (AMAN untuk GAS)
+  // 👉 kirim juga di BODY (biar 100% kebaca GAS)
   const formData = new URLSearchParams();
+
+  formData.append("action", action);
+  if (token) formData.append("token", token);
 
   for (let key in data) {
     if (data[key] !== undefined && data[key] !== null) {
@@ -60,11 +68,9 @@ function post(action, data = {}, token = "") {
     body: formData
   })
   .then(async res => {
-
     if (!res.ok) {
       throw new Error("HTTP Error " + res.status);
     }
-
     return await parseJSON(res);
   })
   .catch(err => {
@@ -90,22 +96,14 @@ function get(action, params = {}) {
     });
   }
 
-  let url = `${API_URL}?action=${encodeURIComponent(action)}`;
-
-  // optional params
-  for (let key in params) {
-    if (params[key] !== undefined && params[key] !== null) {
-      url += `&${encodeURIComponent(key)}=${encodeURIComponent(params[key])}`;
-    }
-  }
+  const query = buildQuery({ action, ...params });
+  const url = `${API_URL}?${query}`;
 
   return fetchWithTimeout(url)
   .then(async res => {
-
     if (!res.ok) {
       throw new Error("HTTP Error " + res.status);
     }
-
     return await parseJSON(res);
   })
   .catch(err => {
@@ -127,8 +125,26 @@ function getToken(){
   return localStorage.getItem("token") || "";
 }
 
+// set token
+function setToken(token){
+  localStorage.setItem("token", token);
+}
+
+// cek login
+function isLoggedIn(){
+  return !!getToken();
+}
+
 // logout global
 function logout(){
   localStorage.removeItem("token");
   window.location = "login.html";
+}
+
+/* =========================
+   DEBUG (OPSIONAL)
+========================= */
+
+function debugLog(label, data){
+  console.log("🔎", label, data);
 }
