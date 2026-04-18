@@ -2,7 +2,6 @@ const API_URL = "https://script.google.com/macros/s/AKfycbxUexWANnqC_zPN2-08j1iO
 
 /* ========= HELPER ========= */
 
-// timeout fetch (biar tidak hang)
 function fetchWithTimeout(resource, options = {}, timeout = 15000) {
   return Promise.race([
     fetch(resource, options),
@@ -12,7 +11,7 @@ function fetchWithTimeout(resource, options = {}, timeout = 15000) {
   ]);
 }
 
-// POST
+// POST (FIXED)
 function post(action, data = {}, token = "") {
   const formData = new URLSearchParams();
 
@@ -44,6 +43,7 @@ function post(action, data = {}, token = "") {
     };
   });
 }
+
 // GET
 function get(action) {
   const url = `${API_URL}?action=${action}`;
