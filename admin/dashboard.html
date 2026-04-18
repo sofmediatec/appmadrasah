@@ -18,7 +18,7 @@
 
   <!-- HEADER -->
   <div class="d-flex justify-content-between align-items-center mb-4">
-    <h4>Dashboard Admin</h4>
+    <h4>Dashboard Admin CBT</h4>
     <button class="btn btn-danger btn-sm" onclick="logout()">Logout</button>
   </div>
 
@@ -33,7 +33,7 @@
   <!-- TABLE -->
   <div class="card p-3">
     <div class="table-responsive">
-      <table class="table table-bordered table-striped align-middle" id="table">
+      <table class="table table-bordered table-striped align-middle">
         <thead class="table-dark">
           <tr>
             <th>ID</th>
@@ -45,7 +45,7 @@
             <th>Aksi</th>
           </tr>
         </thead>
-        <tbody>
+        <tbody id="tbody">
           <tr><td colspan="7" class="text-center">Loading...</td></tr>
         </tbody>
       </table>
@@ -59,20 +59,22 @@
 <script>
 const token = localStorage.token;
 
-// ===================
-// PROTEKSI LOGIN
-// ===================
 if(!token){
   location = "login.html";
 }
+
+const totalEl = document.getElementById("total");
+const pendingEl = document.getElementById("pending");
+const approvedEl = document.getElementById("approved");
+const paidEl = document.getElementById("paid");
 
 // ===================
 // LOAD DATA
 // ===================
 async function loadData(){
 
-  document.querySelector("#table tbody").innerHTML =
-    `<tr><td colspan="7" class="text-center">Loading...</td></tr>`;
+  const tbody = document.getElementById("tbody");
+  tbody.innerHTML = `<tr><td colspan="7" class="text-center">Loading...</td></tr>`;
 
   try{
     const res = await get("pendaftaran");
@@ -81,27 +83,26 @@ async function loadData(){
       throw new Error(res.message);
     }
 
-    let html = "";
-    let total=0, pending=0, approved=0, paid=0;
-
     const rows = res.data || [];
 
     if(rows.length <= 1){
-      document.querySelector("#table tbody").innerHTML =
-        `<tr><td colspan="7" class="text-center">Tidak ada data</td></tr>`;
+      tbody.innerHTML = `<tr><td colspan="7" class="text-center">Tidak ada data</td></tr>`;
       return;
     }
 
-    rows.slice(1).forEach(r => {
+    let html = "";
+    let total=0, pending=0, approved=0, paid=0;
 
-      total++;
+    rows.slice(1).forEach(r => {
 
       const id = r[0];
       const nama = r[3];
       const hp = r[9];
-      const status = r[14];
-      const bayar = r[15];
-      const link = r[16];
+      const status = r[14];   // status order
+      const bayar = r[15];    // status pembayaran
+      const link = r[16];     // link CBT
+
+      total++;
 
       if(status === "pending") pending++;
       if(status === "disetujui") approved++;
@@ -150,7 +151,7 @@ async function loadData(){
       `;
     });
 
-    document.querySelector("#table tbody").innerHTML = html;
+    tbody.innerHTML = html;
 
     totalEl.innerText = total;
     pendingEl.innerText = pending;
@@ -158,21 +159,16 @@ async function loadData(){
     paidEl.innerText = paid;
 
   }catch(err){
-    document.querySelector("#table tbody").innerHTML =
+    document.getElementById("tbody").innerHTML =
       `<tr><td colspan="7" class="text-danger text-center">${err.message}</td></tr>`;
   }
 }
-
-const totalEl = document.getElementById("total");
-const pendingEl = document.getElementById("pending");
-const approvedEl = document.getElementById("approved");
-const paidEl = document.getElementById("paid");
 
 // ===================
 // UPDATE STATUS ORDER
 // ===================
 function updateStatus(id){
-  const status = prompt("Status order (pending / disetujui)");
+  const status = prompt("Status (pending / disetujui)");
 
   if(!status) return;
 
@@ -182,7 +178,7 @@ function updateStatus(id){
         alert(res.message);
         return;
       }
-      alert("Status diupdate");
+      alert("Status berhasil diubah");
       loadData();
     });
 }
@@ -201,18 +197,21 @@ function setLink(id){
         alert(res.message);
         return;
       }
-      alert("Link disimpan");
+      alert("Link berhasil disimpan");
       loadData();
     });
 }
 
 // ===================
-// APPROVE
+// APPROVE ORDER
 // ===================
 function approve(id){
-  const link = prompt("Masukkan link CBT");
+  const link = prompt("Masukkan link CBT (wajib)");
 
-  if(!link) return;
+  if(!link){
+    alert("Link wajib diisi");
+    return;
+  }
 
   post("approve", {id, link_cbt:link}, token)
     .then(res => {
@@ -235,7 +234,12 @@ function verifikasi(id){
 
   get("pembayaran").then(res => {
 
-    const data = (res.data || []).find(r => String(r[1]) === String(id));
+    if(!res.data){
+      alert("Data pembayaran kosong");
+      return;
+    }
+
+    const data = res.data.find(r => String(r[1]) === String(id));
 
     if(!data){
       alert("Belum ada pembayaran");
@@ -252,7 +256,7 @@ function verifikasi(id){
         return;
       }
 
-      alert("Berhasil verifikasi");
+      alert("Verifikasi berhasil");
       loadData();
     });
   });
@@ -266,7 +270,7 @@ function logout(){
   location = "login.html";
 }
 
-// init
+// INIT
 loadData();
 </script>
 
