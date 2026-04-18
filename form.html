@@ -7,43 +7,96 @@
 
 <body class="container py-5">
 
-<h3>Form Pendaftaran CBT</h3>
+<h3 class="mb-4">Form Pendaftaran CBT</h3>
 
-<form id="form">
+<form id="form" class="card p-4 shadow-sm">
 
-<input class="form-control mb-2" name="nama_madrasah" placeholder="Nama Madrasah">
+<input class="form-control mb-2" name="nama_madrasah" placeholder="Nama Madrasah" required>
 <input class="form-control mb-2" name="npsn" placeholder="NPSN">
 <input class="form-control mb-2" name="alamat" placeholder="Alamat">
 <input class="form-control mb-2" name="kabupaten" placeholder="Kabupaten">
 <input class="form-control mb-2" name="provinsi" placeholder="Provinsi">
 <input class="form-control mb-2" name="penanggung_jawab" placeholder="Penanggung Jawab">
-<input class="form-control mb-2" name="no_hp" placeholder="No HP">
-<input class="form-control mb-2" name="email" placeholder="Email">
-<input class="form-control mb-2" name="jumlah_peserta" placeholder="Jumlah Peserta">
+<input class="form-control mb-2" name="no_hp" placeholder="No HP" required>
+<input class="form-control mb-2" name="email" placeholder="Email" type="email">
+<input class="form-control mb-3" name="jumlah_peserta" placeholder="Jumlah Peserta" type="number">
 
-<select class="form-control mb-3" name="paket_id">
-<option value="1">Basic</option>
-<option value="2">Standard</option>
-<option value="3">Premium</option>
+<select class="form-control mb-3" name="paket_id" id="paket">
+  <option value="1">Basic - Rp100.000</option>
+  <option value="2">Standard - Rp250.000</option>
+  <option value="3">Premium - Rp500.000</option>
 </select>
 
-<button class="btn btn-primary w-100">Kirim</button>
+<div class="mb-3">
+  <strong>Total Harga: <span id="hargaText">Rp100.000</span></strong>
+</div>
+
+<button class="btn btn-primary w-100" id="btnSubmit">Kirim</button>
+
 </form>
 
 <script src="assets/app.js"></script>
+
 <script>
+// ambil ref dari URL (optional promo)
+const urlParams = new URLSearchParams(window.location.search);
+const ref = urlParams.get("ref");
+
+// update harga realtime
+const paket = document.getElementById("paket");
+const hargaText = document.getElementById("hargaText");
+
+function getHarga(id){
+  if(id == 1) return 100000;
+  if(id == 2) return 250000;
+  return 500000;
+}
+
+paket.onchange = function(){
+  hargaText.innerText = "Rp" + getHarga(this.value).toLocaleString();
+};
+
+// submit form
 document.getElementById("form").onsubmit = function(e){
   e.preventDefault();
+
+  const btn = document.getElementById("btnSubmit");
+  btn.innerText = "Mengirim...";
+  btn.disabled = true;
+
   const data = Object.fromEntries(new FormData(this));
 
-  data.harga = data.paket_id == 1 ? 100000 :
-               data.paket_id == 2 ? 250000 : 500000;
+  // validasi sederhana
+  if(!data.nama_madrasah || !data.no_hp){
+    alert("Nama madrasah & No HP wajib diisi");
+    btn.innerText = "Kirim";
+    btn.disabled = false;
+    return;
+  }
+
+  data.harga = getHarga(data.paket_id);
+  data.created_by = ref || "";
 
   post("daftar", data).then(res => {
-    alert("Berhasil daftar. Kode: " + res.kode);
-    window.location = "bayar.html?id=" + res.kode;
+
+    if(res.status !== "success"){
+      alert(res.message || "Gagal daftar");
+      btn.innerText = "Kirim";
+      btn.disabled = false;
+      return;
+    }
+
+    alert("Berhasil daftar!\nKode: " + res.kode);
+
+    // ✅ FIX PENTING DI SINI
+    window.location = "bayar.html?id=" + res.id + "&kode=" + res.kode;
+
+  }).catch(() => {
+    alert("Terjadi kesalahan");
+    btn.innerText = "Kirim";
+    btn.disabled = false;
   });
-}
+};
 </script>
 
 </body>
