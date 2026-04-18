@@ -1,19 +1,173 @@
+/* =========================
+   GLOBAL
+========================= */
 body {
   background: #f5f7fb;
+  font-family: 'Segoe UI', Tahoma, sans-serif;
+  color: #333;
 }
 
+h1, h2, h3, h4, h5 {
+  font-weight: 600;
+}
+
+/* =========================
+   HERO
+========================= */
 .hero {
   background: linear-gradient(135deg, #0d6efd, #0dcaf0);
   color: white;
   padding: 80px 20px;
   border-radius: 20px;
+  box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+}
+
+.hero h1 {
+  font-size: 2.5rem;
+}
+
+.hero p {
+  opacity: 0.9;
+}
+
+/* =========================
+   CARD
+========================= */
+.card {
+  border: none;
+  border-radius: 15px;
+  transition: all 0.3s ease;
 }
 
 .card-hover:hover {
-  transform: translateY(-5px);
-  transition: 0.3s;
+  transform: translateY(-6px);
+  box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+}
+
+/* =========================
+   BUTTON
+========================= */
+.btn {
+  border-radius: 30px;
+  padding: 8px 20px;
+  transition: 0.2s;
 }
 
 .btn-primary {
-  border-radius: 30px;
+  background: #0d6efd;
+  border: none;
+}
+
+.btn-primary:hover {
+  background: #0b5ed7;
+}
+
+.btn-success {
+  background: #198754;
+  border: none;
+}
+
+.btn-success:hover {
+  background: #157347;
+}
+
+.btn-danger {
+  border: none;
+}
+
+/* =========================
+   FORM
+========================= */
+.form-control {
+  border-radius: 10px;
+  padding: 10px;
+  border: 1px solid #ddd;
+  transition: 0.2s;
+}
+
+.form-control:focus {
+  border-color: #0d6efd;
+  box-shadow: 0 0 0 0.15rem rgba(13,110,253,.2);
+}
+
+/* =========================
+   TABLE
+========================= */
+.table {
+  background: white;
+  border-radius: 10px;
+  overflow: hidden;
+}
+
+.table th {
+  font-weight: 600;
+}
+
+.table td, .table th {
+  vertical-align: middle;
+}
+
+/* =========================
+   BADGE
+========================= */
+.badge {
+  font-size: 0.85rem;
+  padding: 6px 10px;
+  border-radius: 10px;
+}
+
+/* =========================
+   ALERT
+========================= */
+.alert {
+  border-radius: 10px;
+}
+
+/* =========================
+   SHADOW & SPACING
+========================= */
+.shadow-sm {
+  box-shadow: 0 5px 15px rgba(0,0,0,0.05) !important;
+}
+
+.shadow {
+  box-shadow: 0 10px 25px rgba(0,0,0,0.1) !important;
+}
+
+/* =========================
+   UTILITIES
+========================= */
+.text-muted {
+  opacity: 0.8;
+}
+
+/* =========================
+   ANIMATION
+========================= */
+.fade-in {
+  animation: fadeIn 0.5s ease-in-out;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* =========================
+   RESPONSIVE
+========================= */
+@media (max-width: 768px) {
+  .hero {
+    padding: 50px 15px;
+  }
+
+  .hero h1 {
+    font-size: 1.8rem;
+  }
 }
