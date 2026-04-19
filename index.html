@@ -1,232 +1,211 @@
 <!DOCTYPE html>
 <html lang="id">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>CBT Online Madrasah</title>
-  
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
-  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-  
-  <style>
-    body {
-      font-family: 'Inter', sans-serif;
-      background-color: #f8f9fa;
-      color: #333;
-    }
-
-    /* Modern Hero Section */
-    .hero {
-      background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
-      color: white;
-      padding: 80px 20px;
-      border-radius: 20px;
-      margin-top: 20px;
-      box-shadow: 0 10px 30px rgba(0,0,0,0.1);
-    }
-    
-    .hero h1 {
-      font-weight: 700;
-      letter-spacing: -1px;
-    }
-
-    /* Card Styling */
-    .card-paket {
-      border: none;
-      border-radius: 15px;
-      transition: transform 0.3s ease, box-shadow 0.3s ease;
-      background: #fff;
-    }
-
-    .card-paket:hover {
-      transform: translateY(-10px);
-      box-shadow: 0 15px 35px rgba(0,0,0,0.1) !important;
-    }
-
-    .price-tag {
-      color: #2a5298;
-      font-weight: 700;
-      font-size: 1.5rem;
-    }
-
-    /* Table Styling */
-    .table-container {
-      background: white;
-      padding: 20px;
-      border-radius: 15px;
-      box-shadow: 0 5px 20px rgba(0,0,0,0.05);
-    }
-
-    .table thead th {
-      background-color: #f1f4f8;
-      color: #4a5568;
-      font-weight: 600;
-      border: none;
-      text-transform: uppercase;
-      font-size: 0.85rem;
-      letter-spacing: 0.5px;
-    }
-
-    .badge {
-      padding: 0.6em 1em;
-      border-radius: 8px;
-      font-weight: 500;
-      text-transform: capitalize;
-    }
-
-    .btn-primary-custom {
-      background-color: #2a5298;
-      border: none;
-      padding: 8px 20px;
-      border-radius: 8px;
-    }
-
-    .section-title {
-      font-weight: 700;
-      margin-bottom: 1.5rem;
-      position: relative;
-      display: inline-block;
-    }
-
-    .section-title::after {
-      content: '';
-      position: absolute;
-      width: 50%;
-      height: 4px;
-      background: #2a5298;
-      bottom: -8px;
-      left: 0;
-      border-radius: 2px;
-    }
-  </style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CBT Online Madrasah | Dashboard</title>
+    <!-- Tailwind CSS untuk styling modern yang cepat -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Google Fonts: Inter -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f3f4f6;
+        }
+        .hero-gradient {
+            background: linear-gradient(135deg, #1e40af 0%, #3b82f6 100%);
+        }
+        .glass-card {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+        .table-row-hover:hover {
+            background-color: #f9fafb;
+            transition: all 0.2s;
+        }
+    </style>
 </head>
+<body class="text-gray-800">
 
-<body>
-
-<div class="container pb-5">
-
-  <div class="hero text-center mb-5">
-    <h1 class="display-4">CBT Online Madrasah</h1>
-    <p class="lead opacity-75">Solusi ujian online yang cepat, aman, dan profesional untuk madrasah Anda.</p>
-    <a href="form.html" class="btn btn-light btn-lg px-5 py-3 mt-3 fw-bold shadow-sm">Ajukan Sekarang</a>
-  </div>
-
-  <div class="mb-5">
-    <h4 class="section-title">Paket Layanan</h4>
-    <div class="row g-4 mt-2" id="paketList">
-        <div class="col-12 text-center text-muted">Memuat paket...</div>
-    </div>
-  </div>
-
-  <div class="mb-5">
-    <h4 class="section-title">Status Pendaftaran</h4>
-    <div class="table-container mt-3">
-      <div class="table-responsive">
-        <table class="table align-middle">
-          <thead>
-            <tr>
-              <th width="50">No</th>
-              <th>Madrasah</th>
-              <th>Kabupaten</th>
-              <th>Paket</th>
-              <th>Status</th>
-              <th>Pembayaran</th>
-              <th>Aksi</th>
-              <th>CBT</th>
-            </tr>
-          </thead>
-          <tbody id="userList">
-            <tr><td colspan="8" class="text-center py-4">Menghubungkan ke server...</td></tr>
-          </tbody>
-        </table>
-      </div>
-    </div>
-  </div>
-
-</div>
-
-<script src="assets/app.js"></script>
-
-<script>
-// Logic JavaScript tetap sama dengan penyesuaian class CSS pada template literal
-async function loadPaket(){
-  try {
-    const res = await get("paket");
-    if(!res || !res.data) throw new Error("Data paket kosong");
-
-    let html = "";
-    res.data.slice(1).forEach(p => {
-      html += `
-      <div class="col-md-4">
-        <div class="card card-paket shadow-sm text-center p-4 h-100">
-          <div class="mb-2 text-muted text-uppercase small fw-bold">Pilihan Paket</div>
-          <h4 class="fw-bold">${p[1] || "-"}</h4>
-          <hr class="mx-auto w-25">
-          <p class="mb-3"><span class="badge bg-light text-dark border">${p[3] || 0} Peserta</span></p>
-          <div class="price-tag mb-0">Rp ${Number(p[2] || 0).toLocaleString()}</div>
+    <!-- HERO SECTION -->
+    <div class="hero-gradient text-white pb-32 pt-16 px-4">
+        <div class="max-w-6xl mx-auto text-center">
+            <h1 class="text-4xl md:text-5xl font-extrabold mb-4 tracking-tight">CBT Online Madrasah</h1>
+            <p class="text-lg md:text-xl text-blue-100 mb-8 max-w-2xl mx-auto">
+                Solusi ujian online cepat, profesional, dan terintegrasi untuk kemajuan pendidikan madrasah.
+            </p>
+            <a href="form.html" class="inline-block bg-white text-blue-600 font-bold px-8 py-3 rounded-full shadow-lg hover:bg-blue-50 transition transform hover:-translate-y-1">
+                Ajukan Sekarang
+            </a>
         </div>
-      </div>`;
-    });
-    document.getElementById("paketList").innerHTML = html;
-  } catch(err) {
-    document.getElementById("paketList").innerHTML = `<div class="col-12 text-danger">Gagal memuat paket layanan.</div>`;
-  }
-}
+    </div>
 
-async function loadUser(){
-  const tbody = document.getElementById("userList");
-  try {
-    const res = await get("pendaftaran");
-    if(!res || !res.data) throw new Error("Data tidak ditemukan");
+    <!-- MAIN CONTENT -->
+    <div class="max-w-6xl mx-auto px-4 -mt-20">
+        
+        <!-- PAKET CARDS -->
+        <div class="mb-12">
+            <div class="flex items-center mb-6">
+                <div class="h-8 w-2 bg-blue-600 rounded-full mr-3"></div>
+                <h2 class="text-2xl font-bold text-gray-900">Pilihan Paket CBT</h2>
+            </div>
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6" id="paketList">
+                <!-- Placeholder Loading -->
+                <div class="col-span-3 text-center py-10 bg-white rounded-2xl shadow">
+                    <p class="text-gray-500 animate-pulse">Sedang memuat paket layanan...</p>
+                </div>
+            </div>
+        </div>
 
-    let html = "";
-    let no = 1;
+        <!-- DAFTAR PENGGUNA -->
+        <div class="mb-20">
+            <div class="flex items-center mb-6">
+                <div class="h-8 w-2 bg-blue-600 rounded-full mr-3"></div>
+                <h2 class="text-2xl font-bold text-gray-900">Daftar Pengguna Aktif</h2>
+            </div>
+            
+            <div class="bg-white rounded-2xl shadow-xl overflow-hidden border border-gray-100">
+                <div class="overflow-x-auto">
+                    <table class="w-full text-left border-collapse">
+                        <thead>
+                            <tr class="bg-gray-50 border-b border-gray-100">
+                                <th class="px-6 py-4 text-xs font-semibold text-gray-500 uppercase tracking-wider">No</th>
+                                <th class="px-6 py-4 text-xs font-semibold text-gray-500 uppercase tracking-wider">Madrasah</th>
+                                <th class="px-6 py-4 text-xs font-semibold text-gray-500 uppercase tracking-wider">Kabupaten</th>
+                                <th class="px-6 py-4 text-xs font-semibold text-gray-500 uppercase tracking-wider">Paket</th>
+                                <th class="px-6 py-4 text-xs font-semibold text-gray-500 uppercase tracking-wider">Status</th>
+                                <th class="px-6 py-4 text-xs font-semibold text-gray-500 uppercase tracking-wider">Pembayaran</th>
+                                <th class="px-6 py-4 text-xs font-semibold text-gray-500 uppercase tracking-wider text-center">Aksi</th>
+                                <th class="px-6 py-4 text-xs font-semibold text-gray-500 uppercase tracking-wider text-center">Akses CBT</th>
+                            </tr>
+                        </thead>
+                        <tbody id="userList" class="divide-y divide-gray-100">
+                            <tr>
+                                <td colspan="8" class="px-6 py-10 text-center text-gray-400 italic">
+                                    Menunggu data dari server...
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
 
-    res.data.slice(1).reverse().forEach(r => {
-      const id     = r[0];
-      const nama   = r[3] || "-";
-      const kab    = r[6] || "-";
-      const paket  = r[12] || "-";
-      const status = (r[14] || "pending").toLowerCase();
-      const bayar  = (r[15] || "belum_bayar").toLowerCase();
-      const link   = r[16] || "";
+    <!-- Script tetap menggunakan assets/app.js Anda -->
+    <script src="assets/app.js"></script>
 
-      let badge = status === "disetujui" ? "success" : (status === "pending" ? "warning" : "danger");
-      let bayarBadge = bayar === "lunas" ? "success" : (bayar === "menunggu_verifikasi" ? "info" : "danger");
+    <script>
+    // ===================
+    // LOAD PAKET (UI IMPROVED)
+    // ===================
+    async function loadPaket(){
+        try {
+            const res = await get("paket");
+            if(!res || !res.data) throw new Error("Data paket kosong");
 
-      let tombolBayar = "-";
-      if(bayar === "belum_bayar" || bayar === "ditolak") {
-        tombolBayar = `<a href="bayar.html?id=${id}" class="btn btn-sm btn-warning fw-bold px-3 shadow-sm">Bayar</a>`;
-      } else if(bayar === "menunggu_verifikasi") {
-        tombolBayar = `<small class="text-info fw-bold">Verifikasi...</small>`;
-      } else if(bayar === "lunas") {
-        tombolBayar = `<span class="text-success small fw-bold">Terverifikasi</span>`;
-      }
+            let html = "";
+            // Slice(1) karena biasanya baris pertama adalah header spreadsheet
+            res.data.slice(1).forEach(p => {
+                html += `
+                <div class="bg-white rounded-2xl p-6 shadow-md border border-gray-50 hover:shadow-xl transition transform hover:-translate-y-2 text-center group">
+                    <div class="w-12 h-12 bg-blue-100 text-blue-600 rounded-xl flex items-center justify-center mx-auto mb-4 group-hover:bg-blue-600 group-hover:text-white transition">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10" />
+                        </svg>
+                    </div>
+                    <h3 class="text-xl font-bold text-gray-800 mb-1">${p[1] || "-"}</h3>
+                    <p class="text-sm text-gray-500 mb-4">${p[3] || 0} Kuota Peserta</p>
+                    <div class="text-2xl font-black text-blue-600">
+                        <span class="text-sm font-normal text-gray-400 mr-1">Rp</span>${Number(p[2] || 0).toLocaleString()}
+                    </div>
+                </div>`;
+            });
+            document.getElementById("paketList").innerHTML = html;
+        } catch(err) {
+            document.getElementById("paketList").innerHTML = `<div class="col-span-3 text-red-500 text-center p-6 bg-red-50 rounded-xl">Gagal memuat paket: ${err.message}</div>`;
+        }
+    }
 
-      let tombolCBT = link ? `<a href="${link}" target="_blank" class="btn btn-sm btn-primary-custom text-white shadow-sm">Masuk Sistem</a>` : `<span class="text-muted small">Belum Tersedia</span>`;
+    // ===================
+    // LOAD DATA USER (UI IMPROVED)
+    // ===================
+    async function loadUser(){
+        const tbody = document.getElementById("userList");
+        try {
+            const res = await get("pendaftaran");
+            if(!res || !res.data) throw new Error("Data tidak ditemukan");
 
-      html += `
-      <tr>
-        <td class="fw-bold text-muted">${no++}</td>
-        <td class="fw-bold">${nama}</td>
-        <td>${kab}</td>
-        <td><span class="text-primary fw-medium">${paket}</span></td>
-        <td><span class="badge bg-${badge}">${status}</span></td>
-        <td><span class="badge bg-${bayarBadge}">${bayar.replace('_', ' ')}</span></td>
-        <td>${tombolBayar}</td>
-        <td>${tombolCBT}</td>
-      </tr>`;
-    });
+            let html = "";
+            let no = 1;
 
-    tbody.innerHTML = html || `<tr><td colspan="8" class="text-center py-4">Belum ada data pendaftaran.</td></tr>`;
-  } catch(err) {
-    tbody.innerHTML = `<tr><td colspan="8" class="text-danger text-center py-4">${err.message}</td></tr>`;
-  }
-}
+            res.data.slice(1).reverse().forEach(r => {
+                const id     = r[0];
+                const nama   = r[3] || "-";
+                const kab    = r[6] || "-";
+                const paket  = r[12] || "-";
+                const status = (r[14] || "pending").toLowerCase();
+                const bayar  = (r[15] || "belum_bayar").toLowerCase();
+                const link   = r[16] || "";
 
-loadPaket();
-loadUser();
-</script>
+                // Badge Styles
+                let statusClass = "bg-gray-100 text-gray-600";
+                if(status === "pending") statusClass = "bg-yellow-100 text-yellow-700";
+                if(status === "disetujui") statusClass = "bg-green-100 text-green-700";
+                if(status === "ditolak") statusClass = "bg-red-100 text-red-700";
 
+                let bayarClass = "bg-gray-100 text-gray-600";
+                if(bayar === "menunggu_verifikasi") bayarClass = "bg-blue-100 text-blue-700";
+                if(bayar === "lunas") bayarClass = "bg-green-100 text-green-700";
+                if(bayar === "ditolak") bayarClass = "bg-red-100 text-red-700";
+
+                // Tombol Bayar
+                let actionBtn = "-";
+                if(bayar === "belum_bayar" || bayar === "ditolak"){
+                    actionBtn = `<a href="bayar.html?id=${id}" class="bg-orange-500 hover:bg-orange-600 text-white text-xs font-bold py-2 px-4 rounded-lg shadow-sm inline-block transition">BAYAR</a>`;
+                } else if(bayar === "menunggu_verifikasi"){
+                    actionBtn = `<span class="text-blue-500 text-xs font-semibold">Proses Verifikasi</span>`;
+                } else {
+                    actionBtn = `<span class="text-green-500 text-xs font-bold italic">Lunas</span>`;
+                }
+
+                // Link CBT
+                let cbtBtn = "-";
+                if(link && link !== ""){
+                    cbtBtn = `<a href="${link}" target="_blank" class="bg-blue-600 hover:bg-blue-700 text-white text-xs font-bold py-2 px-4 rounded-lg shadow-sm inline-block transition">MASUK CBT</a>`;
+                }
+
+                html += `
+                <tr class="table-row-hover">
+                    <td class="px-6 py-4 text-sm text-gray-400 font-medium">${no++}</td>
+                    <td class="px-6 py-4 text-sm font-semibold text-gray-800">${nama}</td>
+                    <td class="px-6 py-4 text-sm text-gray-600">${kab}</td>
+                    <td class="px-6 py-4 text-sm font-medium text-blue-600">${paket}</td>
+                    <td class="px-6 py-4">
+                        <span class="px-3 py-1 rounded-full text-xs font-bold uppercase ${statusClass}">${status}</span>
+                    </td>
+                    <td class="px-6 py-4">
+                        <span class="px-3 py-1 rounded-full text-xs font-bold uppercase ${bayarClass}">${bayar.replace('_', ' ')}</span>
+                    </td>
+                    <td class="px-6 py-4 text-center">${actionBtn}</td>
+                    <td class="px-6 py-4 text-center">${cbtBtn}</td>
+                </tr>`;
+            });
+
+            tbody.innerHTML = html || `<tr><td colspan="8" class="px-6 py-10 text-center text-gray-500">Belum ada data pendaftaran.</td></tr>`;
+
+        } catch(err) {
+            tbody.innerHTML = `<tr><td colspan="8" class="px-6 py-10 text-center text-red-500 bg-red-50">${err.message}</td></tr>`;
+        }
+    }
+
+    // Init data
+    window.onload = () => {
+        loadPaket();
+        loadUser();
+    };
+    </script>
 </body>
 </html>
