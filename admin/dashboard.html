@@ -143,10 +143,19 @@ let selectedId=null;
 /* FIX GOOGLE DRIVE */
 function fixDriveUrl(url){
     if(!url) return "";
+
+    // ambil ID file google drive
+    const match = url.match(/\/d\/([a-zA-Z0-9_-]+)/);
+    if(match){
+        return `https://drive.google.com/uc?export=view&id=${match[1]}`;
+    }
+
+    // fallback lama
     if(url.includes("drive.google.com")){
         const id = url.match(/[-\w]{25,}/);
         if(id) return `https://drive.google.com/uc?export=view&id=${id[0]}`;
     }
+
     return url;
 }
 
