@@ -1,4 +1,4 @@
-const API_URL = "https://script.google.com/macros/s/AKfycbzO5GWjtifcNZy2sRJDDZNKVPOb_mN6D7YMf-oigonnbUwO9BROyHXWu3NYXbb33YoU/exec";
+const API_URL = "https://script.google.com/macros/s/AKfycbxUexWANnqC_zPN2-08j1iOGqokmFnRo14DqwjBp5AA0tq30Nu5uaPUAODvVkH7fEbfPg/exec";
 
 /* =========================
    HELPER
