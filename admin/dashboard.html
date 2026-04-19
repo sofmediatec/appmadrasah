@@ -75,11 +75,10 @@ body { font-family: 'Inter', sans-serif; }
 </table>
 </div>
 
-<!-- MODAL -->
-<div id="modal" class="fixed inset-0 bg-black/50 hidden z-50">
-<div class="flex items-center justify-center min-h-screen">
-
+<!-- MODAL (TENGAH) -->
+<div id="modal" class="fixed inset-0 bg-black/50 hidden z-50 flex items-center justify-center">
 <div class="bg-white p-6 rounded w-96 shadow-lg">
+
 <h2 class="font-bold mb-3">Detail</h2>
 
 <div>ID: <span id="dId"></span></div>
@@ -105,8 +104,6 @@ body { font-family: 'Inter', sans-serif; }
 </div>
 
 </div>
-
-</div>
 </div>
 
 <script>
@@ -116,16 +113,22 @@ if(!token) location="login.html";
 const user = JSON.parse(localStorage.getItem("user")||"{}");
 
 let allData=[];
+let paymentsData=[];
 let selectedId=null;
 
 /* FIX DRIVE */
 function fixDriveUrl(url){
     if(!url) return "";
-
-    let match = url.match(/\/d\/([a-zA-Z0-9_-]+)/);
+    const match = url.match(/\/d\/([a-zA-Z0-9_-]+)/);
     if(match) return `https://drive.google.com/uc?export=view&id=${match[1]}`;
-
     return "";
+}
+
+/* 🔥 AMBIL BUKTI DARI SHEET PEMBAYARAN */
+function getBuktiById(pendaftaranId){
+    const row = paymentsData.find(p => p[1] == pendaftaranId);
+    if(!row) return "";
+    return row[6]; // kolom bukti_transfer
 }
 
 /* LOAD */
@@ -134,11 +137,15 @@ async function loadData(){
     tbody.innerHTML=`<tr><td colspan="7" class="p-6 text-center">Loading...</td></tr>`;
 
     try{
-        const res = await get("pendaftaran");
+        const pendaftaran = await get("pendaftaran");
+        const pembayaran = await get("pembayaran");
 
-        if(res.status!=="success") throw new Error(res.message);
+        if(pendaftaran.status!=="success") throw new Error(pendaftaran.message);
+        if(pembayaran.status!=="success") throw new Error(pembayaran.message);
 
-        allData = res.data.slice(1);
+        allData = pendaftaran.data.slice(1);
+        paymentsData = pembayaran.data.slice(1);
+
         render();
 
     }catch(err){
@@ -163,8 +170,7 @@ function render(){
         const status=(r[14]||"pending").toLowerCase();
         const bayar=(r[15]||"belum_bayar").toLowerCase();
 
-        // ✅ FIX FINAL
-        const rawBukti = r[6] || "";
+        const rawBukti = getBuktiById(id);
         const bukti = fixDriveUrl(rawBukti);
 
         if(search && !(`${id} ${nama}`.toLowerCase().includes(search))) return;
@@ -184,8 +190,7 @@ function render(){
                 ${bukti ? `
                     <img src="${bukti}"
                         class="w-12 h-12 object-cover rounded border cursor-pointer"
-                        onclick="window.open('${rawBukti}')"
-                        onerror="this.src='https://via.placeholder.com/50?text=No+Image'">
+                        onclick="window.open('${rawBukti}')">
                 ` : "-"}
             </td>
             <td class="p-2">
@@ -217,7 +222,7 @@ function openDetail(id){
     dBayar.value=r[15]||"belum_bayar";
     dLink.value=r[16]||"";
 
-    const raw = r[6] || "";
+    const raw = getBuktiById(id);
     const bukti = fixDriveUrl(raw);
 
     if(bukti){
@@ -230,7 +235,6 @@ function openDetail(id){
     modal.classList.remove("hidden");
 }
 
-/* CLOSE */
 function closeModal(){
     modal.classList.add("hidden");
 }
