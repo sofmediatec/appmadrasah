@@ -158,26 +158,14 @@ async function loadData(){
     tbody.innerHTML=`<tr><td colspan="7" class="p-6 text-center">Loading...</td></tr>`;
 
     try{
-        // 🔥 GANTI KE DASHBOARD (INI KUNCI UTAMA)
-        const res = await post("dashboard",{},token);
+        // ✅ pakai dashboard (SUDAH include bukti)
+        const res = await get("dashboard");
 
         console.log("DASHBOARD:", res);
 
         if(res.status!=="success") throw new Error(res.message);
 
-        allData = res.data; // tidak pakai slice
-
-        // fallback lama tetap (tidak dihapus)
-        try{
-            const pembayaran = await get("pembayaran");
-            if(pembayaran.status==="success"){
-                paymentsData = pembayaran.data.slice(1);
-            }else{
-                paymentsData = [];
-            }
-        }catch(e){
-            paymentsData = [];
-        }
+        allData = res.data; // ⚠️ TIDAK slice(1) karena sudah tanpa header
 
         render();
 
@@ -203,7 +191,7 @@ function render(){
         const status=(r[14]||"pending").toLowerCase();
         const bayar=(r[15]||"belum_bayar").toLowerCase();
 
-        const rawBukti = getBuktiById(id);
+        const rawBukti = r[r.length-1] || "";
         const bukti = fixDriveUrl(rawBukti);
 
         if(search && !(`${id} ${nama}`.toLowerCase().includes(search))) return;
@@ -256,7 +244,7 @@ function openDetail(id){
     dBayar.value=r[15]||"belum_bayar";
     dLink.value=r[16]||"";
 
-    const raw = getBuktiById(id);
+    const raw = r[r.length-1] || "";
     const bukti = fixDriveUrl(raw);
 
     if(bukti){
