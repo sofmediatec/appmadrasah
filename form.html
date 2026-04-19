@@ -1,103 +1,191 @@
 <!DOCTYPE html>
-<html>
+<html lang="id">
 <head>
-  <title>Daftar CBT</title>
-  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pendaftaran CBT Online | Madrasah Digital</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Google Fonts: Inter -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <!-- AOS Animation Library -->
+    <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f1f5f9;
+            -webkit-font-smoothing: antialiased;
+        }
+        .hero-mini {
+            background: linear-gradient(135deg, #1e40af 0%, #1e3a8a 100%);
+        }
+        .form-input {
+            @apply w-full px-4 py-3 rounded-xl border border-slate-200 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 outline-none transition-all bg-slate-50 font-medium text-slate-900;
+        }
+        .form-label {
+            @apply block text-xs font-black uppercase tracking-widest text-slate-500 mb-2 ml-1;
+        }
+    </style>
 </head>
+<body class="text-slate-900 pb-20">
 
-<body class="container py-5">
+    <!-- HEADER MINI -->
+    <header class="hero-mini py-12 px-6 text-center relative overflow-hidden">
+        <div class="absolute top-0 left-0 w-32 h-32 bg-white opacity-5 rounded-full -translate-x-1/2 -translate-y-1/2"></div>
+        <div class="relative z-10">
+            <a href="index.html" class="inline-flex items-center space-x-2 mb-6 text-blue-200 hover:text-white transition-colors">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"/></svg>
+                <span class="font-bold text-sm">Kembali ke Beranda</span>
+            </a>
+            <h1 class="text-3xl md:text-4xl font-black text-white tracking-tight" data-aos="fade-down">Form Pendaftaran</h1>
+            <p class="text-blue-100 mt-2 font-medium" data-aos="fade-up" data-aos-delay="100">Lengkapi data madrasah untuk mulai menggunakan layanan CBT.</p>
+        </div>
+    </header>
 
-<h3 class="mb-4">Form Pendaftaran CBT</h3>
+    <main class="max-w-2xl mx-auto px-6 -mt-12 relative z-20">
+        <form id="form" class="bg-white rounded-3xl shadow-2xl p-8 md:p-12 border border-slate-100" data-aos="zoom-in" data-aos-delay="200">
+            
+            <!-- Section: Identitas -->
+            <div class="mb-10">
+                <div class="flex items-center space-x-3 mb-6 border-b border-slate-100 pb-4">
+                    <div class="w-8 h-8 bg-blue-100 text-blue-700 rounded-lg flex items-center justify-center font-bold text-sm">01</div>
+                    <h2 class="font-black text-slate-900 uppercase tracking-tight">Identitas Madrasah</h2>
+                </div>
+                
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div class="md:col-span-2">
+                        <label class="form-label">Nama Madrasah *</label>
+                        <input class="form-input" name="nama_madrasah" placeholder="Contoh: MAN Merdeka" required>
+                    </div>
+                    <div>
+                        <label class="form-label">NPSN</label>
+                        <input class="form-input" name="npsn" placeholder="Nomor Pokok Sekolah">
+                    </div>
+                    <div>
+                        <label class="form-label">No. HP / WhatsApp *</label>
+                        <input class="form-input" name="no_hp" placeholder="0812xxxx" required>
+                    </div>
+                    <div class="md:col-span-2">
+                        <label class="form-label">Alamat Lengkap</label>
+                        <input class="form-input" name="alamat" placeholder="Jl. Raya Utama No. 123">
+                    </div>
+                    <div>
+                        <label class="form-label">Kabupaten</label>
+                        <input class="form-input" name="kabupaten" placeholder="Pilih Kabupaten">
+                    </div>
+                    <div>
+                        <label class="form-label">Provinsi</label>
+                        <input class="form-input" name="provinsi" placeholder="Pilih Provinsi">
+                    </div>
+                </div>
+            </div>
 
-<form id="form" class="card p-4 shadow-sm">
+            <!-- Section: Kontak & Layanan -->
+            <div class="mb-10">
+                <div class="flex items-center space-x-3 mb-6 border-b border-slate-100 pb-4">
+                    <div class="w-8 h-8 bg-blue-100 text-blue-700 rounded-lg flex items-center justify-center font-bold text-sm">02</div>
+                    <h2 class="font-black text-slate-900 uppercase tracking-tight">Layanan & Kontak</h2>
+                </div>
+                
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div>
+                        <label class="form-label">Penanggung Jawab</label>
+                        <input class="form-input" name="penanggung_jawab" placeholder="Nama Lengkap">
+                    </div>
+                    <div>
+                        <label class="form-label">Email Madrasah</label>
+                        <input class="form-input" name="email" type="email" placeholder="admin@madrasah.sch.id">
+                    </div>
+                    <div>
+                        <label class="form-label">Estimasi Peserta</label>
+                        <input class="form-input" name="jumlah_peserta" type="number" placeholder="0">
+                    </div>
+                    <div>
+                        <label class="form-label">Pilih Paket CBT</label>
+                        <select class="form-input appearance-none" name="paket_id" id="paket">
+                            <option value="1">Basic - Rp500.000</option>
+                            <option value="2">Standard - Rp750.000</option>
+                            <option value="3">Premium - Rp1.000.000</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
 
-<input class="form-control mb-2" name="nama_madrasah" placeholder="Nama Madrasah" required>
-<input class="form-control mb-2" name="npsn" placeholder="NPSN">
-<input class="form-control mb-2" name="alamat" placeholder="Alamat">
-<input class="form-control mb-2" name="kabupaten" placeholder="Kabupaten">
-<input class="form-control mb-2" name="provinsi" placeholder="Provinsi">
-<input class="form-control mb-2" name="penanggung_jawab" placeholder="Penanggung Jawab">
-<input class="form-control mb-2" name="no_hp" placeholder="No HP" required>
-<input class="form-control mb-2" name="email" placeholder="Email" type="email">
-<input class="form-control mb-3" name="jumlah_peserta" placeholder="Jumlah Peserta" type="number">
+            <!-- Total Harga Display -->
+            <div class="bg-blue-50 rounded-2xl p-6 mb-8 flex items-center justify-between border border-blue-100">
+                <div>
+                    <span class="text-[10px] font-black uppercase tracking-widest text-blue-600 block mb-1">Total Pembayaran</span>
+                    <span class="text-2xl font-black text-slate-900" id="hargaText">Rp500.000</span>
+                </div>
+                <div class="w-12 h-12 bg-white rounded-xl flex items-center justify-center shadow-sm">
+                    <svg class="w-6 h-6 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 9V7a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2m2 4h10a2 2 0 002-2v-6a2 2 0 00-2-2H9a2 2 0 00-2 2v6a2 2 0 002 2zm7-5a2 2 0 11-4 0 2 2 0 014 0z"/></svg>
+                </div>
+            </div>
 
-<select class="form-control mb-3" name="paket_id" id="paket">
-  <option value="1">Basic - Rp500.000</option>
-  <option value="2">Standard - Rp750.000</option>
-  <option value="3">Premium - Rp1000.000</option>
-</select>
+            <button type="submit" id="btnSubmit" class="w-full bg-blue-700 text-white font-black py-5 rounded-2xl shadow-xl shadow-blue-200 hover:bg-blue-800 transition-all transform hover:-translate-y-1 active:scale-95 uppercase tracking-widest text-sm">
+                Konfirmasi Pendaftaran
+            </button>
+            
+            <p class="text-center text-slate-400 text-[10px] mt-6 font-bold uppercase tracking-wider">
+                Dengan mendaftar, Anda menyetujui Syarat & Ketentuan CBT Madrasah.
+            </p>
+        </form>
+    </main>
 
-<div class="mb-3">
-  <strong>Total Harga: <span id="hargaText">Rp500.000</span></strong>
-</div>
+    <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
+    <script src="assets/app.js"></script>
 
-<button class="btn btn-primary w-100" id="btnSubmit">Kirim</button>
+    <script>
+    AOS.init({ duration: 800, once: true });
 
-</form>
+    // Referensi promo dari URL
+    const urlParams = new URLSearchParams(window.location.search);
+    const ref = urlParams.get("ref");
 
-<script src="assets/app.js"></script>
+    const paket = document.getElementById("paket");
+    const hargaText = document.getElementById("hargaText");
 
-<script>
-// ambil ref dari URL (optional promo)
-const urlParams = new URLSearchParams(window.location.search);
-const ref = urlParams.get("ref");
-
-// update harga realtime
-const paket = document.getElementById("paket");
-const hargaText = document.getElementById("hargaText");
-
-function getHarga(id){
-  if(id == 1) return 500000;
-  if(id == 2) return 750000;
-  return 1000000;
-}
-
-paket.onchange = function(){
-  hargaText.innerText = "Rp" + getHarga(this.value).toLocaleString();
-};
-
-// submit form
-document.getElementById("form").onsubmit = function(e){
-  e.preventDefault();
-
-  const btn = document.getElementById("btnSubmit");
-  btn.innerText = "Mengirim...";
-  btn.disabled = true;
-
-  const data = Object.fromEntries(new FormData(this));
-
-  // validasi sederhana
-  if(!data.nama_madrasah || !data.no_hp){
-    alert("Nama madrasah & No HP wajib diisi");
-    btn.innerText = "Kirim";
-    btn.disabled = false;
-    return;
-  }
-
-  data.harga = getHarga(data.paket_id);
-  data.created_by = ref || "";
-
-  post("daftar", data).then(res => {
-
-    if(res.status !== "success"){
-      alert(res.message || "Gagal daftar");
-      btn.innerText = "Kirim";
-      btn.disabled = false;
-      return;
+    function getHarga(id){
+        if(id == 1) return 500000;
+        if(id == 2) return 750000;
+        return 1000000;
     }
 
-    alert("Berhasil daftar!\nKode: " + res.kode);
+    paket.onchange = function(){
+        const harga = getHarga(this.value);
+        hargaText.innerText = "Rp" + harga.toLocaleString();
+    };
 
-    // ✅ FIX PENTING DI SINI
-    window.location = "bayar.html?id=" + res.id + "&kode=" + res.kode;
+    document.getElementById("form").onsubmit = function(e){
+        e.preventDefault();
 
-  }).catch(() => {
-    alert("Terjadi kesalahan");
-    btn.innerText = "Kirim";
-    btn.disabled = false;
-  });
-};
-</script>
+        const btn = document.getElementById("btnSubmit");
+        const originalText = btn.innerText;
+        btn.innerText = "MEMPROSES DATA...";
+        btn.disabled = true;
 
+        const data = Object.fromEntries(new FormData(this));
+
+        data.harga = getHarga(data.paket_id);
+        data.created_by = ref || "";
+
+        post("daftar", data).then(res => {
+            if(res.status !== "success"){
+                alert(res.message || "Pendaftaran gagal, silakan coba lagi.");
+                btn.innerText = originalText;
+                btn.disabled = false;
+                return;
+            }
+            
+            // Redirect ke halaman pembayaran
+            window.location = "bayar.html?id=" + res.id + "&kode=" + res.kode;
+        }).catch(err => {
+            console.error(err);
+            alert("Terjadi gangguan koneksi.");
+            btn.innerText = originalText;
+            btn.disabled = false;
+        });
+    };
+    </script>
 </body>
 </html>
