@@ -1,46 +1,146 @@
 <!DOCTYPE html>
-<html>
+<html lang="id">
 <head>
-  <title>CBT Online</title>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>CBT Online Madrasah</title>
+  
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-  <link rel="stylesheet" href="assets/style.css">
+  
+  <style>
+    body {
+      font-family: 'Inter', sans-serif;
+      background-color: #f8f9fa;
+      color: #333;
+    }
+
+    /* Modern Hero Section */
+    .hero {
+      background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+      color: white;
+      padding: 80px 20px;
+      border-radius: 20px;
+      margin-top: 20px;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+    }
+    
+    .hero h1 {
+      font-weight: 700;
+      letter-spacing: -1px;
+    }
+
+    /* Card Styling */
+    .card-paket {
+      border: none;
+      border-radius: 15px;
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
+      background: #fff;
+    }
+
+    .card-paket:hover {
+      transform: translateY(-10px);
+      box-shadow: 0 15px 35px rgba(0,0,0,0.1) !important;
+    }
+
+    .price-tag {
+      color: #2a5298;
+      font-weight: 700;
+      font-size: 1.5rem;
+    }
+
+    /* Table Styling */
+    .table-container {
+      background: white;
+      padding: 20px;
+      border-radius: 15px;
+      box-shadow: 0 5px 20px rgba(0,0,0,0.05);
+    }
+
+    .table thead th {
+      background-color: #f1f4f8;
+      color: #4a5568;
+      font-weight: 600;
+      border: none;
+      text-transform: uppercase;
+      font-size: 0.85rem;
+      letter-spacing: 0.5px;
+    }
+
+    .badge {
+      padding: 0.6em 1em;
+      border-radius: 8px;
+      font-weight: 500;
+      text-transform: capitalize;
+    }
+
+    .btn-primary-custom {
+      background-color: #2a5298;
+      border: none;
+      padding: 8px 20px;
+      border-radius: 8px;
+    }
+
+    .section-title {
+      font-weight: 700;
+      margin-bottom: 1.5rem;
+      position: relative;
+      display: inline-block;
+    }
+
+    .section-title::after {
+      content: '';
+      position: absolute;
+      width: 50%;
+      height: 4px;
+      background: #2a5298;
+      bottom: -8px;
+      left: 0;
+      border-radius: 2px;
+    }
+  </style>
 </head>
 
 <body>
 
-<div class="container py-5">
+<div class="container pb-5">
 
-  <!-- HERO -->
   <div class="hero text-center mb-5">
-    <h1>CBT Online Madrasah</h1>
-    <p>Solusi ujian online cepat & profesional</p>
-    <a href="form.html" class="btn btn-light btn-lg mt-3">Ajukan Sekarang</a>
+    <h1 class="display-4">CBT Online Madrasah</h1>
+    <p class="lead opacity-75">Solusi ujian online yang cepat, aman, dan profesional untuk madrasah Anda.</p>
+    <a href="form.html" class="btn btn-light btn-lg px-5 py-3 mt-3 fw-bold shadow-sm">Ajukan Sekarang</a>
   </div>
 
-  <!-- PAKET -->
-  <h4 class="mb-3">Paket CBT</h4>
-  <div class="row mb-5" id="paketList"></div>
+  <div class="mb-5">
+    <h4 class="section-title">Paket Layanan</h4>
+    <div class="row g-4 mt-2" id="paketList">
+        <div class="col-12 text-center text-muted">Memuat paket...</div>
+    </div>
+  </div>
 
-  <!-- DAFTAR PENGGUNA -->
-  <h4 class="mb-3">Daftar Pengguna CBT</h4>
-  <div class="table-responsive">
-    <table class="table table-bordered table-striped">
-      <thead class="table-dark">
-        <tr>
-          <th>No</th>
-          <th>Madrasah</th>
-          <th>Kabupaten</th>
-          <th>Paket</th>
-          <th>Status</th>
-          <th>Pembayaran</th>
-          <th>Aksi</th>
-          <th>CBT</th>
-        </tr>
-      </thead>
-      <tbody id="userList">
-        <tr><td colspan="6" class="text-center">Loading...</td></tr>
-      </tbody>
-    </table>
+  <div class="mb-5">
+    <h4 class="section-title">Status Pendaftaran</h4>
+    <div class="table-container mt-3">
+      <div class="table-responsive">
+        <table class="table align-middle">
+          <thead>
+            <tr>
+              <th width="50">No</th>
+              <th>Madrasah</th>
+              <th>Kabupaten</th>
+              <th>Paket</th>
+              <th>Status</th>
+              <th>Pembayaran</th>
+              <th>Aksi</th>
+              <th>CBT</th>
+            </tr>
+          </thead>
+          <tbody id="userList">
+            <tr><td colspan="8" class="text-center py-4">Menghubungkan ke server...</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
   </div>
 
 </div>
@@ -48,60 +148,41 @@
 <script src="assets/app.js"></script>
 
 <script>
-// ===================
-// LOAD PAKET
-// ===================
+// Logic JavaScript tetap sama dengan penyesuaian class CSS pada template literal
 async function loadPaket(){
-  try{
+  try {
     const res = await get("paket");
-
-    if(!res || !res.data){
-      throw new Error("Data paket kosong");
-    }
+    if(!res || !res.data) throw new Error("Data paket kosong");
 
     let html = "";
-
     res.data.slice(1).forEach(p => {
       html += `
-      <div class="col-md-4 mb-3">
-        <div class="card shadow text-center p-3">
-          <h4>${p[1] || "-"}</h4>
-          <p>${p[3] || 0} peserta</p>
-          <h5>Rp ${Number(p[2] || 0).toLocaleString()}</h5>
+      <div class="col-md-4">
+        <div class="card card-paket shadow-sm text-center p-4 h-100">
+          <div class="mb-2 text-muted text-uppercase small fw-bold">Pilihan Paket</div>
+          <h4 class="fw-bold">${p[1] || "-"}</h4>
+          <hr class="mx-auto w-25">
+          <p class="mb-3"><span class="badge bg-light text-dark border">${p[3] || 0} Peserta</span></p>
+          <div class="price-tag mb-0">Rp ${Number(p[2] || 0).toLocaleString()}</div>
         </div>
       </div>`;
     });
-
     document.getElementById("paketList").innerHTML = html;
-
-  }catch(err){
-    document.getElementById("paketList").innerHTML =
-      `<div class="text-danger">Gagal load paket</div>`;
+  } catch(err) {
+    document.getElementById("paketList").innerHTML = `<div class="col-12 text-danger">Gagal memuat paket layanan.</div>`;
   }
 }
 
-
-// ===================
-// LOAD DATA USER
-// ===================
 async function loadUser(){
-
   const tbody = document.getElementById("userList");
-  tbody.innerHTML = `<tr><td colspan="8" class="text-center">Loading...</td></tr>`;
-
-  try{
-
+  try {
     const res = await get("pendaftaran");
-
-    if(!res || !res.data){
-      throw new Error("Data tidak ditemukan");
-    }
+    if(!res || !res.data) throw new Error("Data tidak ditemukan");
 
     let html = "";
     let no = 1;
 
     res.data.slice(1).reverse().forEach(r => {
-
       const id     = r[0];
       const nama   = r[3] || "-";
       const kab    = r[6] || "-";
@@ -110,92 +191,41 @@ async function loadUser(){
       const bayar  = (r[15] || "belum_bayar").toLowerCase();
       const link   = r[16] || "";
 
-      // ===================
-      // STATUS ORDER
-      // ===================
-      let badge = "secondary";
-      if(status === "pending") badge = "warning";
-      if(status === "disetujui") badge = "success";
-      if(status === "ditolak") badge = "danger";
+      let badge = status === "disetujui" ? "success" : (status === "pending" ? "warning" : "danger");
+      let bayarBadge = bayar === "lunas" ? "success" : (bayar === "menunggu_verifikasi" ? "info" : "danger");
 
-      // ===================
-      // STATUS BAYAR
-      // ===================
-      let bayarBadge = "secondary";
-      if(bayar === "menunggu_verifikasi") bayarBadge = "warning";
-      if(bayar === "lunas") bayarBadge = "success";
-      if(bayar === "ditolak") bayarBadge = "danger";
-
-      // ===================
-      // TOMBOL BAYAR
-      // ===================
       let tombolBayar = "-";
-
-      if(bayar === "belum_bayar" || bayar === "ditolak"){
-        tombolBayar = `
-          <a href="bayar.html?id=${id}" 
-             class="btn btn-sm btn-warning">
-             Bayar
-          </a>`;
+      if(bayar === "belum_bayar" || bayar === "ditolak") {
+        tombolBayar = `<a href="bayar.html?id=${id}" class="btn btn-sm btn-warning fw-bold px-3 shadow-sm">Bayar</a>`;
+      } else if(bayar === "menunggu_verifikasi") {
+        tombolBayar = `<small class="text-info fw-bold">Verifikasi...</small>`;
+      } else if(bayar === "lunas") {
+        tombolBayar = `<span class="text-success small fw-bold">Terverifikasi</span>`;
       }
 
-      if(bayar === "menunggu_verifikasi"){
-        tombolBayar = `<span class="text-warning">Menunggu Verifikasi</span>`;
-      }
-
-      if(bayar === "lunas"){
-        tombolBayar = `<span class="text-success">Lunas</span>`;
-      }
-
-      // ===================
-      // LINK CBT
-      // ===================
-      let tombolCBT = "-";
-
-      if(link && link !== ""){
-        tombolCBT = `<a href="${link}" target="_blank" class="btn btn-sm btn-primary">Masuk CBT</a>`;
-      }
+      let tombolCBT = link ? `<a href="${link}" target="_blank" class="btn btn-sm btn-primary-custom text-white shadow-sm">Masuk Sistem</a>` : `<span class="text-muted small">Belum Tersedia</span>`;
 
       html += `
       <tr>
-        <td>${no++}</td>
-        <td>${nama}</td>
+        <td class="fw-bold text-muted">${no++}</td>
+        <td class="fw-bold">${nama}</td>
         <td>${kab}</td>
-        <td>${paket}</td>
-
+        <td><span class="text-primary fw-medium">${paket}</span></td>
         <td><span class="badge bg-${badge}">${status}</span></td>
-
-        <td><span class="badge bg-${bayarBadge}">${bayar}</span></td>
-
+        <td><span class="badge bg-${bayarBadge}">${bayar.replace('_', ' ')}</span></td>
         <td>${tombolBayar}</td>
-
         <td>${tombolCBT}</td>
-      </tr>
-      `;
+      </tr>`;
     });
 
-    if(html === ""){
-      html = `<tr><td colspan="8" class="text-center">Belum ada data</td></tr>`;
-    }
-
-    tbody.innerHTML = html;
-
-  }catch(err){
-
-    console.error(err);
-
-    tbody.innerHTML =
-      `<tr><td colspan="8" class="text-danger text-center">${err.message}</td></tr>`;
+    tbody.innerHTML = html || `<tr><td colspan="8" class="text-center py-4">Belum ada data pendaftaran.</td></tr>`;
+  } catch(err) {
+    tbody.innerHTML = `<tr><td colspan="8" class="text-danger text-center py-4">${err.message}</td></tr>`;
   }
 }
 
-
-// ===================
-// INIT
-// ===================
 loadPaket();
 loadUser();
-
 </script>
 
 </body>
