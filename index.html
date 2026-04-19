@@ -24,7 +24,6 @@
             backdrop-filter: blur(12px);
             -webkit-backdrop-filter: blur(12px);
         }
-        /* Animasi kustom untuk floating element */
         @keyframes float {
             0% { transform: translateY(0px); }
             50% { transform: translateY(-10px); }
@@ -37,7 +36,7 @@
 </head>
 <body class="text-gray-900">
 
-    <!-- HEADER / NAVBAR (Simplified) -->
+    <!-- HEADER / NAVBAR -->
     <header class="glass-nav border-b border-gray-100 sticky top-0 z-50">
         <div class="max-w-6xl mx-auto px-6 h-20 flex items-center justify-between">
             <div class="flex items-center space-x-3">
@@ -77,54 +76,40 @@
                     <a href="form.html" class="bg-white text-blue-700 font-bold px-10 py-5 rounded-full shadow-2xl hover:bg-blue-50 transition transform hover:-translate-y-1 active:scale-95">
                         Daftarkan Madrasah
                     </a>
-                    <a href="#keunggulan" class="text-white font-semibold flex items-center gap-2 group">
-                        Lihat Keunggulan 
-                        <svg class="w-5 h-5 group-hover:translate-y-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
-                        </svg>
-                    </a>
                 </div>
             </div>
         </section>
 
-        <!-- KEUNGGULAN SECTION (Ganti dari Stats) -->
+        <!-- KEUNGGULAN SECTION -->
         <div id="keunggulan" class="max-w-6xl mx-auto px-6 -mt-16 relative z-20">
             <div class="bg-white rounded-3xl shadow-xl p-8 grid grid-cols-1 md:grid-cols-4 gap-8 border border-gray-50" data-aos="fade-up">
                 <div class="flex flex-col items-center text-center p-4">
                     <div class="w-12 h-12 bg-blue-100 text-blue-600 rounded-full flex items-center justify-center mb-4">
-                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
-                        </svg>
+                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" /></svg>
                     </div>
                     <h4 class="font-bold text-sm text-gray-900 uppercase tracking-wide">Sistem Aman</h4>
-                    <p class="text-xs text-gray-400 mt-2">Proteksi ujian dari kecurangan & kebocoran soal.</p>
+                    <p class="text-xs text-gray-400 mt-2">Proteksi ujian dari kecurangan & soal bocor.</p>
                 </div>
                 <div class="flex flex-col items-center text-center p-4">
                     <div class="w-12 h-12 bg-green-100 text-green-600 rounded-full flex items-center justify-center mb-4">
-                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z" />
-                        </svg>
+                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z" /></svg>
                     </div>
                     <h4 class="font-bold text-sm text-gray-900 uppercase tracking-wide">Akses Cepat</h4>
-                    <p class="text-xs text-gray-400 mt-2">Server stabil & ringan diakses berbagai perangkat.</p>
+                    <p class="text-xs text-gray-400 mt-2">Server stabil & ringan diakses perangkat apa pun.</p>
                 </div>
                 <div class="flex flex-col items-center text-center p-4">
                     <div class="w-12 h-12 bg-purple-100 text-purple-600 rounded-full flex items-center justify-center mb-4">
-                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 17v-2m3 2v-4m3 4v-6m2 10H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
-                        </svg>
+                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 17v-2m3 2v-4m3 4v-6m2 10H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" /></svg>
                     </div>
                     <h4 class="font-bold text-sm text-gray-900 uppercase tracking-wide">Hasil Instan</h4>
-                    <p class="text-xs text-gray-400 mt-2">Analisis nilai otomatis langsung setelah ujian.</p>
+                    <p class="text-xs text-gray-400 mt-2">Analisis nilai otomatis setelah ujian selesai.</p>
                 </div>
                 <div class="flex flex-col items-center text-center p-4">
                     <div class="w-12 h-12 bg-orange-100 text-orange-600 rounded-full flex items-center justify-center mb-4">
-                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M18.364 5.636l-3.536 3.536m0 5.656l3.536 3.536M9.172 9.172L5.636 5.636m3.536 9.192l-3.536 3.536M21 12a9 9 0 11-18 0 9 9 0 0118 0zm-5 0a4 4 0 11-8 0 4 4 0 018 0z" />
-                        </svg>
+                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M18.364 5.636l-3.536 3.536m0 5.656l3.536 3.536M9.172 9.172L5.636 5.636m3.536 9.192l-3.536 3.536M21 12a9 9 0 11-18 0 9 9 0 0118 0zm-5 0a4 4 0 11-8 0 4 4 0 018 0z" /></svg>
                     </div>
                     <h4 class="font-bold text-sm text-gray-900 uppercase tracking-wide">Support 24/7</h4>
-                    <p class="text-xs text-gray-400 mt-2">Bantuan teknis siaga selama masa ujian.</p>
+                    <p class="text-xs text-gray-400 mt-2">Bantuan teknis siaga selama pelaksanaan ujian.</p>
                 </div>
             </div>
         </div>
@@ -132,42 +117,43 @@
         <!-- PAKET SECTION -->
         <section id="paketSection" class="max-w-6xl mx-auto px-6 py-24">
             <div class="text-center mb-16">
-                <h2 class="text-3xl md:text-4xl font-extrabold text-gray-900 mb-4" data-aos="fade-up">Investasi Pendidikan Terbaik</h2>
+                <h2 class="text-3xl md:text-4xl font-extrabold text-gray-900 mb-4" data-aos="fade-up">Paket CBT</h2>
                 <p class="text-gray-500 max-w-xl mx-auto" data-aos="fade-up" data-aos-delay="100">
                     Pilih paket layanan yang sesuai dengan skala jumlah peserta didik di lembaga Anda.
                 </p>
             </div>
-            
             <div class="grid grid-cols-1 md:grid-cols-3 gap-8" id="paketList">
-                <div class="col-span-3 text-center py-20">
-                    <div class="inline-block w-8 h-8 border-4 border-blue-600 border-t-transparent rounded-full animate-spin"></div>
-                    <p class="text-gray-400 mt-4 font-medium italic">Menghubungkan ke database...</p>
-                </div>
+                <!-- Data diinjeksi via script -->
             </div>
         </section>
 
         <!-- USER LIST SECTION -->
         <section class="bg-gray-100 py-24 px-6">
-            <div class="max-w-6xl mx-auto">
+            <div class="max-w-7xl mx-auto">
                 <div class="flex flex-col md:flex-row items-end justify-between mb-12 gap-6">
                     <div data-aos="fade-right">
-                        <h2 class="text-3xl font-extrabold text-gray-900 mb-2">Kepercayaan Lembaga</h2>
-                        <p class="text-gray-500 italic">Daftar madrasah yang baru saja bergabung dalam ekosistem digital kami.</p>
+                        <h2 class="text-3xl font-extrabold text-gray-900 mb-2">Daftar Pengguna CBT</h2>
+                        <p class="text-gray-500 italic">Daftar madrasah yang baru saja bergabung dalam ekosistem kami.</p>
                     </div>
                 </div>
                 
                 <div class="bg-white rounded-3xl shadow-sm overflow-hidden border border-gray-200" data-aos="fade-up">
                     <div class="overflow-x-auto">
-                        <table class="w-full text-left">
+                        <table class="w-full text-left text-sm">
                             <thead>
                                 <tr class="bg-gray-50 text-gray-400 text-[10px] uppercase font-bold tracking-[0.2em]">
-                                    <th class="px-8 py-5">Lembaga</th>
-                                    <th class="px-8 py-5">Wilayah</th>
-                                    <th class="px-8 py-5">Paket</th>
-                                    <th class="px-8 py-5 text-center">Status</th>
+                                    <th class="px-6 py-5 whitespace-nowrap">No</th>
+                                    <th class="px-6 py-5">Madrasah</th>
+                                    <th class="px-6 py-5">Kabupaten</th>
+                                    <th class="px-6 py-5">Paket</th>
+                                    <th class="px-6 py-5 text-center">Status</th>
+                                    <th class="px-6 py-5 text-center">Pembayaran</th>
+                                    <th class="px-6 py-5 text-center">Aksi</th>
+                                    <th class="px-6 py-5 text-center">CBT</th>
                                 </tr>
                             </thead>
-                            <tbody id="userListBody" class="divide-y divide-gray-50">
+                            <tbody id="userList" class="divide-y divide-gray-50">
+                                <tr><td colspan="8" class="px-8 py-10 text-center text-gray-400 italic">Menghubungkan ke database...</td></tr>
                             </tbody>
                         </table>
                     </div>
@@ -179,39 +165,15 @@
     <!-- FOOTER -->
     <footer class="bg-white border-t border-gray-100 py-16">
         <div class="max-w-6xl mx-auto px-6 text-center">
-            <div class="flex items-center justify-center space-x-3 mb-8">
-                <div class="w-8 h-8 bg-blue-600 rounded-lg flex items-center justify-center">
-                    <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" />
-                    </svg>
-                </div>
-                <span class="text-xl font-black text-gray-900 italic uppercase">CBT Online</span>
-            </div>
-            <p class="text-gray-400 text-sm max-w-md mx-auto mb-10">
-                Solusi transformasi digital pendidikan Islam. Memberdayakan madrasah dengan teknologi ujian masa kini.
-            </p>
-            <div class="border-t border-gray-50 pt-10 flex flex-col md:flex-row justify-between items-center text-xs text-gray-400 gap-4">
-                <p>&copy; 2024 CBT Online Madrasah. Powered by Innovation.</p>
-                <div class="flex space-x-8 uppercase font-bold tracking-widest">
-                    <a href="#" class="hover:text-blue-600">Kebijakan</a>
-                    <a href="#" class="hover:text-blue-600">Kontak</a>
-                    <a href="#" class="hover:text-blue-600">FAQ</a>
-                </div>
-            </div>
+            <p class="text-gray-400 text-sm mb-4">&copy; 2024 CBT Online Madrasah. Powered by Innovation.</p>
         </div>
     </footer>
 
-    <!-- AOS Animation Engine -->
     <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
-    <!-- Script app.js Anda -->
     <script src="assets/app.js"></script>
 
     <script>
-    AOS.init({
-        duration: 1000,
-        once: true,
-        easing: 'ease-out-cubic'
-    });
+    AOS.init({ duration: 1000, once: true });
 
     async function loadPaket(){
         try {
@@ -220,71 +182,94 @@
 
             let html = "";
             res.data.slice(1).forEach((p, index) => {
-                const isPopular = index === 1;
                 html += `
-                <div class="bg-white rounded-3xl p-10 shadow-lg border ${isPopular ? 'border-blue-500 ring-4 ring-blue-50' : 'border-gray-100'} text-center relative group overflow-hidden" data-aos="fade-up" data-aos-delay="${index * 100}">
-                    ${isPopular ? '<div class="absolute top-0 right-0 bg-blue-600 text-white text-[10px] font-bold px-4 py-1 rounded-bl-xl uppercase tracking-widest">Terpopuler</div>' : ''}
+                <div class="bg-white rounded-3xl p-10 shadow-lg border border-gray-100 text-center relative group" data-aos="fade-up" data-aos-delay="${index * 100}">
                     <h3 class="text-xl font-bold text-gray-900 mb-2">${p[1] || "-"}</h3>
-                    <p class="text-gray-400 text-sm mb-6 uppercase tracking-widest font-bold">${p[3] || 0} Siswa</p>
-                    <div class="text-4xl font-black text-gray-900 mb-8">
+                    <p class="text-gray-400 text-sm mb-6 uppercase tracking-widest font-bold">${p[3] || 0} Peserta</p>
+                    <div class="text-3xl font-black text-gray-900 mb-8">
                         <span class="text-sm font-medium text-gray-400 mr-1">Rp</span>${Number(p[2] || 0).toLocaleString()}
                     </div>
-                    <ul class="text-left text-sm text-gray-500 space-y-4 mb-10">
-                        <li class="flex items-center gap-3">
-                            <svg class="w-5 h-5 text-green-500" fill="currentColor" viewBox="0 0 20 20"><path d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"></path></svg>
-                            Server Dedicated
-                        </li>
-                        <li class="flex items-center gap-3">
-                            <svg class="w-5 h-5 text-green-500" fill="currentColor" viewBox="0 0 20 20"><path d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"></path></svg>
-                            Laporan PDF Instan
-                        </li>
-                    </ul>
-                    <a href="form.html" class="block w-full py-4 rounded-2xl font-bold transition-all ${isPopular ? 'bg-blue-600 text-white shadow-lg shadow-blue-200 hover:bg-blue-700' : 'bg-gray-100 text-gray-700 hover:bg-gray-200'}">
+                    <a href="form.html" class="block w-full py-4 rounded-2xl font-bold bg-gray-100 text-gray-700 hover:bg-blue-600 hover:text-white transition-all">
                         Pilih Paket
                     </a>
                 </div>`;
             });
             document.getElementById("paketList").innerHTML = html;
         } catch(err) {
-            document.getElementById("paketList").innerHTML = `<div class="col-span-3 text-red-500 text-center font-bold">${err.message}</div>`;
+            document.getElementById("paketList").innerHTML = `<div class="col-span-3 text-red-500 text-center">${err.message}</div>`;
         }
     }
 
     async function loadUser(){
-        const tbody = document.getElementById("userListBody");
+        const tbody = document.getElementById("userList");
         try {
             const res = await get("pendaftaran");
             if(!res || !res.data) throw new Error("Data tidak ditemukan");
 
             let html = "";
-            res.data.slice(1).reverse().slice(0, 5).forEach(r => {
+            let no = 1;
+
+            res.data.slice(1).reverse().forEach(r => {
+                const id     = r[0];
                 const nama   = r[3] || "-";
                 const kab    = r[6] || "-";
                 const paket  = r[12] || "-";
-                const bayar  = (r[15] || "").toLowerCase();
+                const status = (r[14] || "pending").toLowerCase();
+                const bayar  = (r[15] || "belum_bayar").toLowerCase();
+                const link   = r[16] || "";
 
-                let statusBadge = `<span class="px-3 py-1 bg-gray-100 text-gray-400 text-[10px] font-bold rounded-full uppercase tracking-tighter">Dalam Proses</span>`;
-                if(bayar === "lunas") {
-                    statusBadge = `<span class="px-3 py-1 bg-green-100 text-green-600 text-[10px] font-bold rounded-full uppercase tracking-tighter">Aktif</span>`;
+                // Badge Status Order
+                let badgeClass = "bg-gray-100 text-gray-500";
+                if(status === "pending") badgeClass = "bg-amber-100 text-amber-600";
+                if(status === "disetujui") badgeClass = "bg-green-100 text-green-600";
+                if(status === "ditolak") badgeClass = "bg-red-100 text-red-600";
+
+                // Badge Status Bayar
+                let bayarBadgeClass = "bg-gray-100 text-gray-500";
+                if(bayar === "menunggu_verifikasi") bayarBadgeClass = "bg-amber-100 text-amber-600";
+                if(bayar === "lunas") bayarBadgeClass = "bg-green-100 text-green-600";
+                if(bayar === "ditolak") bayarBadgeClass = "bg-red-100 text-red-600";
+
+                // Tombol Bayar / Aksi
+                let tombolBayar = "-";
+                if(bayar === "belum_bayar" || bayar === "ditolak"){
+                    tombolBayar = `<a href="bayar.html?id=${id}" class="bg-amber-500 hover:bg-amber-600 text-white text-[10px] px-4 py-1.5 rounded-lg font-bold transition-all shadow-sm">Bayar</a>`;
+                } else if(bayar === "menunggu_verifikasi"){
+                    tombolBayar = `<span class="text-amber-500 font-bold text-[10px]">Menunggu Verifikasi</span>`;
+                } else if(bayar === "lunas"){
+                    tombolBayar = `<span class="text-green-600 font-bold text-[10px]">Lunas</span>`;
+                }
+
+                // Tombol Link CBT
+                let tombolCBT = "-";
+                if(link && link !== ""){
+                    tombolCBT = `<a href="${link}" target="_blank" class="bg-blue-600 hover:bg-blue-700 text-white text-[10px] px-4 py-1.5 rounded-lg font-bold transition-all shadow-sm">Masuk CBT</a>`;
                 }
 
                 html += `
-                <tr class="hover:bg-gray-50 transition-colors group">
-                    <td class="px-8 py-6">
-                        <div class="text-sm font-bold text-gray-900 group-hover:text-blue-600 transition-colors uppercase">${nama}</div>
+                <tr class="hover:bg-gray-50 transition-colors">
+                    <td class="px-6 py-6 text-gray-400 font-mono">${no++}</td>
+                    <td class="px-6 py-6">
+                        <div class="text-sm font-bold text-gray-900 uppercase">${nama}</div>
                     </td>
-                    <td class="px-8 py-6 text-sm text-gray-400 font-medium">${kab}</td>
-                    <td class="px-8 py-6">
-                        <span class="text-sm font-bold text-blue-600 italic">${paket}</span>
+                    <td class="px-6 py-6 text-sm text-gray-400 font-medium">${kab}</td>
+                    <td class="px-6 py-6">
+                        <span class="text-xs font-bold text-blue-600 italic uppercase">${paket}</span>
                     </td>
-                    <td class="px-8 py-6 text-center">${statusBadge}</td>
+                    <td class="px-6 py-6 text-center">
+                        <span class="px-3 py-1 ${badgeClass} text-[10px] font-bold rounded-full uppercase tracking-tighter">${status}</span>
+                    </td>
+                    <td class="px-6 py-6 text-center">
+                        <span class="px-3 py-1 ${bayarBadgeClass} text-[10px] font-bold rounded-full uppercase tracking-tighter">${bayar.replace('_', ' ')}</span>
+                    </td>
+                    <td class="px-6 py-6 text-center">${tombolBayar}</td>
+                    <td class="px-6 py-6 text-center">${tombolCBT}</td>
                 </tr>`;
             });
 
-            tbody.innerHTML = html || `<tr><td colspan="4" class="px-8 py-10 text-center text-gray-400 italic">Belum ada aktivitas.</td></tr>`;
-
+            tbody.innerHTML = html || `<tr><td colspan="8" class="px-8 py-10 text-center text-gray-400 italic">Belum ada data.</td></tr>`;
         } catch(err) {
-            tbody.innerHTML = `<tr><td colspan="4" class="p-8 text-center text-red-500 font-bold">${err.message}</td></tr>`;
+            tbody.innerHTML = `<tr><td colspan="8" class="p-8 text-center text-red-500 font-bold">${err.message}</td></tr>`;
         }
     }
 
