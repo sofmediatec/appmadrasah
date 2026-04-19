@@ -1,12 +1,116 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Dashboard Admin CBT</title>
+
+<!-- Tailwind -->
+<script src="https://cdn.tailwindcss.com"></script>
+
+<!-- Font -->
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
+
+<!-- Lucide -->
+<script src="https://unpkg.com/lucide@latest"></script>
+
+<link rel="icon" href="data:,">
+
+<style>
+body { font-family: 'Inter', sans-serif; }
+.badge {
+    padding: 4px 10px;
+    border-radius: 999px;
+    font-size: 11px;
+    font-weight: bold;
+}
+</style>
+</head>
+
+<body class="bg-slate-100 p-6">
+
+<script src="../assets/app.js"></script>
+
+<!-- NAVBAR -->
+<div class="flex justify-between items-center mb-6">
+    <h1 class="text-2xl font-bold">Dashboard CBT</h1>
+    <button onclick="logout()" class="bg-red-600 text-white px-4 py-2 rounded">Logout</button>
+</div>
+
+<!-- STATS -->
+<div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
+    <div class="bg-white p-4 rounded shadow">
+        <div>Total</div>
+        <div id="total" class="text-2xl font-bold">0</div>
+    </div>
+    <div class="bg-white p-4 rounded shadow">
+        <div>Pending</div>
+        <div id="pending" class="text-2xl font-bold">0</div>
+    </div>
+    <div class="bg-white p-4 rounded shadow">
+        <div>Disetujui</div>
+        <div id="approved" class="text-2xl font-bold">0</div>
+    </div>
+    <div class="bg-white p-4 rounded shadow">
+        <div>Lunas</div>
+        <div id="paid" class="text-2xl font-bold">0</div>
+    </div>
+</div>
+
+<!-- FILTER -->
+<div class="bg-white p-4 rounded shadow mb-4 flex flex-wrap gap-3">
+    <input id="search" type="text" placeholder="Cari..." class="border p-2 rounded w-48">
+
+    <select id="filterStatus" class="border p-2 rounded">
+        <option value="">Semua Status</option>
+        <option value="pending">Pending</option>
+        <option value="disetujui">Disetujui</option>
+        <option value="ditolak">Ditolak</option>
+    </select>
+
+    <select id="filterBayar" class="border p-2 rounded">
+        <option value="">Semua Bayar</option>
+        <option value="lunas">Lunas</option>
+        <option value="menunggu_verifikasi">Menunggu</option>
+        <option value="ditolak">Ditolak</option>
+    </select>
+
+    <button onclick="loadData()" class="bg-blue-600 text-white px-3 rounded">Refresh</button>
+</div>
+
+<!-- TABLE -->
+<div class="bg-white rounded shadow overflow-auto">
+<table class="w-full text-sm">
+    <thead class="bg-slate-800 text-white">
+        <tr>
+            <th class="p-3">ID</th>
+            <th class="p-3">Madrasah</th>
+            <th class="p-3">HP</th>
+            <th class="p-3">Status</th>
+            <th class="p-3">Bayar</th>
+            <th class="p-3">Link</th>
+            <th class="p-3">Aksi</th>
+        </tr>
+    </thead>
+    <tbody id="tbody">
+        <tr>
+            <td colspan="7" class="text-center p-6">Loading...</td>
+        </tr>
+    </tbody>
+</table>
+</div>
+
+<div class="mt-4 text-sm text-gray-600" id="showingCount"></div>
+
+<!-- SCRIPT -->
 <script>
-lucide.createIcons();
 
 const token = localStorage.getItem("token");
 if(!token) location = "login.html";
 
 let allData = [];
 
-/* ================= LOAD DATA ================= */
+/* ================= LOAD ================= */
 async function loadData(){
     const tbody = document.getElementById("tbody");
     tbody.innerHTML = `<tr><td colspan="7" class="text-center p-6">Loading...</td></tr>`;
@@ -16,12 +120,11 @@ async function loadData(){
 
         console.log("API:", res);
 
-        if(!res || !Array.isArray(res.data)){
-            throw new Error("Response tidak valid");
+        if(!res || res.status !== "success"){
+            throw new Error(res?.message || "Gagal ambil data");
         }
 
-        // skip header spreadsheet
-        allData = res.data.slice(1);
+        allData = res.data.slice(1); // skip header
 
         render();
 
@@ -43,7 +146,7 @@ function render(){
 
     allData.forEach(r => {
 
-        if(!r || r.length < 16) return;
+        if(!r || r.length < 10) return;
 
         const id = r[0];
         const nama = r[3] || "-";
@@ -52,12 +155,10 @@ function render(){
         const bayar = (r[15] || "belum_bayar").toLowerCase();
         const link = r[16];
 
-        // FILTER
         if(search && !(`${id} ${nama}`.toLowerCase().includes(search))) return;
         if(fStatus && status !== fStatus) return;
         if(fBayar && bayar !== fBayar) return;
 
-        // STATS
         stats.total++;
         if(status === "pending") stats.pending++;
         if(status === "disetujui") stats.approved++;
@@ -68,14 +169,11 @@ function render(){
             <td class="p-2">${id}</td>
             <td class="p-2">${nama}</td>
             <td class="p-2">${hp}</td>
-
-            <td class="p-2">${status}</td>
-            <td class="p-2">${bayar}</td>
-
+            <td class="p-2"><span class="badge bg-yellow-100">${status}</span></td>
+            <td class="p-2"><span class="badge bg-green-100">${bayar}</span></td>
             <td class="p-2">
                 ${link ? `<a href="${link}" target="_blank" class="text-blue-600">Buka</a>` : "-"}
             </td>
-
             <td class="p-2 flex gap-1">
                 <button onclick="approve('${id}')" class="bg-green-600 text-white px-2">✔</button>
                 <button onclick="lunas('${id}')" class="bg-blue-600 text-white px-2">💳</button>
@@ -86,12 +184,13 @@ function render(){
 
     tbody.innerHTML = html || `<tr><td colspan="7" class="text-center p-6">Tidak ada data</td></tr>`;
 
-    // UPDATE STATS
     document.getElementById("total").innerText = stats.total;
     document.getElementById("pending").innerText = stats.pending;
     document.getElementById("approved").innerText = stats.approved;
     document.getElementById("paid").innerText = stats.paid;
     document.getElementById("showingCount").innerText = `Menampilkan ${stats.total} data`;
+
+    lucide.createIcons();
 }
 
 /* ================= ACTION ================= */
@@ -131,11 +230,16 @@ async function lunas(id){
     loadData();
 }
 
-/* ================= FILTER ================= */
-document.getElementById("search").oninput = render;
-document.getElementById("filterStatus").onchange = render;
-document.getElementById("filterBayar").onchange = render;
-
 /* ================= INIT ================= */
-loadData();
+window.onload = () => {
+    loadData();
+
+    document.getElementById("search").oninput = render;
+    document.getElementById("filterStatus").onchange = render;
+    document.getElementById("filterBayar").onchange = render;
+};
+
 </script>
+
+</body>
+</html>
