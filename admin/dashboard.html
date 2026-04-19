@@ -9,6 +9,7 @@
   <style>
     body { background: #f5f7fa; }
     .card { border-radius: 12px; }
+    .btn-sm { padding: 4px 8px; }
   </style>
 </head>
 
@@ -20,6 +21,31 @@
   <div class="d-flex justify-content-between align-items-center mb-4">
     <h4>Dashboard Admin CBT</h4>
     <button class="btn btn-danger btn-sm" onclick="logout()">Logout</button>
+  </div>
+
+  <!-- FILTER -->
+  <div class="card p-3 mb-3">
+    <div class="row g-2">
+      <div class="col-md-6">
+        <input id="search" class="form-control" placeholder="Cari nama / ID">
+      </div>
+      <div class="col-md-3">
+        <select id="filterStatus" class="form-select">
+          <option value="">Semua Status</option>
+          <option value="pending">Pending</option>
+          <option value="disetujui">Disetujui</option>
+          <option value="ditolak">Ditolak</option>
+        </select>
+      </div>
+      <div class="col-md-3">
+        <select id="filterBayar" class="form-select">
+          <option value="">Semua Pembayaran</option>
+          <option value="lunas">Lunas</option>
+          <option value="menunggu_verifikasi">Menunggu</option>
+          <option value="ditolak">Ditolak</option>
+        </select>
+      </div>
+    </div>
   </div>
 
   <!-- STATS -->
@@ -39,7 +65,7 @@
             <th>ID</th>
             <th>Madrasah</th>
             <th>HP</th>
-            <th>Status Order</th>
+            <th>Status</th>
             <th>Pembayaran</th>
             <th>CBT</th>
             <th>Aksi</th>
@@ -57,257 +83,123 @@
 <script src="../assets/app.js"></script>
 
 <script>
-// ===================
-// AUTH
-// ===================
 const token = localStorage.getItem("token");
+if(!token) location="login.html";
 
-// proteksi halaman
-if(!token){
-  location = "login.html";
-}
+let allData = [];
 
-// ===================
-// ELEMENT
-// ===================
-const totalEl = document.getElementById("total");
-const pendingEl = document.getElementById("pending");
-const approvedEl = document.getElementById("approved");
-const paidEl = document.getElementById("paid");
-
-// ===================
-// LOAD DATA
-// ===================
+// ================= LOAD DATA =================
 async function loadData(){
+  const res = await get("pendaftaran");
 
+  if(res.status !== "success"){
+    alert(res.message);
+    return;
+  }
+
+  allData = res.data.slice(1);
+  render();
+}
+
+// ================= RENDER =================
+function render(){
   const tbody = document.getElementById("tbody");
-  tbody.innerHTML = `<tr><td colspan="7" class="text-center">Loading...</td></tr>`;
+  const search = document.getElementById("search").value.toLowerCase();
+  const fStatus = document.getElementById("filterStatus").value;
+  const fBayar = document.getElementById("filterBayar").value;
 
-  try{
-    const res = await get("pendaftaran");
+  let html = "";
+  let total=0,pending=0,approved=0,paid=0;
 
-    if(res.status === "error"){
-      throw new Error(res.message || "Gagal load data");
-    }
+  allData.forEach(r=>{
 
-    const rows = res.data || [];
+    const id = r[0];
+    const nama = r[3] || "-";
+    const hp = r[9] || "-";
+    const status = (r[14]||"pending").toLowerCase();
+    const bayar = (r[15]||"belum_bayar").toLowerCase();
+    const link = r[16];
 
-    if(rows.length <= 1){
-      tbody.innerHTML = `<tr><td colspan="7" class="text-center">Tidak ada data</td></tr>`;
-      return;
-    }
+    // FILTER
+    if(search && !(`${id} ${nama}`.toLowerCase().includes(search))) return;
+    if(fStatus && status!==fStatus) return;
+    if(fBayar && bayar!==fBayar) return;
 
-    let html = "";
-    let total=0, pending=0, approved=0, paid=0;
+    total++;
+    if(status==="pending") pending++;
+    if(status==="disetujui") approved++;
+    if(bayar==="lunas") paid++;
 
-    rows.slice(1).forEach(r => {
+    const sBadge = status==="pending"?"warning":status==="disetujui"?"success":"danger";
+    const bBadge = bayar==="lunas"?"success":bayar==="menunggu_verifikasi"?"warning":bayar==="ditolak"?"danger":"secondary";
 
-      const id = r[0];
-      const nama = r[3] || "-";
-      const hp = r[9] || "-";
-      const status = (r[14] || "pending").toLowerCase();
-      const bayar = (r[15] || "belum_bayar").toLowerCase();
-      const link = r[16];
+    html+=`
+    <tr>
+      <td>${id}</td>
+      <td>${nama}</td>
+      <td>${hp}</td>
 
-      total++;
+      <td><span class="badge bg-${sBadge}">${status}</span></td>
+      <td><span class="badge bg-${bBadge}">${bayar}</span></td>
 
-      if(status === "pending") pending++;
-      if(status === "disetujui") approved++;
-      if(bayar === "lunas") paid++;
+      <td>
+        ${link ? `<a href="${link}" target="_blank" class="btn btn-primary btn-sm">Buka</a>`
+               : `<button class="btn btn-secondary btn-sm" onclick="setLink('${id}')">Isi</button>`}
+      </td>
 
-      const statusBadge =
-        status === "pending" ? "warning" :
-        status === "disetujui" ? "success" : "secondary";
+      <td class="d-flex gap-1 flex-wrap">
+        <button class="btn btn-success btn-sm" onclick="approve('${id}')">Approve</button>
+        <button class="btn btn-danger btn-sm" onclick="tolak('${id}')">Tolak</button>
+        <button class="btn btn-warning btn-sm" onclick="lunas('${id}')">Lunas</button>
+      </td>
+    </tr>`;
+  });
 
-      const bayarBadge =
-        bayar === "lunas" ? "success" :
-        bayar === "menunggu_verifikasi" ? "warning" :
-        bayar === "ditolak" ? "danger" : "secondary";
+  tbody.innerHTML = html || `<tr><td colspan="7" class="text-center">Tidak ada data</td></tr>`;
 
-      html += `
-      <tr>
-        <td>${id}</td>
-        <td>${nama}</td>
-        <td>${hp}</td>
-
-        <td>
-          <span class="badge bg-${statusBadge}">${status}</span><br>
-          <button class="btn btn-sm btn-outline-primary mt-1"
-            onclick="updateStatus('${id}')">Ubah</button>
-        </td>
-
-        <td>
-          <span class="badge bg-${bayarBadge}">${bayar}</span><br>
-          <button class="btn btn-sm btn-outline-warning mt-1"
-            onclick="verifikasi('${id}')">Verifikasi</button>
-        </td>
-
-        <td>
-          ${link 
-            ? `<a href="${link}" target="_blank" class="btn btn-sm btn-primary">Buka</a>`
-            : `<button class="btn btn-sm btn-outline-secondary" onclick="setLink('${id}')">Isi Link</button>`
-          }
-        </td>
-
-        <td>
-          <button class="btn btn-success btn-sm" onclick="approve('${id}')">
-            Approve
-          </button>
-        </td>
-      </tr>
-      `;
-    });
-
-    tbody.innerHTML = html;
-
-    totalEl.innerText = total;
-    pendingEl.innerText = pending;
-    approvedEl.innerText = approved;
-    paidEl.innerText = paid;
-
-  }catch(err){
-    document.getElementById("tbody").innerHTML =
-      `<tr><td colspan="7" class="text-danger text-center">${err.message}</td></tr>`;
-  }
+  document.getElementById("total").innerText=total;
+  document.getElementById("pending").innerText=pending;
+  document.getElementById("approved").innerText=approved;
+  document.getElementById("paid").innerText=paid;
 }
 
-// ===================
-// UPDATE STATUS ORDER (FIX TOTAL)
-// ===================
-function updateStatus(id){
-
-  let status = prompt("Status (pending / disetujui)");
-
-  if(!status) return;
-
-  status = status.toLowerCase().trim();
-
-  if(!["pending","disetujui"].includes(status)){
-    alert("Status tidak valid");
-    return;
-  }
-
-  post("update_order", {id, status_order: status}, token)
-    .then(res => {
-
-      if(!res || res.status !== "success"){
-        alert(res?.message || "Gagal update status");
-        return;
-      }
-
-      alert("Status berhasil diubah");
-      loadData();
-    });
-}
-
-// ===================
-// SET LINK CBT
-// ===================
-function setLink(id){
-
-  const link = prompt("Masukkan link CBT");
-
-  if(!link) return;
-
-  post("update_order", {id, link_cbt: link}, token)
-    .then(res => {
-
-      if(!res || res.status !== "success"){
-        alert(res?.message || "Gagal simpan link");
-        return;
-      }
-
-      alert("Link berhasil disimpan");
-      loadData();
-    });
-}
-
-// ===================
-// APPROVE ORDER
-// ===================
+// ================= ACTION =================
 function approve(id){
-
-  const link = prompt("Masukkan link CBT (wajib)");
-
-  if(!link){
-    alert("Link wajib diisi");
-    return;
-  }
-
-  post("update_order", {
-    id,
-    status_order: "disetujui",
-    link_cbt: link
-  }, token)
-  .then(res => {
-
-    if(!res || res.status !== "success"){
-      alert(res?.message || "Gagal approve");
-      return;
-    }
-
-    alert("Order disetujui");
-    loadData();
-  });
+  const link = prompt("Link CBT:");
+  post("update_order",{id,status_order:"disetujui",link_cbt:link||""},token)
+  .then(()=>loadData());
 }
 
-// ===================
-// VERIFIKASI PEMBAYARAN
-// ===================
-async function verifikasi(id){
-
-  let status = prompt("Status pembayaran (lunas / ditolak)");
-
-  if(!status) return;
-
-  status = status.toLowerCase().trim();
-
-  if(!["lunas","ditolak"].includes(status)){
-    alert("Status tidak valid");
-    return;
-  }
-
-  const res = await get("pembayaran");
-
-  if(!res.data){
-    alert("Data pembayaran kosong");
-    return;
-  }
-
-  const data = res.data.find(r => String(r[1]) === String(id));
-
-  if(!data){
-    alert("Belum ada pembayaran");
-    return;
-  }
-
-  post("update_pembayaran", {
-    id: data[0],
-    status
-  }, token)
-  .then(res => {
-
-    if(!res || res.status !== "success"){
-      alert(res?.message || "Gagal verifikasi");
-      return;
-    }
-
-    alert("Verifikasi berhasil");
-    loadData();
-  });
+function tolak(id){
+  if(!confirm("Tolak?")) return;
+  post("update_order",{id,status_order:"ditolak"},token)
+  .then(()=>loadData());
 }
 
-// ===================
-// LOGOUT
-// ===================
+function lunas(id){
+  if(!confirm("Set LUNAS?")) return;
+  post("update_order",{id,status_bayar:"lunas"},token)
+  .then(()=>loadData());
+}
+
+function setLink(id){
+  const link = prompt("Link CBT:");
+  if(!link) return;
+  post("update_order",{id,link_cbt:link},token)
+  .then(()=>loadData());
+}
+
+// ================= EVENT =================
+document.getElementById("search").oninput = render;
+document.getElementById("filterStatus").onchange = render;
+document.getElementById("filterBayar").onchange = render;
+
+// ================= LOGOUT =================
 function logout(){
   localStorage.clear();
-  location = "login.html";
+  location="login.html";
 }
 
-// ===================
-// INIT
-// ===================
 loadData();
 </script>
 
