@@ -3,61 +3,50 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Dashboard Admin CBT</title>
+<title>Dashboard Admin | CBT Madrasah</title>
 
-<!-- Tailwind STABLE -->
-<link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+<script src="https://cdn.tailwindcss.com"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
+<script src="https://unpkg.com/lucide@latest"></script>
 
 <style>
-body {
-    background: #f1f5f9;
-}
-.card {
-    background: white;
-    border-radius: 12px;
-    padding: 16px;
-    box-shadow: 0 4px 12px rgba(0,0,0,0.05);
-}
-.badge {
-    padding: 4px 8px;
-    border-radius: 6px;
-    font-size: 11px;
-    font-weight: bold;
-    text-transform: uppercase;
-}
+body { font-family: 'Inter', sans-serif; background:#f1f5f9; }
+.badge { padding:4px 10px; border-radius:999px; font-size:10px; font-weight:800; border:1px solid #ddd; }
+.btn { padding:6px; border-radius:10px; color:white; font-size:12px; }
 </style>
-
 </head>
 
 <body class="p-6">
 
-<div class="max-w-7xl mx-auto">
-
-<h1 class="text-3xl font-bold mb-6">Dashboard Admin CBT</h1>
+<!-- HEADER -->
+<div class="flex justify-between items-center mb-6">
+    <h1 class="text-2xl font-black">Dashboard Admin</h1>
+    <button onclick="logout()" class="bg-red-600 text-white px-4 py-2 rounded-lg text-xs">Logout</button>
+</div>
 
 <!-- STATS -->
 <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
-    <div class="card text-center">
-        <p class="text-gray-500 text-sm">Total</p>
-        <h2 id="total" class="text-2xl font-bold">0</h2>
+    <div class="bg-white p-4 rounded-xl shadow">
+        <p class="text-xs">Total</p>
+        <h2 id="total" class="text-xl font-bold">0</h2>
     </div>
-    <div class="card text-center">
-        <p class="text-gray-500 text-sm">Pending</p>
-        <h2 id="pending" class="text-2xl font-bold text-yellow-600">0</h2>
+    <div class="bg-white p-4 rounded-xl shadow">
+        <p class="text-xs">Pending</p>
+        <h2 id="pending" class="text-xl font-bold text-yellow-600">0</h2>
     </div>
-    <div class="card text-center">
-        <p class="text-gray-500 text-sm">Disetujui</p>
-        <h2 id="approved" class="text-2xl font-bold text-green-600">0</h2>
+    <div class="bg-white p-4 rounded-xl shadow">
+        <p class="text-xs">Disetujui</p>
+        <h2 id="approved" class="text-xl font-bold text-green-600">0</h2>
     </div>
-    <div class="card text-center">
-        <p class="text-gray-500 text-sm">Lunas</p>
-        <h2 id="paid" class="text-2xl font-bold text-blue-600">0</h2>
+    <div class="bg-white p-4 rounded-xl shadow">
+        <p class="text-xs">Lunas</p>
+        <h2 id="paid" class="text-xl font-bold text-blue-600">0</h2>
     </div>
 </div>
 
 <!-- FILTER -->
-<div class="card mb-4 flex flex-wrap gap-2 items-center">
-    <input id="search" placeholder="Cari nama / ID..." class="border p-2 rounded w-full md:w-64">
+<div class="bg-white p-4 rounded-xl shadow mb-4 flex flex-wrap gap-2">
+    <input id="search" placeholder="Cari..." class="border p-2 rounded w-48">
     
     <select id="filterStatus" class="border p-2 rounded">
         <option value="">Semua Status</option>
@@ -73,23 +62,21 @@ body {
         <option value="ditolak">Ditolak</option>
     </select>
 
-    <button onclick="loadData()" class="bg-blue-600 text-white px-4 py-2 rounded">
-        Refresh
-    </button>
+    <button onclick="loadData()" class="bg-blue-600 text-white px-4 rounded">Refresh</button>
 </div>
 
 <!-- TABLE -->
-<div class="card overflow-x-auto">
+<div class="bg-white rounded-xl shadow overflow-x-auto">
 <table class="w-full text-sm">
-<thead>
-<tr class="bg-gray-800 text-white">
-<th class="p-3 text-left">ID</th>
-<th class="p-3 text-left">Nama</th>
-<th class="p-3 text-left">HP</th>
-<th class="p-3 text-left">Status</th>
-<th class="p-3 text-left">Bayar</th>
-<th class="p-3 text-left">Link</th>
-<th class="p-3 text-left">Aksi</th>
+<thead class="bg-gray-800 text-white">
+<tr>
+<th class="p-3">ID</th>
+<th class="p-3">Nama</th>
+<th class="p-3">HP</th>
+<th class="p-3">Status</th>
+<th class="p-3">Bayar</th>
+<th class="p-3">Link</th>
+<th class="p-3">Aksi</th>
 </tr>
 </thead>
 <tbody id="tbody">
@@ -98,141 +85,129 @@ body {
 </table>
 </div>
 
-</div>
-
 <script src="../assets/app.js"></script>
 
 <script>
 const token = getToken();
-if(!token) location = "login.html";
+if(!token) location="login.html";
 
 let allData = [];
 
-/* ================= HELPER ================= */
-function safe(val, def="-"){
-    return (val === undefined || val === null || val === "") ? def : val;
-}
-
-function normalizeData(data){
-    if(!Array.isArray(data)) return [];
-    if(Array.isArray(data[0]) && String(data[0][0]).toLowerCase() === "id"){
-        return data.slice(1);
-    }
-    return data;
-}
-
-function badge(text){
-    const map = {
-        pending: "background:#fef3c7;color:#92400e",
-        disetujui: "background:#d1fae5;color:#065f46",
-        ditolak: "background:#fee2e2;color:#7f1d1d",
-        lunas: "background:#dbeafe;color:#1e3a8a",
-        belum_bayar: "background:#e5e7eb;color:#374151",
-        menunggu_verifikasi: "background:#fed7aa;color:#9a3412"
-    };
-    return `<span class="badge" style="${map[text]||''}">${text}</span>`;
-}
-
 /* ================= LOAD ================= */
 async function loadData(){
-    try{
-        document.getElementById("tbody").innerHTML =
-            `<tr><td colspan="7" class="text-center p-6">Loading...</td></tr>`;
+    const tbody = document.getElementById("tbody");
+    tbody.innerHTML = `<tr><td colspan="7" class="text-center p-6">Loading...</td></tr>`;
 
+    try{
         const res = await get("pendaftaran", {}, token);
 
-        if(!res || !res.data) throw new Error("Data tidak ditemukan");
+        if(!res || !res.data){
+            throw new Error("Data kosong");
+        }
 
-        allData = normalizeData(res.data);
+        // auto fix header
+        if(Array.isArray(res.data[0]) && String(res.data[0][0]).toLowerCase()==="id"){
+            allData = res.data.slice(1);
+        } else {
+            allData = res.data;
+        }
+
         render();
 
     }catch(err){
-        document.getElementById("tbody").innerHTML =
-            `<tr><td colspan="7" class="text-center text-red-600 p-6">${err.message}</td></tr>`;
+        tbody.innerHTML = `<tr><td colspan="7" class="text-red-600 text-center">${err.message}</td></tr>`;
     }
 }
 
 /* ================= RENDER ================= */
 function render(){
+    const tbody = document.getElementById("tbody");
     const search = document.getElementById("search").value.toLowerCase();
     const fStatus = document.getElementById("filterStatus").value;
     const fBayar = document.getElementById("filterBayar").value;
 
-    let html = "";
+    let html="";
     let total=0, pending=0, approved=0, paid=0;
 
-    allData.forEach(r => {
+    allData.forEach(r=>{
 
-        const id     = safe(r[0]);
-        const nama   = safe(r[3]);
-        const hp     = safe(r[9]);
-        const status = safe(r[14],"pending").toLowerCase();
-        const bayar  = safe(r[15],"belum_bayar").toLowerCase();
-        const link   = r[16];
+        const id = r[0];
+        const nama = r[3]||"-";
+        const hp = r[9]||"-";
+        const status = (r[14]||"pending").toLowerCase();
+        const bayar = (r[15]||"belum_bayar").toLowerCase();
+        const link = r[16];
 
-        if(search && !(`${id} ${nama}`.toLowerCase().includes(search))) return;
-        if(fStatus && status !== fStatus) return;
-        if(fBayar && bayar !== fBayar) return;
+        if(search && !(`${id} ${nama}`.includes(search))) return;
+        if(fStatus && status!==fStatus) return;
+        if(fBayar && bayar!==fBayar) return;
 
         total++;
         if(status==="pending") pending++;
         if(status==="disetujui") approved++;
         if(bayar==="lunas") paid++;
 
-        html += `
+        html+=`
         <tr class="border-b hover:bg-gray-50">
             <td class="p-2">${id}</td>
             <td class="p-2 font-semibold">${nama}</td>
             <td class="p-2">${hp}</td>
-            <td class="p-2">${badge(status)}</td>
-            <td class="p-2">${badge(bayar)}</td>
+
             <td class="p-2">
-                ${link ? `<a href="${link}" target="_blank" class="text-blue-600 underline">Buka</a>` : "-"}
+                <span class="badge bg-yellow-100">${status}</span>
             </td>
-            <td class="p-2 space-x-1">
-                <button onclick="approve('${id}')" class="bg-green-500 text-white px-2 py-1 rounded">✔</button>
-                <button onclick="lunas('${id}')" class="bg-blue-500 text-white px-2 py-1 rounded">💳</button>
-                <button onclick="tolak('${id}')" class="bg-red-500 text-white px-2 py-1 rounded">✖</button>
+
+            <td class="p-2">
+                <span class="badge bg-green-100">${bayar}</span>
+            </td>
+
+            <td class="p-2">
+                ${link ? `<a href="${link}" target="_blank" class="text-blue-600">Buka</a>`:"-"}
+            </td>
+
+            <td class="p-2 flex gap-1">
+                <button onclick="approve('${id}')" class="btn bg-green-600">✔</button>
+                <button onclick="lunas('${id}')" class="btn bg-blue-600">💳</button>
+                <button onclick="tolak('${id}')" class="btn bg-red-600">✖</button>
             </td>
         </tr>`;
     });
 
-    document.getElementById("tbody").innerHTML =
-        html || `<tr><td colspan="7" class="text-center p-6">Tidak ada data</td></tr>`;
+    tbody.innerHTML = html || `<tr><td colspan="7" class="text-center p-6">Tidak ada data</td></tr>`;
 
-    document.getElementById("total").innerText = total;
-    document.getElementById("pending").innerText = pending;
-    document.getElementById("approved").innerText = approved;
-    document.getElementById("paid").innerText = paid;
+    document.getElementById("total").innerText=total;
+    document.getElementById("pending").innerText=pending;
+    document.getElementById("approved").innerText=approved;
+    document.getElementById("paid").innerText=paid;
 }
 
 /* ================= ACTION ================= */
 async function approve(id){
-    const link = prompt("Masukkan link CBT:");
-    if(!link) return;
-
+    const link = prompt("Link CBT:");
     await post("update_order",{id, status_order:"disetujui", link_cbt:link}, token);
     loadData();
 }
 
 async function tolak(id){
-    if(!confirm("Tolak data ini?")) return;
     await post("update_order",{id, status_order:"ditolak"}, token);
     loadData();
 }
 
 async function lunas(id){
-    if(!confirm("Tandai lunas?")) return;
     await post("update_order",{id, status_bayar:"lunas"}, token);
     loadData();
 }
 
-/* ================= EVENT ================= */
-document.getElementById("search").addEventListener("input", render);
-document.getElementById("filterStatus").addEventListener("change", render);
-document.getElementById("filterBayar").addEventListener("change", render);
+function logout(){
+    localStorage.clear();
+    location="login.html";
+}
 
-/* ================= START ================= */
+/* ================= EVENT ================= */
+document.getElementById("search").oninput = render;
+document.getElementById("filterStatus").onchange = render;
+document.getElementById("filterBayar").onchange = render;
+
 loadData();
 </script>
 
