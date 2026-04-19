@@ -113,7 +113,7 @@ if(!token) location="login.html";
 const user = JSON.parse(localStorage.getItem("user")||"{}");
 
 let allData=[];
-let paymentsData=[];
+let paymentsData=[]; // tetap ada (tidak dihapus)
 let selectedId=null;
 
 /* FIX DRIVE */
@@ -121,11 +121,9 @@ function fixDriveUrl(url){
     if(!url) return "";
 
     try{
-        // format /file/d/
         let match = url.match(/\/d\/([a-zA-Z0-9_-]+)/);
         if(match) return `https://drive.google.com/uc?export=view&id=${match[1]}`;
 
-        // fallback (kadang format beda)
         match = url.match(/[-\w]{25,}/);
         if(match) return `https://drive.google.com/uc?export=view&id=${match[0]}`;
 
@@ -136,21 +134,22 @@ function fixDriveUrl(url){
     return "";
 }
 
-/* 🔥 AMBIL BUKTI DARI SHEET PEMBAYARAN */
+/* 🔥 UPDATED: fallback ke dashboard */
 function getBuktiById(pendaftaranId){
-    if(!paymentsData.length) return "";
-
-    // paksa string biar pasti match
-    const row = paymentsData.find(p => String(p[1]).trim() === String(pendaftaranId).trim());
-
-    if(!row){
-        console.log("❌ TIDAK KETEMU BUKTI UNTUK ID:", pendaftaranId);
-        return "";
+    // 🔥 PRIORITAS: dari dashboard (sudah join backend)
+    const row = allData.find(r => String(r[0]) === String(pendaftaranId));
+    if(row){
+        const bukti = row[row.length - 1];
+        if(bukti) return bukti;
     }
 
-    console.log("✅ KETEMU BUKTI:", row);
+    // 🔥 fallback lama (tetap dipertahankan)
+    if(!paymentsData.length) return "";
 
-    return row[6] || "";
+    const rowPay = paymentsData.find(p => String(p[1]).trim() === String(pendaftaranId).trim());
+    if(!rowPay) return "";
+
+    return rowPay[6] || "";
 }
 
 /* LOAD */
@@ -159,24 +158,24 @@ async function loadData(){
     tbody.innerHTML=`<tr><td colspan="7" class="p-6 text-center">Loading...</td></tr>`;
 
     try{
-        // ambil pendaftaran (WAJIB)
-        const pendaftaran = await get("pendaftaran");
+        // 🔥 GANTI KE DASHBOARD (INI KUNCI UTAMA)
+        const res = await post("dashboard",{},token);
 
-        if(pendaftaran.status!=="success") throw new Error(pendaftaran.message);
+        console.log("DASHBOARD:", res);
 
-        allData = pendaftaran.data.slice(1);
+        if(res.status!=="success") throw new Error(res.message);
 
-        // ambil pembayaran (OPSIONAL)
+        allData = res.data; // tidak pakai slice
+
+        // fallback lama tetap (tidak dihapus)
         try{
             const pembayaran = await get("pembayaran");
-
             if(pembayaran.status==="success"){
                 paymentsData = pembayaran.data.slice(1);
             }else{
                 paymentsData = [];
             }
         }catch(e){
-            console.log("Pembayaran tidak tersedia:", e);
             paymentsData = [];
         }
 
@@ -224,7 +223,8 @@ function render(){
                 ${bukti ? `
                     <img src="${bukti}"
                         class="w-12 h-12 object-cover rounded border cursor-pointer"
-                        onclick="window.open('${rawBukti}')">
+                        onclick="window.open('${rawBukti}')"
+                        onerror="this.src='https://via.placeholder.com/50?text=No+Image'">
                 ` : "-"}
             </td>
             <td class="p-2">
@@ -311,6 +311,5 @@ window.onload=()=>{
     search.oninput=render;
 };
 </script>
-
 </body>
 </html>
