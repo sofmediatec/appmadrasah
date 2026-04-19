@@ -122,10 +122,13 @@ function fixDriveUrl(url){
 
     try{
         let match = url.match(/\/d\/([a-zA-Z0-9_-]+)/);
-        if(match) return `https://drive.google.com/uc?export=view&id=${match[1]}`;
 
-        match = url.match(/[-\w]{25,}/);
-        if(match) return `https://drive.google.com/uc?export=view&id=${match[0]}`;
+        if(match){
+            const id = match[1];
+
+            // ✅ pakai thumbnail (ANTI BLOKIR)
+            return `https://drive.google.com/thumbnail?id=${id}&sz=w1000`;
+        }
 
     }catch(e){
         console.log("URL ERROR:", url);
