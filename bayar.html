@@ -3,196 +3,151 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Konfirmasi Pembayaran | CBT Madrasah</title>
+<title>Konfirmasi Pembayaran</title>
 
 <script src="https://cdn.tailwindcss.com"></script>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
-<link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
 
 <style>
-body {
-    font-family: 'Inter', sans-serif;
-    background-color: #f1f5f9;
-}
-.hero-mini {
-    background: linear-gradient(135deg, #059669 0%, #065f46 100%);
-}
-.form-input {
-    @apply w-full px-4 py-3 rounded-xl border border-slate-200 focus:border-emerald-500 focus:ring-2 focus:ring-emerald-200 outline-none bg-slate-50;
-}
-.form-label {
-    @apply block text-xs font-black uppercase tracking-widest text-slate-500 mb-2;
-}
-.file-input-wrapper {
-    @apply border-2 border-dashed border-slate-200 rounded-2xl p-8 text-center hover:border-emerald-400 transition bg-slate-50 cursor-pointer;
-}
-
-/* BUTTON IMPROVED */
-.btn-primary {
-    @apply w-full flex items-center justify-center gap-2
-    bg-gradient-to-r from-emerald-600 to-emerald-500 
-    text-white font-black py-4 rounded-2xl 
-    shadow-lg shadow-emerald-200
-    transition-all duration-300 
-    hover:shadow-xl hover:shadow-emerald-300 
-    hover:-translate-y-0.5 
-    active:scale-95 
-    uppercase tracking-widest text-sm;
-}
-.btn-primary:disabled {
-    @apply opacity-70 cursor-not-allowed shadow-none transform-none;
-}
+body { font-family: 'Inter', sans-serif; }
+.hero { background: linear-gradient(135deg,#059669,#065f46); }
 </style>
 </head>
 
-<body class="text-slate-900 pb-20">
+<body class="bg-slate-100">
 
 <!-- HEADER -->
-<header class="hero-mini py-14 text-center text-white">
-    <h1 class="text-3xl font-black" data-aos="fade-down">Konfirmasi Bayar</h1>
-    <p data-aos="fade-up">Upload bukti transfer Anda untuk aktivasi layanan</p>
+<header class="hero text-white text-center py-14">
+<h1 class="text-3xl font-black">Konfirmasi Bayar</h1>
+<p class="opacity-90">Upload bukti transfer</p>
 </header>
 
 <main class="max-w-xl mx-auto px-6 -mt-10">
 
 <!-- INFO -->
-<div class="bg-emerald-900 text-white rounded-3xl p-6 mb-6 flex justify-between">
-    <div>
-        <small>ID Pendaftaran</small>
-        <div id="idText" class="font-mono text-lg">...</div>
-    </div>
-    <div class="text-right">
-        <small>Kode Ref</small>
-        <div id="kodeText" class="font-mono text-lg">...</div>
-    </div>
+<div class="bg-emerald-900 text-white rounded-2xl p-5 mb-6 flex justify-between">
+<div>
+<small>ID</small>
+<div id="idText">...</div>
+</div>
+<div class="text-right">
+<small>Kode</small>
+<div id="kodeText">...</div>
+</div>
 </div>
 
 <!-- FORM -->
-<form id="formBayar" class="bg-white p-8 rounded-3xl shadow-xl">
+<form id="formBayar" class="bg-white p-8 rounded-3xl shadow-lg space-y-5">
 
 <input type="hidden" id="pendaftaran_id">
 
-<div class="mb-5">
-<label class="form-label">Nama Pengirim</label>
-<input class="form-input" name="nama_pengirim" required>
+<!-- INPUT -->
+<div>
+<label class="text-xs font-bold text-slate-500">Nama Pengirim</label>
+<input name="nama_pengirim"
+class="w-full mt-1 px-4 py-3 rounded-xl border border-slate-300 focus:ring-2 focus:ring-emerald-400 outline-none"
+required>
 </div>
 
-<div class="grid grid-cols-2 gap-4 mb-5">
+<div class="grid grid-cols-2 gap-4">
 <div>
-<label class="form-label">Bank</label>
-<input class="form-input" name="bank" required>
+<label class="text-xs font-bold text-slate-500">Bank</label>
+<input name="bank"
+class="w-full mt-1 px-4 py-3 rounded-xl border border-slate-300 focus:ring-2 focus:ring-emerald-400"
+required>
 </div>
+
 <div>
-<label class="form-label">Jumlah Transfer</label>
-<input type="number" class="form-input" name="jumlah_transfer" required>
+<label class="text-xs font-bold text-slate-500">Jumlah</label>
+<input type="number" name="jumlah_transfer"
+class="w-full mt-1 px-4 py-3 rounded-xl border border-slate-300 focus:ring-2 focus:ring-emerald-400"
+required>
 </div>
 </div>
 
 <!-- FILE -->
-<div class="mb-6">
-<label class="form-label">Bukti Transfer</label>
+<div>
+<label class="text-xs font-bold text-slate-500">Bukti Transfer</label>
 
-<label for="file" class="file-input-wrapper block">
-<input type="file" id="file" class="hidden" accept="image/*,.pdf">
+<label for="file"
+class="mt-2 block border-2 border-dashed border-slate-300 rounded-xl p-6 text-center cursor-pointer hover:border-emerald-400">
+
+<input type="file" id="file" class="hidden">
+
 <div id="fileInfo">
-<p class="text-slate-500 font-semibold">Klik untuk pilih file</p>
-<p class="text-xs text-slate-400 mt-1">Max 2MB (JPG, PNG, PDF)</p>
+<p class="text-slate-500">Klik pilih file</p>
+<p class="text-xs text-slate-400">Max 2MB</p>
 </div>
+
 </label>
 </div>
 
-<!-- BUTTON -->
-<button type="submit" id="btnBayar" class="btn-primary">
-<span id="btnText">Kirim Bukti Pembayaran</span>
+<!-- BUTTON CENTER -->
+<div class="flex justify-center pt-4">
+<button id="btnBayar"
+class="px-10 py-4 rounded-2xl text-white font-bold 
+bg-gradient-to-r from-emerald-600 to-emerald-500
+hover:from-emerald-700 hover:to-emerald-600
+shadow-lg transition">
 
-<svg id="btnLoader" class="w-5 h-5 animate-spin hidden" fill="none" viewBox="0 0 24 24">
-<circle class="opacity-25" cx="12" cy="12" r="10" stroke="white" stroke-width="4"></circle>
-<path class="opacity-75" fill="white"
-d="M4 12a8 8 0 018-8v4a4 4 0 00-4 4H4z"></path>
-</svg>
+<span id="btnText">Kirim Bukti Pembayaran</span>
 </button>
+</div>
 
 </form>
 
 </main>
 
-<script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
 <script src="assets/app.js"></script>
 
 <script>
-AOS.init({ duration:800, once:true });
-
-const urlParams = new URLSearchParams(window.location.search);
-const id = urlParams.get("id");
-const kode = urlParams.get("kode");
-
-if(!id){
-    alert("ID tidak ditemukan");
-    location.href="form.html";
-}
-
-document.getElementById("pendaftaran_id").value = id;
-document.getElementById("idText").innerText = id;
-document.getElementById("kodeText").innerText = kode || "-";
+const id = new URLSearchParams(location.search).get("id");
+document.getElementById("idText").innerText = id || "-";
 
 const fileInput = document.getElementById("file");
 const fileInfo = document.getElementById("fileInfo");
 
 fileInput.onchange = function(){
-    if(this.files[0]){
-        fileInfo.innerHTML = `<b class="text-emerald-600">✔ ${this.files[0].name}</b>`;
-    }
+if(this.files[0]){
+fileInfo.innerHTML = `<b class="text-emerald-600">${this.files[0].name}</b>`;
+}
 };
 
 function toBase64(file){
-    return new Promise((resolve,reject)=>{
-        const reader = new FileReader();
-        reader.onload = ()=> resolve(reader.result.split(",")[1]);
-        reader.onerror = reject;
-        reader.readAsDataURL(file);
-    });
+return new Promise((res,rej)=>{
+const r=new FileReader();
+r.onload=()=>res(r.result.split(",")[1]);
+r.readAsDataURL(file);
+});
 }
 
-document.getElementById("formBayar").onsubmit = async function(e){
+document.getElementById("formBayar").onsubmit=async function(e){
 e.preventDefault();
 
-const btn = document.getElementById("btnBayar");
 const btnText = document.getElementById("btnText");
-const loader = document.getElementById("btnLoader");
-
-btnText.innerText="Mengupload...";
-loader.classList.remove("hidden");
-btn.disabled=true;
+btnText.innerText="Loading...";
 
 try{
-    const file = fileInput.files[0];
+const file=fileInput.files[0];
+if(!file) throw "Pilih file";
 
-    if(!file) throw new Error("File belum dipilih");
-    if(file.size > 2*1024*1024) throw new Error("Ukuran max 2MB");
+const base64=await toBase64(file);
 
-    const base64 = await toBase64(file);
+await post("bayar",{
+pendaftaran_id:id,
+nama_pengirim:this.nama_pengirim.value,
+bank:this.bank.value,
+jumlah_transfer:this.jumlah_transfer.value,
+file:base64
+});
 
-    const res = await post("bayar", {
-        pendaftaran_id: id,
-        nama_pengirim: this.nama_pengirim.value,
-        bank: this.bank.value,
-        jumlah_transfer: this.jumlah_transfer.value,
-        file: base64,
-        filename: file.name
-    });
-
-    if(!res || res.status !== "success") throw new Error(res?.message || "Gagal upload");
-
-    alert("Upload berhasil");
-    location.href="index.html";
+alert("Berhasil");
+location.href="index.html";
 
 }catch(err){
-    alert(err.message);
-    btnText.innerText="Kirim Bukti Pembayaran";
-    loader.classList.add("hidden");
-    btn.disabled=false;
+alert(err);
+btnText.innerText="Kirim Bukti Pembayaran";
 }
-
 };
 </script>
 
