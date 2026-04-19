@@ -66,15 +66,15 @@ body { font-family: 'Inter', sans-serif; }
 
 <!-- STATS -->
 <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
-    <div class="card card-blue"><div>Total</div><div id="total" class="text-3xl font-bold">0</div><i data-lucide="users" class="icon"></i></div>
-    <div class="card card-yellow"><div>Pending</div><div id="pending" class="text-3xl font-bold">0</div><i data-lucide="clock" class="icon"></i></div>
-    <div class="card card-green"><div>Disetujui</div><div id="approved" class="text-3xl font-bold">0</div><i data-lucide="check-circle" class="icon"></i></div>
-    <div class="card card-purple"><div>Lunas</div><div id="paid" class="text-3xl font-bold">0</div><i data-lucide="credit-card" class="icon"></i></div>
+    <div class="card card-blue"><div>Total</div><div id="total" class="text-3xl font-bold">0</div></div>
+    <div class="card card-yellow"><div>Pending</div><div id="pending" class="text-3xl font-bold">0</div></div>
+    <div class="card card-green"><div>Disetujui</div><div id="approved" class="text-3xl font-bold">0</div></div>
+    <div class="card card-purple"><div>Lunas</div><div id="paid" class="text-3xl font-bold">0</div></div>
 </div>
 
-<!-- FILTER -->
-<div class="bg-white p-4 rounded shadow mb-4 flex gap-3 flex-wrap">
-    <input id="search" class="border p-2 rounded" placeholder="Cari nama / ID...">
+<!-- SEARCH -->
+<div class="bg-white p-4 rounded shadow mb-4">
+    <input id="search" class="border p-2 rounded w-full" placeholder="Cari nama / ID...">
 </div>
 
 <!-- TABLE -->
@@ -95,10 +95,38 @@ body { font-family: 'Inter', sans-serif; }
 </table>
 </div>
 
-<!-- PAGINATION -->
-<div class="mt-4 flex justify-between">
-    <button onclick="prevPage()" class="bg-gray-300 px-3 py-1 rounded">Prev</button>
-    <button onclick="nextPage()" class="bg-gray-300 px-3 py-1 rounded">Next</button>
+<!-- MODAL DETAIL -->
+<div id="modal" class="fixed inset-0 bg-black/50 hidden items-center justify-center">
+<div class="bg-white p-6 rounded w-96">
+
+<h2 class="font-bold mb-3">Detail Pendaftaran</h2>
+
+<div class="mb-2 text-sm text-gray-600">
+ID: <span id="dId"></span>
+</div>
+
+<img id="dBukti" class="w-full h-40 object-cover rounded mb-3 border hidden">
+
+<select id="dStatus" class="border w-full p-2 mb-2">
+<option value="pending">Pending</option>
+<option value="disetujui">Disetujui</option>
+<option value="ditolak">Ditolak</option>
+</select>
+
+<select id="dBayar" class="border w-full p-2 mb-2">
+<option value="belum_bayar">Belum Bayar</option>
+<option value="menunggu_verifikasi">Menunggu</option>
+<option value="lunas">Lunas</option>
+</select>
+
+<input id="dLink" class="border w-full p-2 mb-3" placeholder="Link CBT">
+
+<div class="flex justify-end gap-2">
+<button onclick="closeModal()">Batal</button>
+<button onclick="saveDetail()" class="bg-blue-600 text-white px-3 rounded">Simpan</button>
+</div>
+
+</div>
 </div>
 
 <script>
@@ -110,56 +138,45 @@ const user = JSON.parse(localStorage.getItem("user")||"{}");
 let allData=[];
 let page=1;
 let limit=10;
+let selectedId=null;
 
-/* ================= FIX GOOGLE DRIVE ================= */
+/* FIX GOOGLE DRIVE */
 function fixDriveUrl(url){
     if(!url) return "";
     if(url.includes("drive.google.com")){
-        const id = url.match(/[-\\w]{25,}/);
+        const id = url.match(/[-\w]{25,}/);
         if(id) return `https://drive.google.com/uc?export=view&id=${id[0]}`;
     }
     return url;
 }
 
-/* ================= LOAD DATA ================= */
+/* LOAD */
 async function loadData(){
-    const tbody = document.getElementById("tbody");
-
-    tbody.innerHTML = `<tr><td colspan="7" class="p-6"><div class="skeleton h-6 w-full"></div></td></tr>`;
+    const tbody=document.getElementById("tbody");
+    tbody.innerHTML=`<tr><td colspan="7" class="p-6"><div class="skeleton h-6 w-full"></div></td></tr>`;
 
     try{
         const res = await get("pendaftaran");
 
-        console.log("DEBUG:", res);
-
-        if(!res || res.status !== "success"){
-            throw new Error(res?.message || "Gagal ambil data");
-        }
-
-        if(!Array.isArray(res.data)){
-            throw new Error("Format data salah");
-        }
+        if(res.status!=="success") throw new Error(res.message);
 
         allData = res.data.slice(1);
         render();
 
     }catch(err){
-        tbody.innerHTML = `<tr><td colspan="7" class="text-red-600 text-center p-6">${err.message}</td></tr>`;
+        tbody.innerHTML=`<tr><td colspan="7" class="text-red-600 text-center">${err.message}</td></tr>`;
     }
 }
 
-/* ================= RENDER ================= */
+/* RENDER */
 function render(){
-    const tbody = document.getElementById("tbody");
-    const search = document.getElementById("search").value.toLowerCase();
-
-    let start=(page-1)*limit;
-    let data=allData.slice(start,start+limit);
+    const tbody=document.getElementById("tbody");
+    const search=document.getElementById("search").value.toLowerCase();
 
     let html="";
-    let stats={total:0,pending:0,approved:0,paid:0};
+    let stats={pending:0,approved:0,paid:0};
 
-    data.forEach(r=>{
+    allData.forEach(r=>{
         if(!r) return;
 
         const id=r[0];
@@ -171,7 +188,6 @@ function render(){
 
         if(search && !(`${id} ${nama}`.toLowerCase().includes(search))) return;
 
-        stats.total++;
         if(status==="pending")stats.pending++;
         if(status==="disetujui")stats.approved++;
         if(bayar==="lunas")stats.paid++;
@@ -181,57 +197,71 @@ function render(){
             <td class="p-2">${id}</td>
             <td class="p-2">${nama}</td>
             <td class="p-2">${hp}</td>
-            <td class="p-2"><span class="badge bg-yellow-100">${status}</span></td>
-            <td class="p-2"><span class="badge bg-green-100">${bayar}</span></td>
+            <td class="p-2">${status}</td>
+            <td class="p-2">${bayar}</td>
             <td class="p-2">
-                ${bukti
-                    ? `<img src="${fixDriveUrl(bukti)}"
-                        class="w-12 h-12 object-cover rounded border cursor-pointer"
-                        onclick="window.open('${fixDriveUrl(bukti)}')">`
+                ${bukti ? `<img src="${fixDriveUrl(bukti)}" class="w-12 h-12 object-cover rounded border">` : "-"}
+            </td>
+            <td class="p-2">
+                ${user?.role==="admin"
+                    ? `<button onclick="openDetail('${id}')" class="bg-blue-600 text-white px-2 py-1 rounded text-xs">Detail</button>`
                     : "-"
                 }
-            </td>
-            <td class="p-2 flex gap-1">
-                ${user?.role==="admin" ? `
-                    <button onclick="approve('${id}')" class="bg-green-600 text-white px-2 rounded">✔</button>
-                    <button onclick="lunas('${id}')" class="bg-blue-600 text-white px-2 rounded">💳</button>
-                    <button onclick="tolak('${id}')" class="bg-red-600 text-white px-2 rounded">✖</button>
-                ` : '-'}
             </td>
         </tr>`;
     });
 
-    tbody.innerHTML = html || `<tr><td colspan="7" class="text-center p-6">Tidak ada data</td></tr>`;
+    tbody.innerHTML=html;
 
-    document.getElementById("total").innerText = allData.length;
-    document.getElementById("pending").innerText = stats.pending;
-    document.getElementById("approved").innerText = stats.approved;
-    document.getElementById("paid").innerText = stats.paid;
-
-    lucide.createIcons();
+    document.getElementById("total").innerText=allData.length;
+    document.getElementById("pending").innerText=stats.pending;
+    document.getElementById("approved").innerText=stats.approved;
+    document.getElementById("paid").innerText=stats.paid;
 }
 
-/* ================= ACTION ================= */
-async function approve(id){
-    await post("update_order",{id, status_order:"disetujui"}, token);
+/* OPEN MODAL */
+function openDetail(id){
+    const r = allData.find(x=>x[0]==id);
+    if(!r) return;
+
+    selectedId=id;
+
+    document.getElementById("dId").innerText=id;
+    document.getElementById("dStatus").value=r[14]||"pending";
+    document.getElementById("dBayar").value=r[15]||"belum_bayar";
+    document.getElementById("dLink").value=r[16]||"";
+
+    const bukti = fixDriveUrl(r[r.length-1]);
+    const img = document.getElementById("dBukti");
+
+    if(bukti){
+        img.src=bukti;
+        img.classList.remove("hidden");
+    }else{
+        img.classList.add("hidden");
+    }
+
+    document.getElementById("modal").classList.remove("hidden");
+}
+
+function closeModal(){
+    document.getElementById("modal").classList.add("hidden");
+}
+
+/* SAVE */
+async function saveDetail(){
+    await post("update_order",{
+        id:selectedId,
+        status_order:dStatus.value,
+        status_bayar:dBayar.value,
+        link_cbt:dLink.value
+    },token);
+
+    closeModal();
     loadData();
 }
 
-async function tolak(id){
-    await post("update_order",{id, status_order:"ditolak"}, token);
-    loadData();
-}
-
-async function lunas(id){
-    await post("update_order",{id, status_bayar:"lunas"}, token);
-    loadData();
-}
-
-/* ================= PAGINATION ================= */
-function nextPage(){page++;render();}
-function prevPage(){if(page>1)page--;render();}
-
-/* ================= EXPORT ================= */
+/* EXPORT */
 function exportExcel(){
     let csv="ID,Nama,HP\n";
     allData.forEach(r=>{
@@ -245,13 +275,12 @@ function exportExcel(){
     a.click();
 }
 
-/* ================= LOGOUT ================= */
 function logout(){
     localStorage.clear();
     location="login.html";
 }
 
-/* ================= INIT ================= */
+/* INIT */
 window.onload=()=>{
     loadData();
     document.getElementById("search").oninput=render;
