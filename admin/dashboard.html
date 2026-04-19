@@ -5,205 +5,260 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Dashboard Admin | CBT Madrasah</title>
 
+<!-- Tailwind -->
 <script src="https://cdn.tailwindcss.com"></script>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
+
+<!-- Font -->
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800;900&display=swap" rel="stylesheet">
+
+<!-- Icons -->
 <script src="https://unpkg.com/lucide@latest"></script>
 
 <style>
-body { font-family: 'Inter', sans-serif; background:#f1f5f9; }
-.badge { padding:4px 10px; border-radius:999px; font-size:10px; font-weight:800; border:1px solid #ddd; }
-.btn { padding:6px; border-radius:10px; color:white; font-size:12px; }
+body{
+    font-family: 'Inter', sans-serif;
+    background:#f1f5f9;
+}
+
+.custom-scrollbar::-webkit-scrollbar{width:6px;height:6px;}
+.custom-scrollbar::-webkit-scrollbar-thumb{background:#cbd5e1;border-radius:10px;}
+
+/* badge manual (FIX tailwind @apply error) */
+.badge{
+    display:inline-block;
+    padding:4px 10px;
+    font-size:10px;
+    font-weight:900;
+    border-radius:999px;
+    text-transform:uppercase;
+    border:1px solid;
+}
+
+/* button action */
+.btn-action{
+    padding:8px;
+    border-radius:10px;
+    transition:.2s;
+}
+.btn-action:hover{transform:scale(1.05);}
 </style>
 </head>
 
-<body class="p-6">
+<body class="min-h-screen pb-10">
 
-<!-- HEADER -->
-<div class="flex justify-between items-center mb-6">
-    <h1 class="text-2xl font-black">Dashboard Admin</h1>
-    <button onclick="logout()" class="bg-red-600 text-white px-4 py-2 rounded-lg text-xs">Logout</button>
+<!-- NAV -->
+<nav class="bg-white border-b shadow-sm sticky top-0 z-40">
+<div class="max-w-7xl mx-auto px-6 h-20 flex justify-between items-center">
+
+<div class="flex items-center gap-3">
+<div class="w-10 h-10 bg-slate-900 rounded-xl flex items-center justify-center text-white">
+<i data-lucide="layout-dashboard"></i>
 </div>
+<div>
+<div class="font-black">Admin Panel</div>
+<div class="text-[10px] text-blue-600 font-bold">CBT MADRASAH</div>
+</div>
+</div>
+
+<button onclick="logout()" class="bg-red-600 text-white px-4 py-2 rounded-xl text-xs font-black">
+Logout
+</button>
+
+</div>
+</nav>
 
 <!-- STATS -->
-<div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
-    <div class="bg-white p-4 rounded-xl shadow">
-        <p class="text-xs">Total</p>
-        <h2 id="total" class="text-xl font-bold">0</h2>
-    </div>
-    <div class="bg-white p-4 rounded-xl shadow">
-        <p class="text-xs">Pending</p>
-        <h2 id="pending" class="text-xl font-bold text-yellow-600">0</h2>
-    </div>
-    <div class="bg-white p-4 rounded-xl shadow">
-        <p class="text-xs">Disetujui</p>
-        <h2 id="approved" class="text-xl font-bold text-green-600">0</h2>
-    </div>
-    <div class="bg-white p-4 rounded-xl shadow">
-        <p class="text-xs">Lunas</p>
-        <h2 id="paid" class="text-xl font-bold text-blue-600">0</h2>
-    </div>
+<div class="max-w-7xl mx-auto px-6 mt-8 grid grid-cols-2 md:grid-cols-4 gap-4">
+
+<div class="bg-white p-5 rounded-2xl border">
+<div class="text-xs font-bold text-blue-600">TOTAL</div>
+<div id="total" class="text-3xl font-black">0</div>
 </div>
 
-<!-- FILTER -->
-<div class="bg-white p-4 rounded-xl shadow mb-4 flex flex-wrap gap-2">
-    <input id="search" placeholder="Cari..." class="border p-2 rounded w-48">
-    
-    <select id="filterStatus" class="border p-2 rounded">
-        <option value="">Semua Status</option>
-        <option value="pending">Pending</option>
-        <option value="disetujui">Disetujui</option>
-        <option value="ditolak">Ditolak</option>
-    </select>
+<div class="bg-white p-5 rounded-2xl border">
+<div class="text-xs font-bold text-amber-600">PENDING</div>
+<div id="pending" class="text-3xl font-black">0</div>
+</div>
 
-    <select id="filterBayar" class="border p-2 rounded">
-        <option value="">Semua Bayar</option>
-        <option value="lunas">Lunas</option>
-        <option value="menunggu_verifikasi">Menunggu</option>
-        <option value="ditolak">Ditolak</option>
-    </select>
+<div class="bg-white p-5 rounded-2xl border">
+<div class="text-xs font-bold text-green-600">DISETUJUI</div>
+<div id="approved" class="text-3xl font-black">0</div>
+</div>
 
-    <button onclick="loadData()" class="bg-blue-600 text-white px-4 rounded">Refresh</button>
+<div class="bg-white p-5 rounded-2xl border">
+<div class="text-xs font-bold text-purple-600">LUNAS</div>
+<div id="paid" class="text-3xl font-black">0</div>
+</div>
+
 </div>
 
 <!-- TABLE -->
-<div class="bg-white rounded-xl shadow overflow-x-auto">
+<div class="max-w-7xl mx-auto px-6 mt-6">
+
+<div class="bg-white rounded-2xl border overflow-hidden">
+
+<div class="p-4 border-b flex gap-3 flex-wrap">
+<input id="search" class="border px-3 py-2 rounded-xl text-sm" placeholder="Cari...">
+
+<select id="filterStatus" class="border px-3 py-2 rounded-xl text-sm">
+<option value="">Status</option>
+<option value="pending">Pending</option>
+<option value="disetujui">Disetujui</option>
+<option value="ditolak">Ditolak</option>
+</select>
+
+<select id="filterBayar" class="border px-3 py-2 rounded-xl text-sm">
+<option value="">Pembayaran</option>
+<option value="lunas">Lunas</option>
+<option value="menunggu_verifikasi">Menunggu</option>
+<option value="ditolak">Ditolak</option>
+</select>
+
+<button onclick="loadData()" class="bg-blue-600 text-white px-4 rounded-xl text-sm">
+Refresh
+</button>
+
+</div>
+
+<div class="overflow-x-auto custom-scrollbar">
 <table class="w-full text-sm">
-<thead class="bg-gray-800 text-white">
+<thead class="bg-slate-900 text-white text-xs uppercase">
 <tr>
 <th class="p-3">ID</th>
-<th class="p-3">Nama</th>
-<th class="p-3">HP</th>
-<th class="p-3">Status</th>
-<th class="p-3">Bayar</th>
-<th class="p-3">Link</th>
-<th class="p-3">Aksi</th>
+<th>Nama</th>
+<th>HP</th>
+<th>Status</th>
+<th>Bayar</th>
+<th>Link</th>
+<th>Aksi</th>
 </tr>
 </thead>
+
 <tbody id="tbody">
 <tr><td colspan="7" class="text-center p-6">Loading...</td></tr>
 </tbody>
+
 </table>
 </div>
 
-<script src="../assets/app.js"></script>
+</div>
+</div>
+
+<script src="assets/app.js"></script>
 
 <script>
-const token = getToken();
+lucide.createIcons();
+
+const token = localStorage.getItem("token");
 if(!token) location="login.html";
 
 let allData = [];
 
-/* ================= LOAD ================= */
 async function loadData(){
-    const tbody = document.getElementById("tbody");
-    tbody.innerHTML = `<tr><td colspan="7" class="text-center p-6">Loading...</td></tr>`;
+    const res = await get("pendaftaran");
 
-    try{
-        const res = await get("pendaftaran", {}, token);
-
-        if(!res || !res.data){
-            throw new Error("Data kosong");
-        }
-
-        // auto fix header
-        if(Array.isArray(res.data[0]) && String(res.data[0][0]).toLowerCase()==="id"){
-            allData = res.data.slice(1);
-        } else {
-            allData = res.data;
-        }
-
-        render();
-
-    }catch(err){
-        tbody.innerHTML = `<tr><td colspan="7" class="text-red-600 text-center">${err.message}</td></tr>`;
+    if(!res || res.status !== "success"){
+        alert("Gagal load data");
+        return;
     }
+
+    allData = res.data.slice(1);
+    render();
 }
 
-/* ================= RENDER ================= */
 function render(){
-    const tbody = document.getElementById("tbody");
-    const search = document.getElementById("search").value.toLowerCase();
-    const fStatus = document.getElementById("filterStatus").value;
-    const fBayar = document.getElementById("filterBayar").value;
 
-    let html="";
-    let total=0, pending=0, approved=0, paid=0;
+let tbody = document.getElementById("tbody");
+let search = document.getElementById("search").value.toLowerCase();
+let fStatus = document.getElementById("filterStatus").value;
+let fBayar = document.getElementById("filterBayar").value;
 
-    allData.forEach(r=>{
+let html = "";
 
-        const id = r[0];
-        const nama = r[3]||"-";
-        const hp = r[9]||"-";
-        const status = (r[14]||"pending").toLowerCase();
-        const bayar = (r[15]||"belum_bayar").toLowerCase();
-        const link = r[16];
+let total=0, pending=0, approved=0, paid=0;
 
-        if(search && !(`${id} ${nama}`.includes(search))) return;
-        if(fStatus && status!==fStatus) return;
-        if(fBayar && bayar!==fBayar) return;
+allData.forEach(r => {
 
-        total++;
-        if(status==="pending") pending++;
-        if(status==="disetujui") approved++;
-        if(bayar==="lunas") paid++;
+let id = r[0];
+let nama = r[3] || "-";
+let hp = r[9] || "-";
+let status = (r[14]||"pending").toLowerCase();
+let bayar = (r[15]||"belum_bayar").toLowerCase();
+let link = r[16];
 
-        html+=`
-        <tr class="border-b hover:bg-gray-50">
-            <td class="p-2">${id}</td>
-            <td class="p-2 font-semibold">${nama}</td>
-            <td class="p-2">${hp}</td>
+if(search && !(nama+id).toLowerCase().includes(search)) return;
+if(fStatus && status !== fStatus) return;
+if(fBayar && bayar !== fBayar) return;
 
-            <td class="p-2">
-                <span class="badge bg-yellow-100">${status}</span>
-            </td>
+total++;
+if(status==="pending") pending++;
+if(status==="disetujui") approved++;
+if(bayar==="lunas") paid++;
 
-            <td class="p-2">
-                <span class="badge bg-green-100">${bayar}</span>
-            </td>
+let sClass = {
+pending:"bg-amber-100 text-amber-800 border-amber-200",
+disetujui:"bg-green-100 text-green-800 border-green-200",
+ditolak:"bg-red-100 text-red-800 border-red-200"
+};
 
-            <td class="p-2">
-                ${link ? `<a href="${link}" target="_blank" class="text-blue-600">Buka</a>`:"-"}
-            </td>
+let bClass = {
+lunas:"bg-blue-100 text-blue-800 border-blue-200",
+menunggu_verifikasi:"bg-amber-100 text-amber-800 border-amber-200",
+ditolak:"bg-red-100 text-red-800 border-red-200",
+belum_bayar:"bg-slate-100 text-slate-600 border-slate-200"
+};
 
-            <td class="p-2 flex gap-1">
-                <button onclick="approve('${id}')" class="btn bg-green-600">✔</button>
-                <button onclick="lunas('${id}')" class="btn bg-blue-600">💳</button>
-                <button onclick="tolak('${id}')" class="btn bg-red-600">✖</button>
-            </td>
-        </tr>`;
-    });
+html += `
+<tr class="border-b">
+<td class="p-3">#${id}</td>
+<td>${nama}</td>
+<td>${hp}</td>
 
-    tbody.innerHTML = html || `<tr><td colspan="7" class="text-center p-6">Tidak ada data</td></tr>`;
+<td><span class="badge ${sClass[status]||""}">${status}</span></td>
+<td><span class="badge ${bClass[bayar]||""}">${bayar}</span></td>
 
-    document.getElementById("total").innerText=total;
-    document.getElementById("pending").innerText=pending;
-    document.getElementById("approved").innerText=approved;
-    document.getElementById("paid").innerText=paid;
+<td>${link ? `<a class="text-blue-600" target="_blank" href="${link}">Buka</a>` : "-"}</td>
+
+<td class="flex gap-2 p-2">
+<button onclick="approve('${id}')" class="btn-action bg-green-600 text-white">✔</button>
+<button onclick="lunas('${id}')" class="btn-action bg-blue-600 text-white">💳</button>
+<button onclick="tolak('${id}')" class="btn-action bg-red-600 text-white">✖</button>
+</td>
+</tr>
+`;
+});
+
+tbody.innerHTML = html;
+
+document.getElementById("total").innerText = total;
+document.getElementById("pending").innerText = pending;
+document.getElementById("approved").innerText = approved;
+document.getElementById("paid").innerText = paid;
+
+lucide.createIcons();
 }
 
-/* ================= ACTION ================= */
+/* ACTION */
 async function approve(id){
-    const link = prompt("Link CBT:");
-    await post("update_order",{id, status_order:"disetujui", link_cbt:link}, token);
-    loadData();
+await post("update_order",{id,status_order:"disetujui"},token);
+loadData();
 }
 
 async function tolak(id){
-    await post("update_order",{id, status_order:"ditolak"}, token);
-    loadData();
+await post("update_order",{id,status_order:"ditolak"},token);
+loadData();
 }
 
 async function lunas(id){
-    await post("update_order",{id, status_bayar:"lunas"}, token);
-    loadData();
+await post("update_order",{id,status_bayar:"lunas"},token);
+loadData();
 }
 
 function logout(){
-    localStorage.clear();
-    location="login.html";
+localStorage.clear();
+location="login.html";
 }
 
-/* ================= EVENT ================= */
 document.getElementById("search").oninput = render;
 document.getElementById("filterStatus").onchange = render;
 document.getElementById("filterBayar").onchange = render;
