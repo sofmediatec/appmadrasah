@@ -22,13 +22,13 @@
 <input class="form-control mb-3" name="jumlah_peserta" placeholder="Jumlah Peserta" type="number">
 
 <select class="form-control mb-3" name="paket_id" id="paket">
-  <option value="1">Basic - Rp100.000</option>
-  <option value="2">Standard - Rp250.000</option>
-  <option value="3">Premium - Rp500.000</option>
+  <option value="1">Basic - Rp500.000</option>
+  <option value="2">Standard - Rp750.000</option>
+  <option value="3">Premium - Rp1000.000</option>
 </select>
 
 <div class="mb-3">
-  <strong>Total Harga: <span id="hargaText">Rp100.000</span></strong>
+  <strong>Total Harga: <span id="hargaText">Rp500.000</span></strong>
 </div>
 
 <button class="btn btn-primary w-100" id="btnSubmit">Kirim</button>
@@ -47,9 +47,9 @@ const paket = document.getElementById("paket");
 const hargaText = document.getElementById("hargaText");
 
 function getHarga(id){
-  if(id == 1) return 100000;
-  if(id == 2) return 250000;
-  return 500000;
+  if(id == 1) return 500000;
+  if(id == 2) return 750000;
+  return 1000000;
 }
 
 paket.onchange = function(){
