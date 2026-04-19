@@ -60,10 +60,6 @@ async function request(url, options = {}) {
 ========================= */
 function post(action, data = {}, token = "") {
 
-  let url = `${API_URL}?action=${encodeURIComponent(action)}`;
-
-  if (token) url += `&token=${encodeURIComponent(token)}`;
-
   const formData = new URLSearchParams();
 
   formData.append("action", action);
@@ -75,7 +71,7 @@ function post(action, data = {}, token = "") {
     }
   }
 
-  return request(url, {
+  return request(API_URL, {
     method: "POST",
     body: formData
   });
