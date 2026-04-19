@@ -6,9 +6,7 @@
 <title>Dashboard Admin CBT</title>
 
 <script src="https://cdn.tailwindcss.com"></script>
-<script src="https://unpkg.com/lucide@latest"></script>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
-<link rel="icon" href="data:,">
 
 <style>
 body { font-family: 'Inter', sans-serif; }
@@ -46,7 +44,7 @@ body { font-family: 'Inter', sans-serif; }
 <script src="../assets/app.js"></script>
 
 <!-- NAVBAR -->
-<div class="flex justify-between items-center mb-6">
+<div class="flex justify-between mb-6">
     <h1 class="text-2xl font-bold">Dashboard CBT</h1>
     <div class="flex gap-2">
         <button onclick="exportExcel()" class="bg-green-600 text-white px-3 py-2 rounded">Excel</button>
@@ -90,13 +88,11 @@ body { font-family: 'Inter', sans-serif; }
 <div id="modal" class="fixed inset-0 bg-black/50 hidden items-center justify-center">
 <div class="bg-white p-6 rounded w-96">
 
-<h2 class="font-bold mb-3">Detail Pendaftaran</h2>
+<h2 class="font-bold mb-3">Detail</h2>
 
-<div class="mb-2 text-sm text-gray-600">
-ID: <span id="dId"></span>
-</div>
+<div>ID: <span id="dId"></span></div>
 
-<img id="dBukti" class="w-full h-40 object-cover rounded mb-3 border hidden">
+<img id="dBukti" class="w-full h-40 object-cover rounded my-3 border hidden">
 
 <select id="dStatus" class="border w-full p-2 mb-2">
 <option value="pending">Pending</option>
@@ -105,8 +101,7 @@ ID: <span id="dId"></span>
 </select>
 
 <select id="dBayar" class="border w-full p-2 mb-2">
-<option value="belum_bayar">Belum Bayar</option>
-<option value="menunggu_verifikasi">Menunggu</option>
+<option value="belum_bayar">Belum</option>
 <option value="lunas">Lunas</option>
 </select>
 
@@ -127,39 +122,41 @@ if(!token) location="login.html";
 const user = JSON.parse(localStorage.getItem("user")||"{}");
 
 let allData=[];
-let pembayaranData=[];
 let selectedId=null;
 
-/* FIX GOOGLE DRIVE */
+/* ===== FIX GOOGLE DRIVE (VERSI STABIL) ===== */
 function fixDriveUrl(url){
     if(!url) return "";
 
-    let match = url.match(/\/d\/([a-zA-Z0-9_-]+)/);
-    if(match) return `https://drive.google.com/uc?export=view&id=${match[1]}`;
+    try{
+        // format utama
+        let match = url.match(/\/d\/([a-zA-Z0-9_-]+)/);
+        if(match) return `https://drive.google.com/uc?export=view&id=${match[1]}`;
 
-    match = url.match(/[-\w]{25,}/);
-    if(match) return `https://drive.google.com/uc?export=view&id=${match[0]}`;
+        // fallback
+        match = url.match(/[-\w]{25,}/);
+        if(match) return `https://drive.google.com/uc?export=view&id=${match[0]}`;
+
+    }catch(e){
+        console.log("URL ERROR:", url);
+    }
 
     return url;
 }
 
-/* LOAD DATA */
+/* ===== LOAD ===== */
 async function loadData(){
     const tbody=document.getElementById("tbody");
     tbody.innerHTML=`<tr><td colspan="7" class="p-6"><div class="skeleton h-6 w-full"></div></td></tr>`;
 
     try{
-        const [pendaftaran, pembayaran] = await Promise.all([
-            get("pendaftaran"),
-            get("pembayaran")
-        ]);
+        const res = await get("pendaftaran");
 
-        if(pendaftaran.status!=="success") throw new Error("Gagal pendaftaran");
-        if(pembayaran.status!=="success") throw new Error("Gagal pembayaran");
+        console.log("DATA RAW:", res);
 
-        allData = pendaftaran.data.slice(1);
-        pembayaranData = pembayaran.data.slice(1);
+        if(res.status!=="success") throw new Error(res.message);
 
+        allData = res.data.slice(1);
         render();
 
     }catch(err){
@@ -167,13 +164,7 @@ async function loadData(){
     }
 }
 
-/* GET BUKTI DARI PEMBAYARAN */
-function getBukti(id){
-    const row = pembayaranData.find(p => p[1] == id);
-    return row ? row[6] : "";
-}
-
-/* RENDER */
+/* ===== RENDER ===== */
 function render(){
     const tbody=document.getElementById("tbody");
     const search=document.getElementById("search").value.toLowerCase();
@@ -190,8 +181,11 @@ function render(){
         const status=(r[14]||"pending").toLowerCase();
         const bayar=(r[15]||"belum_bayar").toLowerCase();
 
-        const buktiRaw = getBukti(id);
-        const bukti = fixDriveUrl(buktiRaw);
+        // 🔥 ambil bukti lebih aman
+        const rawBukti = r[6] || r[17] || r[r.length-1] || "";
+        const bukti = fixDriveUrl(rawBukti);
+
+        console.log("Bukti:", rawBukti, "=>", bukti);
 
         if(search && !(`${id} ${nama}`.toLowerCase().includes(search))) return;
 
@@ -204,13 +198,13 @@ function render(){
             <td class="p-2">${id}</td>
             <td class="p-2">${nama}</td>
             <td class="p-2">${hp}</td>
-            <td class="p-2"><span class="badge bg-yellow-100">${status}</span></td>
-            <td class="p-2"><span class="badge bg-green-100">${bayar}</span></td>
+            <td class="p-2">${status}</td>
+            <td class="p-2">${bayar}</td>
             <td class="p-2">
                 ${bukti ? `
                     <img src="${bukti}"
                         class="w-12 h-12 object-cover rounded border cursor-pointer"
-                        onclick="window.open('${bukti}')"
+                        onclick="window.open('${rawBukti}')"
                         onerror="this.src='https://via.placeholder.com/50?text=No+Image'">
                 ` : "-"}
             </td>
@@ -231,7 +225,7 @@ function render(){
     document.getElementById("paid").innerText=stats.paid;
 }
 
-/* MODAL */
+/* ===== MODAL ===== */
 function openDetail(id){
     const r = allData.find(x=>x[0]==id);
     if(!r) return;
@@ -243,7 +237,9 @@ function openDetail(id){
     document.getElementById("dBayar").value=r[15]||"belum_bayar";
     document.getElementById("dLink").value=r[16]||"";
 
-    const bukti = fixDriveUrl(getBukti(id));
+    const raw = r[6] || r[r.length-1];
+    const bukti = fixDriveUrl(raw);
+
     const img = document.getElementById("dBukti");
 
     if(bukti){
@@ -260,7 +256,7 @@ function closeModal(){
     document.getElementById("modal").classList.add("hidden");
 }
 
-/* SAVE */
+/* ===== SAVE ===== */
 async function saveDetail(){
     await post("update_order",{
         id:selectedId,
@@ -273,7 +269,7 @@ async function saveDetail(){
     loadData();
 }
 
-/* EXPORT */
+/* ===== EXPORT ===== */
 function exportExcel(){
     let csv="ID,Nama,HP\n";
     allData.forEach(r=>{
@@ -292,7 +288,7 @@ function logout(){
     location="login.html";
 }
 
-/* INIT */
+/* ===== INIT ===== */
 window.onload=()=>{
     loadData();
     document.getElementById("search").oninput=render;
