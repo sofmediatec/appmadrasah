@@ -23,6 +23,11 @@ body { font-family: 'Inter', sans-serif; }
     transform: translateY(-2px);
     box-shadow: 0 10px 25px rgba(16,185,129,0.3);
 }
+.btn-login:disabled{
+    opacity: .7;
+    transform: none;
+    box-shadow: none;
+}
 </style>
 </head>
 
@@ -39,7 +44,7 @@ body { font-family: 'Inter', sans-serif; }
 <!-- CARD -->
 <div class="bg-white p-8 rounded-b-3xl shadow-lg">
 
-<div id="errorBox" class="hidden mb-4 text-red-600 text-sm font-semibold"></div>
+<div id="errorBox" class="hidden mb-4 text-red-600 text-sm font-semibold bg-red-50 p-3 rounded-xl"></div>
 
 <form id="formLogin" class="space-y-5">
 
@@ -47,6 +52,7 @@ body { font-family: 'Inter', sans-serif; }
 <label class="text-sm font-bold text-slate-600">Email</label>
 <input id="email" type="email"
 class="w-full mt-1 px-4 py-3 border rounded-xl focus:ring-2 focus:ring-emerald-400 outline-none"
+placeholder="admin@email.com"
 required>
 </div>
 
@@ -54,6 +60,7 @@ required>
 <label class="text-sm font-bold text-slate-600">Password</label>
 <input id="password" type="password"
 class="w-full mt-1 px-4 py-3 border rounded-xl focus:ring-2 focus:ring-emerald-400 outline-none"
+placeholder="••••••••"
 required>
 </div>
 
@@ -82,42 +89,74 @@ if(localStorage.token){
     location="dashboard.html";
 }
 
-// ================= LOGIN =================
+// ================= ELEMENT =================
 const form = document.getElementById("formLogin");
+const btn = document.getElementById("btnLogin");
 const btnText = document.getElementById("btnText");
 const loader = document.getElementById("loader");
 const errorBox = document.getElementById("errorBox");
 
+// ================= UI HELPER =================
+function setLoading(state){
+    if(state){
+        btn.disabled = true;
+        btnText.innerText = "Loading...";
+        loader.classList.remove("hidden");
+    }else{
+        btn.disabled = false;
+        btnText.innerText = "Login";
+        loader.classList.add("hidden");
+    }
+}
+
+function showError(msg){
+    errorBox.innerText = msg;
+    errorBox.classList.remove("hidden");
+}
+
+function hideError(){
+    errorBox.classList.add("hidden");
+}
+
+// ================= LOGIN =================
 form.onsubmit = async function(e){
 e.preventDefault();
 
-btnText.innerText="Loading...";
-loader.classList.remove("hidden");
+hideError();
+setLoading(true);
 
 try{
     const email = document.getElementById("email").value.trim();
     const password = document.getElementById("password").value.trim();
 
-    if(!email || !password) throw "Isi semua field";
-
-    const res = await post("login",{email,password});
-
-    if(!res || res.status !== "success"){
-        throw res?.message || "Login gagal";
+    // VALIDASI
+    if(!email || !password){
+        throw new Error("Semua field wajib diisi");
     }
 
-    localStorage.token = res.token;
-    localStorage.user = JSON.stringify(res.user);
+    // REQUEST LOGIN
+    const res = await post("login",{ email, password });
 
-    btnText.innerText="Masuk...";
-    location="dashboard.html";
+    // DEBUG (optional, bisa dihapus nanti)
+    console.log("LOGIN RESPONSE:", res);
+
+    if(!res || res.status !== "success"){
+        throw new Error(res?.message || "Email atau password salah");
+    }
+
+    // SIMPAN SESSION
+    localStorage.setItem("token", res.token);
+    localStorage.setItem("user", JSON.stringify(res.user || {}));
+
+    btnText.innerText = "Masuk...";
+    
+    setTimeout(()=>{
+        location = "dashboard.html";
+    }, 500);
 
 }catch(err){
-    errorBox.innerText = err;
-    errorBox.classList.remove("hidden");
-
-    btnText.innerText="Login";
-    loader.classList.add("hidden");
+    showError(err.message || "Gagal login");
+    setLoading(false);
 }
 };
 </script>
