@@ -57,12 +57,19 @@
 <script src="../assets/app.js"></script>
 
 <script>
-const token = localStorage.token;
+// ===================
+// AUTH
+// ===================
+const token = localStorage.getItem("token");
 
+// proteksi halaman
 if(!token){
   location = "login.html";
 }
 
+// ===================
+// ELEMENT
+// ===================
 const totalEl = document.getElementById("total");
 const pendingEl = document.getElementById("pending");
 const approvedEl = document.getElementById("approved");
@@ -80,7 +87,7 @@ async function loadData(){
     const res = await get("pendaftaran");
 
     if(res.status === "error"){
-      throw new Error(res.message);
+      throw new Error(res.message || "Gagal load data");
     }
 
     const rows = res.data || [];
@@ -96,11 +103,11 @@ async function loadData(){
     rows.slice(1).forEach(r => {
 
       const id = r[0];
-      const nama = r[3];
-      const hp = r[9];
-      const status = r[14];   // status order
-      const bayar = r[15];    // status pembayaran
-      const link = r[16];     // link CBT
+      const nama = r[3] || "-";
+      const hp = r[9] || "-";
+      const status = (r[14] || "pending").toLowerCase();
+      const bayar = (r[15] || "belum_bayar").toLowerCase();
+      const link = r[16];
 
       total++;
 
@@ -165,19 +172,29 @@ async function loadData(){
 }
 
 // ===================
-// UPDATE STATUS ORDER
+// UPDATE STATUS ORDER (FIX TOTAL)
 // ===================
 function updateStatus(id){
-  const status = prompt("Status (pending / disetujui)");
+
+  let status = prompt("Status (pending / disetujui)");
 
   if(!status) return;
 
-  post("update_status", {id, status_order: status}, token)
+  status = status.toLowerCase().trim();
+
+  if(!["pending","disetujui"].includes(status)){
+    alert("Status tidak valid");
+    return;
+  }
+
+  post("update_order", {id, status_order: status}, token)
     .then(res => {
-      if(res.status !== "success"){
-        alert(res.message);
+
+      if(!res || res.status !== "success"){
+        alert(res?.message || "Gagal update status");
         return;
       }
+
       alert("Status berhasil diubah");
       loadData();
     });
@@ -187,16 +204,19 @@ function updateStatus(id){
 // SET LINK CBT
 // ===================
 function setLink(id){
+
   const link = prompt("Masukkan link CBT");
 
   if(!link) return;
 
   post("update_order", {id, link_cbt: link}, token)
     .then(res => {
-      if(res.status !== "success"){
-        alert(res.message);
+
+      if(!res || res.status !== "success"){
+        alert(res?.message || "Gagal simpan link");
         return;
       }
+
       alert("Link berhasil disimpan");
       loadData();
     });
@@ -206,6 +226,7 @@ function setLink(id){
 // APPROVE ORDER
 // ===================
 function approve(id){
+
   const link = prompt("Masukkan link CBT (wajib)");
 
   if(!link){
@@ -213,52 +234,66 @@ function approve(id){
     return;
   }
 
-  post("update_order", {id, status_order: "disetujui", link_cbt: link}, token)
-    .then(res => {
-      if(res.status !== "success"){
-        alert(res.message);
-        return;
-      }
-      alert("Order disetujui");
-      loadData();
-    });
+  post("update_order", {
+    id,
+    status_order: "disetujui",
+    link_cbt: link
+  }, token)
+  .then(res => {
+
+    if(!res || res.status !== "success"){
+      alert(res?.message || "Gagal approve");
+      return;
+    }
+
+    alert("Order disetujui");
+    loadData();
+  });
 }
 
 // ===================
 // VERIFIKASI PEMBAYARAN
 // ===================
-function verifikasi(id){
+async function verifikasi(id){
 
-  const status = prompt("Status (valid / ditolak)");
+  let status = prompt("Status pembayaran (lunas / ditolak)");
+
   if(!status) return;
 
-  get("pembayaran").then(res => {
+  status = status.toLowerCase().trim();
 
-    if(!res.data){
-      alert("Data pembayaran kosong");
+  if(!["lunas","ditolak"].includes(status)){
+    alert("Status tidak valid");
+    return;
+  }
+
+  const res = await get("pembayaran");
+
+  if(!res.data){
+    alert("Data pembayaran kosong");
+    return;
+  }
+
+  const data = res.data.find(r => String(r[1]) === String(id));
+
+  if(!data){
+    alert("Belum ada pembayaran");
+    return;
+  }
+
+  post("update_pembayaran", {
+    id: data[0],
+    status
+  }, token)
+  .then(res => {
+
+    if(!res || res.status !== "success"){
+      alert(res?.message || "Gagal verifikasi");
       return;
     }
 
-    const data = res.data.find(r => String(r[1]) === String(id));
-
-    if(!data){
-      alert("Belum ada pembayaran");
-      return;
-    }
-
-    post("update_pembayaran", {
-      id: data[0],
-      status
-    }, token).then(res => {
-
-      if(res.status !== "success"){
-        alert(res.message);
-        return;
-      }
-
-      alert("Verifikasi berhasil");
-      loadData();
-    });
+    alert("Verifikasi berhasil");
+    loadData();
   });
 }
 
@@ -270,7 +305,9 @@ function logout(){
   location = "login.html";
 }
 
+// ===================
 // INIT
+// ===================
 loadData();
 </script>
 
