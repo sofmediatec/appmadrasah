@@ -1,4 +1,4 @@
-const API_URL = "https://script.google.com/macros/s/AKfycbxUexWANnqC_zPN2-08j1iOGqokmFnRo14DqwjBp5AA0tq30Nu5uaPUAODvVkH7fEbfPg/exec";
+const API_URL = "https://script.google.com/macros/s/AKfycbwQ2Y4oV1ugLiiCyEi-hcD8gSai7uvw03m_Cu79bTKzNRXIQ9ThW1gVur2NIsrQo0KjhA/exec";
 
 /* =========================
    FETCH WITH TIMEOUT
