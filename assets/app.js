@@ -4,7 +4,6 @@ const API_URL = "https://script.google.com/macros/s/AKfycbxUexWANnqC_zPN2-08j1iO
    HELPER
 ========================= */
 
-// timeout biar tidak hang
 function fetchWithTimeout(resource, options = {}, timeout = 15000) {
   return Promise.race([
     fetch(resource, options),
@@ -14,19 +13,20 @@ function fetchWithTimeout(resource, options = {}, timeout = 15000) {
   ]);
 }
 
-// parse JSON aman
 async function parseJSON(res) {
   const text = await res.text();
 
   try {
     return JSON.parse(text);
   } catch (e) {
-    console.error("❌ Response bukan JSON:", text);
-    throw new Error("Response server tidak valid");
+    console.error("❌ Bukan JSON:", text);
+    return {
+      status: "error",
+      message: "Response server tidak valid"
+    };
   }
 }
 
-// helper query builder
 function buildQuery(params = {}) {
   return Object.keys(params)
     .filter(k => params[k] !== undefined && params[k] !== null && params[k] !== "")
@@ -35,7 +35,40 @@ function buildQuery(params = {}) {
 }
 
 /* =========================
-   POST (SUPER STABLE)
+   CORE REQUEST
+========================= */
+
+async function request(url, options = {}) {
+  try {
+    const res = await fetchWithTimeout(url, options);
+
+    if (!res.ok) {
+      throw new Error("HTTP " + res.status);
+    }
+
+    const data = await parseJSON(res);
+
+    // 🔥 AUTO HANDLE TOKEN EXPIRED
+    if (data.status === "unauthorized") {
+      alert("Session habis, silakan login ulang");
+      logout();
+      return;
+    }
+
+    return data;
+
+  } catch (err) {
+    console.error("❌ REQUEST ERROR:", err);
+
+    return {
+      status: "error",
+      message: err.message || "Koneksi gagal"
+    };
+  }
+}
+
+/* =========================
+   POST (FIX FINAL)
 ========================= */
 
 function post(action, data = {}, token = "") {
@@ -47,11 +80,11 @@ function post(action, data = {}, token = "") {
     });
   }
 
-  // 👉 kirim action & token di URL (fallback)
+  // 🔥 WAJIB: action & token di URL
   let url = `${API_URL}?action=${encodeURIComponent(action)}`;
   if (token) url += `&token=${encodeURIComponent(token)}`;
 
-  // 👉 kirim juga di BODY (biar 100% kebaca GAS)
+  // 🔥 Kirim juga di body (double safe)
   const formData = new URLSearchParams();
 
   formData.append("action", action);
@@ -63,23 +96,9 @@ function post(action, data = {}, token = "") {
     }
   }
 
-  return fetchWithTimeout(url, {
+  return request(url, {
     method: "POST",
     body: formData
-  })
-  .then(async res => {
-    if (!res.ok) {
-      throw new Error("HTTP Error " + res.status);
-    }
-    return await parseJSON(res);
-  })
-  .catch(err => {
-    console.error("❌ POST ERROR:", err);
-
-    return {
-      status: "error",
-      message: err.message || "Gagal koneksi ke server"
-    };
   });
 }
 
@@ -96,53 +115,34 @@ function get(action, params = {}) {
     });
   }
 
-  const query = buildQuery({ action, ...params });
-  const url = `${API_URL}?${query}`;
+  const url = `${API_URL}?${buildQuery({ action, ...params })}`;
 
-  return fetchWithTimeout(url)
-  .then(async res => {
-    if (!res.ok) {
-      throw new Error("HTTP Error " + res.status);
-    }
-    return await parseJSON(res);
-  })
-  .catch(err => {
-    console.error("❌ GET ERROR:", err);
-
-    return {
-      status: "error",
-      message: err.message || "Gagal koneksi ke server"
-    };
-  });
+  return request(url);
 }
 
 /* =========================
    AUTH HELPER
 ========================= */
 
-// ambil token aman
 function getToken(){
   return localStorage.getItem("token") || "";
 }
 
-// set token
 function setToken(token){
   localStorage.setItem("token", token);
 }
 
-// cek login
 function isLoggedIn(){
   return !!getToken();
 }
 
-// logout global
 function logout(){
-  localStorage.removeItem("token");
+  localStorage.clear();
   window.location = "login.html";
 }
 
 /* =========================
-   DEBUG (OPSIONAL)
+   DEBUG
 ========================= */
 
 function debugLog(label, data){
