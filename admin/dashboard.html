@@ -172,7 +172,7 @@ function updateStatus(id){
 
   if(!status) return;
 
-  post("update_status", {id, status}, token)
+  post("update_status", {id, status_order: status}, token)
     .then(res => {
       if(res.status !== "success"){
         alert(res.message);
@@ -191,7 +191,7 @@ function setLink(id){
 
   if(!link) return;
 
-  post("set_link", {id, link_cbt:link}, token)
+  post("update_order", {id, link_cbt: link}, token)
     .then(res => {
       if(res.status !== "success"){
         alert(res.message);
@@ -213,7 +213,7 @@ function approve(id){
     return;
   }
 
-  post("approve", {id, link_cbt:link}, token)
+  post("update_order", {id, status_order: "disetujui", link_cbt: link}, token)
     .then(res => {
       if(res.status !== "success"){
         alert(res.message);
@@ -246,7 +246,7 @@ function verifikasi(id){
       return;
     }
 
-    post("verifikasi", {
+    post("update_pembayaran", {
       id: data[0],
       status
     }, token).then(res => {
