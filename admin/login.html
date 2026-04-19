@@ -133,8 +133,15 @@ form.addEventListener("submit", async (e) => {
 
         console.log("LOGIN RESPONSE:", res);
 
-        if(!res || res.status !== "success"){
-            throw new Error(res?.message || "Login gagal");
+        if(!res){
+            throw new Error("Server tidak merespon");
+        }
+        
+        const token = res.token || res.access_token || res.data?.token;
+        const success = res.status === "success" || res.success === true || !!token;
+        
+        if(!success || !token){
+            throw new Error(res.message || "Email atau password salah");
         }
 
         localStorage.setItem("token", res.token);
