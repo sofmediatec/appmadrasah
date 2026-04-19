@@ -137,14 +137,26 @@ async function loadData(){
     tbody.innerHTML=`<tr><td colspan="7" class="p-6 text-center">Loading...</td></tr>`;
 
     try{
+        // ambil pendaftaran (WAJIB)
         const pendaftaran = await get("pendaftaran");
-        const pembayaran = await get("pembayaran");
 
         if(pendaftaran.status!=="success") throw new Error(pendaftaran.message);
-        if(pembayaran.status!=="success") throw new Error(pembayaran.message);
 
         allData = pendaftaran.data.slice(1);
-        paymentsData = pembayaran.data.slice(1);
+
+        // ambil pembayaran (OPSIONAL)
+        try{
+            const pembayaran = await get("pembayaran");
+
+            if(pembayaran.status==="success"){
+                paymentsData = pembayaran.data.slice(1);
+            }else{
+                paymentsData = [];
+            }
+        }catch(e){
+            console.log("Pembayaran tidak tersedia:", e);
+            paymentsData = [];
+        }
 
         render();
 
