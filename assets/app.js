@@ -60,18 +60,24 @@ async function request(url, options = {}) {
 ========================= */
 function post(action, data = {}, token = "") {
 
-  const payload = {
-    action,
-    token: token || getToken(),
-    ...data
-  };
+  let url = `${API_URL}?action=${encodeURIComponent(action)}`;
 
-  return request(API_URL, {
+  if (token) url += `&token=${encodeURIComponent(token)}`;
+
+  const formData = new URLSearchParams();
+
+  formData.append("action", action);
+  if (token) formData.append("token", token);
+
+  for (let key in data) {
+    if (data[key] !== undefined && data[key] !== null) {
+      formData.append(key, data[key]);
+    }
+  }
+
+  return request(url, {
     method: "POST",
-    headers: {
-      "Content-Type": "application/json"
-    },
-    body: JSON.stringify(payload)
+    body: formData
   });
 }
 
