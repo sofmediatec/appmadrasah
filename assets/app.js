@@ -1,9 +1,8 @@
 const API_URL = "https://script.google.com/macros/s/AKfycbxUexWANnqC_zPN2-08j1iOGqokmFnRo14DqwjBp5AA0tq30Nu5uaPUAODvVkH7fEbfPg/exec";
 
 /* =========================
-   HELPER
+   FETCH WITH TIMEOUT
 ========================= */
-
 function fetchWithTimeout(resource, options = {}, timeout = 15000) {
   return Promise.race([
     fetch(resource, options),
@@ -13,37 +12,36 @@ function fetchWithTimeout(resource, options = {}, timeout = 15000) {
   ]);
 }
 
+/* =========================
+   PARSE RESPONSE
+========================= */
 async function parseJSON(res) {
   const text = await res.text();
+
+  console.log("RAW RESPONSE:", text);
+
   try {
     return JSON.parse(text);
-  } catch {
-    console.error("Response bukan JSON:", text);
-    return { status: "error", message: "Response tidak valid" };
+  } catch (e) {
+    return {
+      status: "error",
+      message: "Server tidak mengembalikan JSON",
+      raw: text
+    };
   }
-}
-
-function buildQuery(params = {}) {
-  return Object.keys(params)
-    .filter(k => params[k] !== undefined && params[k] !== null && params[k] !== "")
-    .map(k => `${encodeURIComponent(k)}=${encodeURIComponent(params[k])}`)
-    .join("&");
 }
 
 /* =========================
    CORE REQUEST
 ========================= */
-
 async function request(url, options = {}) {
   try {
     const res = await fetchWithTimeout(url, options);
 
-    if (!res.ok) throw new Error("HTTP " + res.status);
-
     const data = await parseJSON(res);
 
     if (data.status === "unauthorized") {
-      alert("Session habis, login ulang");
+      alert("Session habis, silakan login ulang");
       logout();
       return;
     }
@@ -52,65 +50,58 @@ async function request(url, options = {}) {
 
   } catch (err) {
     console.error("REQUEST ERROR:", err);
-    return { status: "error", message: err.message || "Koneksi gagal" };
+    return { status: "error", message: err.message };
   }
 }
 
 /* =========================
-   POST (KOMPATIBEL GAS)
+   POST (FIX TOTAL - JSON MODE)
 ========================= */
-
 function post(action, data = {}, token = "") {
 
-  let url = `${API_URL}?action=${encodeURIComponent(action)}`;
-  if (token) url += `&token=${encodeURIComponent(token)}`;
+  const payload = {
+    action,
+    token,
+    ...data
+  };
 
-  const formData = new URLSearchParams();
-
-  formData.append("action", action);
-  if (token) formData.append("token", token);
-
-  for (let key in data) {
-    if (data[key] !== undefined && data[key] !== null) {
-      formData.append(key, data[key]);
-    }
-  }
-
-  return request(url, {
+  return request(API_URL, {
     method: "POST",
-    body: formData
+    headers: {
+      "Content-Type": "application/json"
+    },
+    body: JSON.stringify(payload)
   });
 }
 
 /* =========================
-   GET (FIX TOKEN)
+   GET
 ========================= */
-
 function get(action, params = {}, token = "") {
 
   let query = { action, ...params };
 
-  // 🔥 FIX: token WAJIB ikut
   if (token) query.token = token;
 
-  const url = `${API_URL}?${buildQuery(query)}`;
+  const url = API_URL + "?" + new URLSearchParams(query).toString();
 
-  return request(url);
+  return request(url, {
+    method: "GET"
+  });
 }
 
 /* =========================
    AUTH
 ========================= */
-
-function getToken(){
+function getToken() {
   return localStorage.getItem("token") || "";
 }
 
-function setToken(token){
+function setToken(token) {
   localStorage.setItem("token", token);
 }
 
-function logout(){
+function logout() {
   localStorage.clear();
   window.location = "login.html";
 }
