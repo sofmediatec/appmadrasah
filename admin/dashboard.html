@@ -19,14 +19,6 @@ body { font-family: 'Inter', sans-serif; }
     color: white;
     position: relative;
 }
-.card .icon {
-    position: absolute;
-    right: 10px;
-    bottom: 10px;
-    opacity: 0.2;
-    transform: scale(2.5);
-}
-
 .card-blue { background: linear-gradient(135deg,#3b82f6,#1e3a8a); }
 .card-yellow { background: linear-gradient(135deg,#f59e0b,#b45309); }
 .card-green { background: linear-gradient(135deg,#10b981,#065f46); }
@@ -95,7 +87,7 @@ body { font-family: 'Inter', sans-serif; }
 </table>
 </div>
 
-<!-- MODAL DETAIL -->
+<!-- MODAL -->
 <div id="modal" class="fixed inset-0 bg-black/50 hidden items-center justify-center">
 <div class="bg-white p-6 rounded w-96">
 
@@ -136,30 +128,24 @@ if(!token) location="login.html";
 const user = JSON.parse(localStorage.getItem("user")||"{}");
 
 let allData=[];
-let page=1;
-let limit=10;
 let selectedId=null;
 
-/* FIX GOOGLE DRIVE */
+/* ================= FIX GOOGLE DRIVE ================= */
 function fixDriveUrl(url){
     if(!url) return "";
 
-    // ambil ID file google drive
-    const match = url.match(/\/d\/([a-zA-Z0-9_-]+)/);
-    if(match){
-        return `https://drive.google.com/uc?export=view&id=${match[1]}`;
-    }
+    // format /file/d/
+    let match = url.match(/\/d\/([a-zA-Z0-9_-]+)/);
+    if(match) return `https://drive.google.com/uc?export=view&id=${match[1]}`;
 
-    // fallback lama
-    if(url.includes("drive.google.com")){
-        const id = url.match(/[-\w]{25,}/);
-        if(id) return `https://drive.google.com/uc?export=view&id=${id[0]}`;
-    }
+    // format id random
+    match = url.match(/[-\w]{25,}/);
+    if(match) return `https://drive.google.com/uc?export=view&id=${match[0]}`;
 
     return url;
 }
 
-/* LOAD */
+/* ================= LOAD ================= */
 async function loadData(){
     const tbody=document.getElementById("tbody");
     tbody.innerHTML=`<tr><td colspan="7" class="p-6"><div class="skeleton h-6 w-full"></div></td></tr>`;
@@ -177,7 +163,7 @@ async function loadData(){
     }
 }
 
-/* RENDER */
+/* ================= RENDER ================= */
 function render(){
     const tbody=document.getElementById("tbody");
     const search=document.getElementById("search").value.toLowerCase();
@@ -193,7 +179,8 @@ function render(){
         const hp=r[9]||"-";
         const status=(r[14]||"pending").toLowerCase();
         const bayar=(r[15]||"belum_bayar").toLowerCase();
-        const bukti=r[r.length-1];
+        const rawBukti=r[r.length-1];
+        const bukti=fixDriveUrl(rawBukti);
 
         if(search && !(`${id} ${nama}`.toLowerCase().includes(search))) return;
 
@@ -206,10 +193,15 @@ function render(){
             <td class="p-2">${id}</td>
             <td class="p-2">${nama}</td>
             <td class="p-2">${hp}</td>
-            <td class="p-2">${status}</td>
-            <td class="p-2">${bayar}</td>
+            <td class="p-2"><span class="badge bg-yellow-100">${status}</span></td>
+            <td class="p-2"><span class="badge bg-green-100">${bayar}</span></td>
             <td class="p-2">
-                ${bukti ? `<img src="${fixDriveUrl(bukti)}" class="w-12 h-12 object-cover rounded border">` : "-"}
+                ${bukti ? `
+                    <img src="${bukti}"
+                        class="w-12 h-12 object-cover rounded border cursor-pointer"
+                        onclick="window.open('${bukti}')"
+                        onerror="this.src='https://via.placeholder.com/50?text=No+Image'">
+                ` : "-"}
             </td>
             <td class="p-2">
                 ${user?.role==="admin"
@@ -228,7 +220,7 @@ function render(){
     document.getElementById("paid").innerText=stats.paid;
 }
 
-/* OPEN MODAL */
+/* ================= MODAL ================= */
 function openDetail(id){
     const r = allData.find(x=>x[0]==id);
     if(!r) return;
@@ -257,7 +249,7 @@ function closeModal(){
     document.getElementById("modal").classList.add("hidden");
 }
 
-/* SAVE */
+/* ================= SAVE ================= */
 async function saveDetail(){
     await post("update_order",{
         id:selectedId,
@@ -270,7 +262,7 @@ async function saveDetail(){
     loadData();
 }
 
-/* EXPORT */
+/* ================= EXPORT ================= */
 function exportExcel(){
     let csv="ID,Nama,HP\n";
     allData.forEach(r=>{
@@ -289,7 +281,7 @@ function logout(){
     location="login.html";
 }
 
-/* INIT */
+/* ================= INIT ================= */
 window.onload=()=>{
     loadData();
     document.getElementById("search").oninput=render;
