@@ -84,9 +84,10 @@ class="btn-login w-full text-white py-3 rounded-xl font-bold flex justify-center
 <script src="../assets/app.js"></script>
 
 <script>
-// ================= AUTH CHECK =================
-if(localStorage.token){
-    location="dashboard.html";
+
+// ================= AUTO REDIRECT =================
+if (localStorage.getItem("token")) {
+    window.location.href = "dashboard.html";
 }
 
 // ================= ELEMENT =================
@@ -96,17 +97,11 @@ const btnText = document.getElementById("btnText");
 const loader = document.getElementById("loader");
 const errorBox = document.getElementById("errorBox");
 
-// ================= UI HELPER =================
+// ================= UI =================
 function setLoading(state){
-    if(state){
-        btn.disabled = true;
-        btnText.innerText = "Loading...";
-        loader.classList.remove("hidden");
-    }else{
-        btn.disabled = false;
-        btnText.innerText = "Login";
-        loader.classList.add("hidden");
-    }
+    btn.disabled = state;
+    btnText.innerText = state ? "Loading..." : "Login";
+    loader.classList.toggle("hidden", !state);
 }
 
 function showError(msg){
@@ -119,46 +114,44 @@ function hideError(){
 }
 
 // ================= LOGIN =================
-form.onsubmit = async function(e){
-e.preventDefault();
+form.addEventListener("submit", async (e) => {
+    e.preventDefault();
 
-hideError();
-setLoading(true);
+    hideError();
+    setLoading(true);
 
-try{
-    const email = document.getElementById("email").value.trim();
-    const password = document.getElementById("password").value.trim();
+    try {
+        const email = document.getElementById("email").value.trim();
+        const password = document.getElementById("password").value.trim();
 
-    // VALIDASI
-    if(!email || !password){
-        throw new Error("Semua field wajib diisi");
+        if(!email || !password){
+            throw new Error("Email dan password wajib diisi");
+        }
+
+        // pastikan function post ada di app.js
+        const res = await post("login", { email, password });
+
+        console.log("LOGIN RESPONSE:", res);
+
+        if(!res || res.status !== "success"){
+            throw new Error(res?.message || "Login gagal");
+        }
+
+        localStorage.setItem("token", res.token);
+        localStorage.setItem("user", JSON.stringify(res.user || {}));
+
+        btnText.innerText = "Masuk...";
+
+        setTimeout(() => {
+            window.location.href = "dashboard.html";
+        }, 500);
+
+    } catch (err) {
+        showError(err.message || "Terjadi kesalahan");
+        setLoading(false);
     }
+});
 
-    // REQUEST LOGIN
-    const res = await post("login",{ email, password });
-
-    // DEBUG (optional, bisa dihapus nanti)
-    console.log("LOGIN RESPONSE:", res);
-
-    if(!res || res.status !== "success"){
-        throw new Error(res?.message || "Email atau password salah");
-    }
-
-    // SIMPAN SESSION
-    localStorage.setItem("token", res.token);
-    localStorage.setItem("user", JSON.stringify(res.user || {}));
-
-    btnText.innerText = "Masuk...";
-    
-    setTimeout(()=>{
-        location = "dashboard.html";
-    }, 500);
-
-}catch(err){
-    showError(err.message || "Gagal login");
-    setLoading(false);
-}
-};
 </script>
 
 </body>
