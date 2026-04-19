@@ -3,15 +3,10 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Dashboard Admin CBT</title>
+<title>Dashboard Admin | CBT Madrasah</title>
 
-<!-- Tailwind -->
 <script src="https://cdn.tailwindcss.com"></script>
-
-<!-- Font -->
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
-
-<!-- Icon -->
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
 <script src="https://unpkg.com/lucide@latest"></script>
 
 <style>
@@ -20,7 +15,16 @@ body {
     background-color: #f1f5f9;
 }
 
-/* CARD STYLE (sesuai dashboard kamu) */
+.custom-scrollbar::-webkit-scrollbar {
+    width: 6px;
+    height: 6px;
+}
+.custom-scrollbar::-webkit-scrollbar-thumb {
+    background: #cbd5e1;
+    border-radius: 10px;
+}
+
+/* CARD STYLE */
 .stat-card {
     @apply p-6 rounded-[1.5rem] border shadow-sm transition-all hover:shadow-md border-opacity-50;
 }
@@ -30,51 +34,93 @@ body {
 .card-purple { @apply bg-white border-purple-100; }
 
 .badge {
-    @apply px-3 py-1 rounded-full text-[10px] font-bold border;
+    @apply px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-wider border;
 }
 
 .btn-action {
-    @apply p-2 rounded-lg text-white text-xs;
+    @apply p-2.5 rounded-xl transition-all;
 }
 </style>
 </head>
 
-<body class="p-6">
+<body class="min-h-screen pb-12">
 
-<h1 class="text-2xl font-bold mb-6">Dashboard Admin CBT</h1>
+<!-- NAV -->
+<nav class="bg-white border-b sticky top-0 z-30 shadow-sm">
+    <div class="max-w-7xl mx-auto px-6 py-4 flex justify-between items-center">
+        <div class="flex items-center gap-4">
+            <div class="w-12 h-12 bg-slate-900 rounded-2xl flex items-center justify-center text-white">
+                <i data-lucide="layout-dashboard" class="w-6 h-6 text-blue-400"></i>
+            </div>
+            <div>
+                <h1 class="font-black text-slate-900">Admin Panel</h1>
+                <p class="text-[10px] font-bold text-blue-600">CBT MADRASAH</p>
+            </div>
+        </div>
 
-<!-- ================= FILTER ================= -->
-<div class="flex gap-2 mb-4">
-<input id="search" placeholder="Cari..." class="border p-2 rounded">
+        <button onclick="logout()" class="bg-red-600 text-white px-4 py-2 rounded-xl text-xs font-bold">
+            Logout
+        </button>
+    </div>
+</nav>
 
-<select id="filterStatus" class="border p-2 rounded">
+<!-- STATS -->
+<div class="max-w-7xl mx-auto px-6 mt-10 grid grid-cols-2 lg:grid-cols-4 gap-6">
+
+<div class="stat-card card-blue">
+    <p class="text-xs font-bold text-blue-600">TOTAL</p>
+    <h2 id="total" class="text-3xl font-black">0</h2>
+</div>
+
+<div class="stat-card card-amber">
+    <p class="text-xs font-bold text-amber-600">PENDING</p>
+    <h2 id="pending" class="text-3xl font-black">0</h2>
+</div>
+
+<div class="stat-card card-emerald">
+    <p class="text-xs font-bold text-emerald-600">DISETUJUI</p>
+    <h2 id="approved" class="text-3xl font-black">0</h2>
+</div>
+
+<div class="stat-card card-purple">
+    <p class="text-xs font-bold text-purple-600">LUNAS</p>
+    <h2 id="paid" class="text-3xl font-black">0</h2>
+</div>
+
+</div>
+
+<!-- FILTER -->
+<div class="max-w-7xl mx-auto px-6 mt-6 flex gap-2 flex-wrap">
+<input id="search" class="border p-2 rounded-xl" placeholder="Cari...">
+
+<select id="filterStatus" class="border p-2 rounded-xl">
 <option value="">Semua Status</option>
 <option value="pending">Pending</option>
 <option value="disetujui">Disetujui</option>
 <option value="ditolak">Ditolak</option>
 </select>
 
-<select id="filterBayar" class="border p-2 rounded">
+<select id="filterBayar" class="border p-2 rounded-xl">
 <option value="">Semua Bayar</option>
 <option value="lunas">Lunas</option>
 <option value="menunggu_verifikasi">Menunggu</option>
 <option value="ditolak">Ditolak</option>
 </select>
 
-<button onclick="loadData()" class="bg-blue-600 text-white px-4 rounded">
-Refresh
-</button>
+<button onclick="loadData()" class="bg-blue-600 text-white px-4 rounded-xl">Refresh</button>
 </div>
 
-<!-- ================= TABLE ================= -->
-<table class="w-full border bg-white">
-<thead class="bg-slate-800 text-white">
+<!-- TABLE -->
+<div class="max-w-7xl mx-auto px-6 mt-6 bg-white rounded-2xl shadow overflow-x-auto custom-scrollbar">
+
+<table class="w-full text-sm">
+<thead class="bg-slate-900 text-white">
 <tr>
-<th class="p-2">ID</th>
+<th class="p-3">ID</th>
 <th>Nama</th>
 <th>HP</th>
 <th>Status</th>
-<th>Pembayaran</th>
+<th>Bayar</th>
 <th>Link</th>
 <th>Aksi</th>
 </tr>
@@ -83,60 +129,42 @@ Refresh
 <tbody id="tbody">
 <tr><td colspan="7" class="text-center p-6">Loading...</td></tr>
 </tbody>
+
 </table>
+
+</div>
 
 <script src="../assets/app.js"></script>
 
 <script>
 const token = localStorage.getItem("token");
-if(!token) location = "login.html";
+if(!token) location.href="login.html";
 
 let allData = [];
 
-/* ================= LOAD DATA ================= */
 async function loadData(){
-    const tbody = document.getElementById("tbody");
-    tbody.innerHTML = `<tr><td colspan="7" class="text-center p-6">Loading...</td></tr>`;
+    const res = await get("pendaftaran");
+    if(!res || res.status !== "success") return;
 
-    try {
-        const res = await get("pendaftaran");
-
-        if(!res || res.status !== "success"){
-            throw new Error("Gagal ambil data");
-        }
-
-        allData = res.data || [];
-        render();
-
-    } catch (err) {
-        tbody.innerHTML = `<tr><td colspan="7" class="text-red-600 p-6 text-center">${err.message}</td></tr>`;
-    }
+    allData = res.data || [];
+    render();
 }
 
-/* ================= RENDER ================= */
 function render(){
-    const tbody = document.getElementById("tbody");
-
     const search = document.getElementById("search").value.toLowerCase();
     const fStatus = document.getElementById("filterStatus").value;
     const fBayar = document.getElementById("filterBayar").value;
 
     let html = "";
-
-    let stats = {
-        total: 0,
-        pending: 0,
-        approved: 0,
-        paid: 0
-    };
+    let stats = {total:0,pending:0,approved:0,paid:0};
 
     allData.forEach(r => {
 
         const id = r[0];
         const nama = r[3] || "-";
         const hp = r[9] || "-";
-        const status = (r[14] || "pending").toLowerCase();
-        const bayar = (r[15] || "belum_bayar").toLowerCase();
+        const status = (r[14]||"pending").toLowerCase();
+        const bayar = (r[15]||"belum_bayar").toLowerCase();
         const link = r[16];
 
         if(search && !(`${id} ${nama}`.toLowerCase().includes(search))) return;
@@ -144,73 +172,54 @@ function render(){
         if(fBayar && bayar !== fBayar) return;
 
         stats.total++;
-        if(status === "pending") stats.pending++;
-        if(status === "disetujui") stats.approved++;
-        if(bayar === "lunas") stats.paid++;
-
-        const sColor = {
-            pending: "bg-amber-100 text-amber-700",
-            disetujui: "bg-emerald-100 text-emerald-700",
-            ditolak: "bg-red-100 text-red-700"
-        };
-
-        const bColor = {
-            lunas: "bg-blue-100 text-blue-700",
-            menunggu_verifikasi: "bg-amber-100 text-amber-700",
-            ditolak: "bg-red-100 text-red-700",
-            belum_bayar: "bg-slate-100 text-slate-600"
-        };
+        if(status==="pending") stats.pending++;
+        if(status==="disetujui") stats.approved++;
+        if(bayar==="lunas") stats.paid++;
 
         html += `
         <tr class="border-b">
             <td class="p-2">#${id}</td>
             <td>${nama}</td>
             <td>${hp}</td>
-
-            <td>
-                <span class="badge ${sColor[status] || ''}">${status}</span>
+            <td>${status}</td>
+            <td>${bayar}</td>
+            <td>${link ? `<a class="text-blue-600" target="_blank" href="${link}">Link</a>` : "-"}</td>
+            <td class="flex gap-2 p-2">
+                <button onclick="approve(${id})" class="bg-green-600 text-white px-2 rounded">✔</button>
+                <button onclick="lunas(${id})" class="bg-blue-600 text-white px-2 rounded">💳</button>
+                <button onclick="tolak(${id})" class="bg-red-600 text-white px-2 rounded">✖</button>
             </td>
-
-            <td>
-                <span class="badge ${bColor[bayar] || ''}">${bayar}</span>
-            </td>
-
-            <td>
-                ${link ? `<a class="text-blue-600" target="_blank" href="${link}">Buka</a>` : "-"}
-            </td>
-
-            <td class="flex gap-2">
-                <button onclick="approve(${id})" class="btn-action bg-green-600">✔</button>
-                <button onclick="lunas(${id})" class="btn-action bg-blue-600">💳</button>
-                <button onclick="tolak(${id})" class="btn-action bg-red-600">✖</button>
-            </td>
-        </tr>
-        `;
+        </tr>`;
     });
 
-    tbody.innerHTML = html || `<tr><td colspan="7" class="p-6 text-center">Tidak ada data</td></tr>`;
+    document.getElementById("tbody").innerHTML = html;
+    document.getElementById("total").innerText = stats.total;
+    document.getElementById("pending").innerText = stats.pending;
+    document.getElementById("approved").innerText = stats.approved;
+    document.getElementById("paid").innerText = stats.paid;
 }
 
-/* ================= ACTION ================= */
 async function approve(id){
-    const link = prompt("Link CBT (optional)");
-    await post("update_order", {id, status_order:"disetujui", link_cbt: link}, token);
+    const link = prompt("Link CBT:");
+    await post("update_order",{id,status_order:"disetujui",link_cbt:link},token);
     loadData();
 }
 
 async function tolak(id){
-    if(!confirm("Tolak data ini?")) return;
-    await post("update_order", {id, status_order:"ditolak"}, token);
+    await post("update_order",{id,status_order:"ditolak"},token);
     loadData();
 }
 
 async function lunas(id){
-    if(!confirm("Tandai lunas?")) return;
-    await post("update_pembayaran", {pendaftaran_id:id, status:"lunas"}, token);
+    await post("update_pembayaran",{pendaftaran_id:id,status:"lunas"},token);
     loadData();
 }
 
-/* ================= FILTER EVENT ================= */
+function logout(){
+    localStorage.clear();
+    location.href="login.html";
+}
+
 document.getElementById("search").oninput = render;
 document.getElementById("filterStatus").onchange = render;
 document.getElementById("filterBayar").onchange = render;
