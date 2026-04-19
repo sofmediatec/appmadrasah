@@ -85,8 +85,8 @@ class="btn-login w-full text-white py-3 rounded-xl font-bold flex justify-center
 
 <script>
 
-// ================= AUTO REDIRECT =================
-if (localStorage.getItem("token")) {
+// ================= AUTO LOGIN CHECK =================
+if(localStorage.getItem("token")){
     window.location.href = "dashboard.html";
 }
 
@@ -116,7 +116,6 @@ function hideError(){
 // ================= LOGIN =================
 form.addEventListener("submit", async (e) => {
     e.preventDefault();
-
     hideError();
     setLoading(true);
 
@@ -128,33 +127,30 @@ form.addEventListener("submit", async (e) => {
             throw new Error("Email dan password wajib diisi");
         }
 
-        // pastikan function post ada di app.js
-        const res = await post("login", { email, password });
+        // FIX: gunakan post() dari app.js (sesuai kode.gs)
+        const res = await post("login", {
+            email: email,
+            password: password
+        });
 
         console.log("LOGIN RESPONSE:", res);
 
-        if(!res){
-            throw new Error("Server tidak merespon");
-        }
-        
-        const token = res.token || res.access_token || res.data?.token;
-        const success = res.status === "success" || res.success === true || !!token;
-        
-        if(!success || !token){
-            throw new Error(res.message || "Email atau password salah");
+        if(!res || res.status !== "success"){
+            throw new Error(res?.message || "Email atau password salah");
         }
 
+        // SIMPAN TOKEN
         localStorage.setItem("token", res.token);
-        localStorage.setItem("user", JSON.stringify(res.user || {}));
+        localStorage.setItem("user", JSON.stringify(res.user));
 
-        btnText.innerText = "Masuk...";
+        btnText.innerText = "Berhasil...";
 
         setTimeout(() => {
             window.location.href = "dashboard.html";
-        }, 500);
+        }, 600);
 
     } catch (err) {
-        showError(err.message || "Terjadi kesalahan");
+        showError(err.message);
         setLoading(false);
     }
 });
