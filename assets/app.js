@@ -13,7 +13,7 @@ function fetchWithTimeout(resource, options = {}, timeout = 15000) {
 }
 
 /* =========================
-   PARSE RESPONSE
+   SAFE JSON PARSER
 ========================= */
 async function parseJSON(res) {
   const text = await res.text();
@@ -25,14 +25,14 @@ async function parseJSON(res) {
   } catch (e) {
     return {
       status: "error",
-      message: "Server tidak mengembalikan JSON",
+      message: "Server tidak mengembalikan JSON valid",
       raw: text
     };
   }
 }
 
 /* =========================
-   CORE REQUEST
+   CORE REQUEST ENGINE
 ========================= */
 async function request(url, options = {}) {
   try {
@@ -40,10 +40,11 @@ async function request(url, options = {}) {
 
     const data = await parseJSON(res);
 
+    // session expired handling
     if (data.status === "unauthorized") {
       alert("Session habis, silakan login ulang");
       logout();
-      return;
+      return null;
     }
 
     return data;
@@ -55,13 +56,13 @@ async function request(url, options = {}) {
 }
 
 /* =========================
-   POST (FIX TOTAL - JSON MODE)
+   POST REQUEST (UNIVERSAL FIX)
 ========================= */
 function post(action, data = {}, token = "") {
 
   const payload = {
     action,
-    token,
+    token: token || getToken(),
     ...data
   };
 
@@ -75,13 +76,15 @@ function post(action, data = {}, token = "") {
 }
 
 /* =========================
-   GET
+   GET REQUEST (UNIVERSAL FIX)
 ========================= */
 function get(action, params = {}, token = "") {
 
-  let query = { action, ...params };
-
-  if (token) query.token = token;
+  const query = {
+    action,
+    ...params,
+    token: token || getToken()
+  };
 
   const url = API_URL + "?" + new URLSearchParams(query).toString();
 
@@ -91,7 +94,28 @@ function get(action, params = {}, token = "") {
 }
 
 /* =========================
-   AUTH
+   CRUD SHORTCUT (NEW - IMPORTANT)
+   → biar frontend tidak ribet
+========================= */
+
+function apiGet(table) {
+  return get("getAll", { table });
+}
+
+function apiCreate(table, data) {
+  return post("create", { table, ...data });
+}
+
+function apiUpdate(table, data) {
+  return post("update", { table, ...data });
+}
+
+function apiDelete(table, id) {
+  return post("delete", { table, id });
+}
+
+/* =========================
+   AUTH SYSTEM
 ========================= */
 function getToken() {
   return localStorage.getItem("token") || "";
@@ -101,7 +125,44 @@ function setToken(token) {
   localStorage.setItem("token", token);
 }
 
+function setUser(user) {
+  localStorage.setItem("user", JSON.stringify(user));
+}
+
+function getUser() {
+  try {
+    return JSON.parse(localStorage.getItem("user")) || null;
+  } catch {
+    return null;
+  }
+}
+
 function logout() {
   localStorage.clear();
   window.location = "login.html";
+}
+
+/* =========================
+   LOGIN HELPER (FIX CONSISTENT)
+========================= */
+async function login(email, password) {
+  const res = await post("login", {
+    email,
+    password
+  });
+
+  if (res && res.status === "success") {
+    setToken(res.token);
+    setUser(res.user);
+  }
+
+  return res;
+}
+
+/* =========================
+   DEBUG HELPER (OPTIONAL)
+========================= */
+function debugAPI() {
+  console.log("TOKEN:", getToken());
+  console.log("USER:", getUser());
 }
