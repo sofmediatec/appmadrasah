@@ -6,7 +6,6 @@
 <title>Dashboard Admin CBT</title>
 
 <script src="https://cdn.tailwindcss.com"></script>
-<script src="https://unpkg.com/lucide@latest"></script>
 
 </head>
 
@@ -15,69 +14,107 @@
 <h1 class="text-2xl font-bold mb-6">Dashboard Admin CBT</h1>
 
 <!-- STATS -->
-<div class="grid grid-cols-4 gap-4 mb-6">
-<div>Total: <b id="total">0</b></div>
-<div>Pending: <b id="pending">0</b></div>
-<div>Disetujui: <b id="approved">0</b></div>
-<div>Lunas: <b id="paid">0</b></div>
+<div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
+<div class="bg-white p-4 rounded shadow">Total: <b id="total">0</b></div>
+<div class="bg-white p-4 rounded shadow">Pending: <b id="pending">0</b></div>
+<div class="bg-white p-4 rounded shadow">Disetujui: <b id="approved">0</b></div>
+<div class="bg-white p-4 rounded shadow">Lunas: <b id="paid">0</b></div>
 </div>
 
 <!-- FILTER -->
-<div class="flex gap-2 mb-4">
-<input id="search" placeholder="Cari..." class="border p-2 rounded">
-<select id="filterStatus" class="border p-2">
+<div class="flex flex-wrap gap-2 mb-4">
+<input id="search" placeholder="Cari..." class="border p-2 rounded w-full md:w-48">
+<select id="filterStatus" class="border p-2 rounded">
 <option value="">Semua Status</option>
 <option value="pending">Pending</option>
 <option value="disetujui">Disetujui</option>
 <option value="ditolak">Ditolak</option>
 </select>
-<select id="filterBayar" class="border p-2">
+<select id="filterBayar" class="border p-2 rounded">
 <option value="">Semua Bayar</option>
 <option value="lunas">Lunas</option>
 <option value="menunggu_verifikasi">Menunggu</option>
 <option value="ditolak">Ditolak</option>
 </select>
-<button onclick="loadData()" class="bg-blue-600 text-white px-4">Refresh</button>
+<button onclick="loadData()" class="bg-blue-600 text-white px-4 rounded">Refresh</button>
 </div>
 
 <!-- TABLE -->
-<table class="w-full border bg-white">
-<thead class="bg-black text-white">
+<div class="overflow-x-auto">
+<table class="w-full border bg-white rounded overflow-hidden">
+<thead class="bg-slate-800 text-white text-sm">
 <tr>
-<th>ID</th>
-<th>Nama</th>
-<th>HP</th>
-<th>Status</th>
-<th>Bayar</th>
-<th>Link</th>
-<th>Aksi</th>
+<th class="p-3">ID</th>
+<th class="p-3">Nama</th>
+<th class="p-3">HP</th>
+<th class="p-3">Status</th>
+<th class="p-3">Bayar</th>
+<th class="p-3">Link</th>
+<th class="p-3">Aksi</th>
 </tr>
 </thead>
-<tbody id="tbody"></tbody>
+<tbody id="tbody">
+<tr><td colspan="7" class="text-center p-6">Loading...</td></tr>
+</tbody>
 </table>
+</div>
 
 <script src="../assets/app.js"></script>
 
 <script>
-const token = localStorage.getItem("token");
-if(!token) location="login.html";
+/* ================= INIT ================= */
+const token = getToken();
+if(!token) location = "login.html";
 
 let allData = [];
 
-/* ================= LOAD ================= */
-async function loadData(){
-    const res = await get("pendaftaran");
+/* ================= HELPER ================= */
+function safe(val, def="-"){
+    return (val === undefined || val === null || val === "") ? def : val;
+}
 
-    console.log(res);
+function normalizeData(data){
+    if(!Array.isArray(data)) return [];
 
-    // 🔥 FIX: tidak perlu status success
-    if(!res || !Array.isArray(res.data)){
-        alert("Data gagal dimuat");
-        return;
+    // detect header otomatis
+    if(Array.isArray(data[0]) && typeof data[0][0] === "string" && data[0][0].toLowerCase() === "id"){
+        return data.slice(1);
     }
 
-    allData = res.data.slice(1); // skip header
-    render();
+    return data;
+}
+
+function badge(text){
+    const map = {
+        pending: "bg-yellow-200 text-yellow-800",
+        disetujui: "bg-green-200 text-green-800",
+        ditolak: "bg-red-200 text-red-800",
+        lunas: "bg-blue-200 text-blue-800",
+        belum_bayar: "bg-gray-200 text-gray-700",
+        menunggu_verifikasi: "bg-orange-200 text-orange-800"
+    };
+    return `<span class="px-2 py-1 rounded text-xs ${map[text]||'bg-gray-200'}">${text}</span>`;
+}
+
+/* ================= LOAD ================= */
+async function loadData(){
+    try{
+        document.getElementById("tbody").innerHTML =
+            `<tr><td colspan="7" class="text-center p-6">Loading...</td></tr>`;
+
+        const res = await get("pendaftaran", {}, token);
+
+        if(!res || !res.data) throw new Error("Data tidak ditemukan");
+
+        allData = normalizeData(res.data);
+
+        render();
+
+    }catch(err){
+        console.error(err);
+        document.getElementById("tbody").innerHTML =
+            `<tr><td colspan="7" class="text-center text-red-600 p-6">${err.message}</td></tr>`;
+    }
 }
 
 /* ================= RENDER ================= */
@@ -92,12 +129,12 @@ function render(){
 
     allData.forEach(r => {
 
-        const id = r[0];
-        const nama = r[3];
-        const hp = r[9];
-        const status = (r[14]||"pending").toLowerCase();
-        const bayar = (r[15]||"belum_bayar").toLowerCase();
-        const link = r[16];
+        const id     = safe(r[0]);
+        const nama   = safe(r[3]);
+        const hp     = safe(r[9]);
+        const status = safe(r[14],"pending").toLowerCase();
+        const bayar  = safe(r[15],"belum_bayar").toLowerCase();
+        const link   = r[16];
 
         if(search && !(`${id} ${nama}`.toLowerCase().includes(search))) return;
         if(fStatus && status !== fStatus) return;
@@ -109,22 +146,24 @@ function render(){
         if(bayar==="lunas") paid++;
 
         html += `
-        <tr class="border">
-            <td>${id}</td>
-            <td>${nama}</td>
-            <td>${hp}</td>
-            <td>${status}</td>
-            <td>${bayar}</td>
-            <td>${link ? `<a href="${link}" target="_blank">Buka</a>` : "-"}</td>
-            <td>
-                <button onclick="approve('${id}')">✔</button>
-                <button onclick="lunas('${id}')">💳</button>
-                <button onclick="tolak('${id}')">✖</button>
+        <tr class="border hover:bg-slate-50">
+            <td class="p-2">${id}</td>
+            <td class="p-2">${nama}</td>
+            <td class="p-2">${hp}</td>
+            <td class="p-2">${badge(status)}</td>
+            <td class="p-2">${badge(bayar)}</td>
+            <td class="p-2">
+                ${link ? `<a href="${link}" target="_blank" class="text-blue-600 underline">Buka</a>` : "-"}
+            </td>
+            <td class="p-2 space-x-1">
+                <button onclick="approve('${id}')" class="bg-green-500 text-white px-2 py-1 rounded">✔</button>
+                <button onclick="lunas('${id}')" class="bg-blue-500 text-white px-2 py-1 rounded">💳</button>
+                <button onclick="tolak('${id}')" class="bg-red-500 text-white px-2 py-1 rounded">✖</button>
             </td>
         </tr>`;
     });
 
-    tbody.innerHTML = html || `<tr><td colspan="7">Tidak ada data</td></tr>`;
+    tbody.innerHTML = html || `<tr><td colspan="7" class="text-center p-6">Tidak ada data</td></tr>`;
 
     document.getElementById("total").innerText = total;
     document.getElementById("pending").innerText = pending;
@@ -133,28 +172,34 @@ function render(){
 }
 
 /* ================= ACTION ================= */
-
 async function approve(id){
-    const link = prompt("Link CBT:");
+    const link = prompt("Masukkan link CBT:");
+    if(!link) return;
+
     await post("update_order",{id, status_order:"disetujui", link_cbt:link}, token);
     loadData();
 }
 
 async function tolak(id){
+    if(!confirm("Tolak data ini?")) return;
+
     await post("update_order",{id, status_order:"ditolak"}, token);
     loadData();
 }
 
 async function lunas(id){
+    if(!confirm("Tandai lunas?")) return;
+
     await post("update_order",{id, status_bayar:"lunas"}, token);
     loadData();
 }
 
 /* ================= EVENT ================= */
-document.getElementById("search").oninput = render;
-document.getElementById("filterStatus").onchange = render;
-document.getElementById("filterBayar").onchange = render;
+document.getElementById("search").addEventListener("input", render);
+document.getElementById("filterStatus").addEventListener("change", render);
+document.getElementById("filterBayar").addEventListener("change", render);
 
+/* ================= START ================= */
 loadData();
 </script>
 
