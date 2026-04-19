@@ -7,154 +7,180 @@
 
 <script src="https://cdn.tailwindcss.com"></script>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
+<script src="https://unpkg.com/lucide@latest"></script>
 
 <style>
 body { font-family: 'Inter', sans-serif; background:#f1f5f9; }
-.card { @apply bg-white p-5 rounded-2xl shadow; }
+.badge { @apply px-3 py-1 rounded-full text-[10px] font-bold border; }
+.btn-action { @apply p-2 rounded-lg text-white text-xs; }
 </style>
 </head>
 
 <body class="p-6">
 
-<h1 class="text-2xl font-bold mb-6">Dashboard Admin</h1>
+<h1 class="text-2xl font-bold mb-6">Dashboard Admin CBT</h1>
 
+<!-- STATS -->
 <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
-<div class="card text-center">Total<br><b id="total">0</b></div>
-<div class="card text-center">Pending<br><b id="pending">0</b></div>
-<div class="card text-center">Disetujui<br><b id="approved">0</b></div>
-<div class="card text-center">Lunas<br><b id="paid">0</b></div>
+<div>Total: <b id="total">0</b></div>
+<div>Pending: <b id="pending">0</b></div>
+<div>Disetujui: <b id="approved">0</b></div>
+<div>Lunas: <b id="paid">0</b></div>
 </div>
 
-<div class="card">
-<input id="search" placeholder="Cari..." class="border p-2 rounded w-full mb-4">
+<!-- FILTER -->
+<div class="flex gap-2 mb-4">
+<input id="search" placeholder="Cari..." class="border p-2 rounded">
+<select id="filterStatus" class="border p-2 rounded">
+<option value="">Semua Status</option>
+<option value="pending">Pending</option>
+<option value="disetujui">Disetujui</option>
+<option value="ditolak">Ditolak</option>
+</select>
+<select id="filterBayar" class="border p-2 rounded">
+<option value="">Semua Bayar</option>
+<option value="lunas">Lunas</option>
+<option value="menunggu_verifikasi">Menunggu</option>
+<option value="ditolak">Ditolak</option>
+</select>
+<button onclick="loadData()" class="bg-blue-600 text-white px-4 rounded">Refresh</button>
+</div>
 
-<table class="w-full text-sm">
-<thead>
-<tr class="bg-gray-200">
+<!-- TABLE -->
+<table class="w-full border">
+<thead class="bg-slate-800 text-white">
+<tr>
 <th>ID</th>
-<th>Madrasah</th>
+<th>Nama</th>
 <th>HP</th>
 <th>Status</th>
-<th>Bayar</th>
+<th>Pembayaran</th>
+<th>Link</th>
 <th>Aksi</th>
 </tr>
 </thead>
-<tbody id="tbody"></tbody>
+<tbody id="tbody">
+<tr><td colspan="7" class="text-center p-6">Loading...</td></tr>
+</tbody>
 </table>
-</div>
 
 <script src="../assets/app.js"></script>
 
 <script>
-// ================= AUTH =================
 const token = localStorage.getItem("token");
-if(!token){
-  alert("Silakan login dulu");
-  location="login.html";
-}
+if(!token) location="login.html";
 
-// ================= DATA =================
 let allData = [];
 
-// ================= LOAD =================
 async function loadData(){
-  try{
+    const tbody = document.getElementById("tbody");
+    tbody.innerHTML = `<tr><td colspan="7" class="text-center p-6">Loading...</td></tr>`;
 
-    console.log("Ambil data...");
+    try{
+        const res = await get("pendaftaran");
 
-    const res = await get("pendaftaran", token);
+        console.log("DEBUG API:", res);
 
-    console.log("Response:", res);
+        if(!res || res.status !== "success" || !Array.isArray(res.data)){
+            throw new Error("Data tidak valid dari server");
+        }
 
-    if(!res || res.status !== "success"){
-      throw new Error(res?.message || "Gagal ambil data");
+        if(res.data.length <= 1){
+            tbody.innerHTML = `<tr><td colspan="7">Tidak ada data</td></tr>`;
+            return;
+        }
+
+        allData = res.data.slice(1); // skip header
+        render();
+
+    }catch(err){
+        tbody.innerHTML = `<tr><td colspan="7" class="text-red-600">${err.message}</td></tr>`;
     }
-
-    if(!res.data){
-      throw new Error("Data kosong dari server");
-    }
-
-    allData = res.data.slice(1);
-
-    render();
-
-  }catch(err){
-    console.error(err);
-    document.getElementById("tbody").innerHTML =
-    `<tr><td colspan="6" class="text-red-600 text-center">${err.message}</td></tr>`;
-  }
 }
 
-// ================= RENDER =================
 function render(){
+    const tbody = document.getElementById("tbody");
+    const search = document.getElementById("search").value.toLowerCase();
+    const fStatus = document.getElementById("filterStatus").value;
+    const fBayar = document.getElementById("filterBayar").value;
 
-  const tbody = document.getElementById("tbody");
-  const search = document.getElementById("search").value.toLowerCase();
+    let html = "";
+    let total=0, pending=0, approved=0, paid=0;
 
-  let html="";
-  let total=0,pending=0,approved=0,paid=0;
+    allData.forEach(r => {
 
-  allData.forEach(r=>{
+        if(!r || r.length < 5) return;
 
-    const id = r[0];
-    const nama = r[3]||"-";
-    const hp = r[9]||"-";
-    const status = (r[14]||"pending").toLowerCase();
-    const bayar = (r[15]||"belum_bayar").toLowerCase();
+        const id = r[0] || "-";
+        const nama = r[3] || "-";
+        const hp = r[9] || "-";
 
-    if(search && !(`${id} ${nama}`.toLowerCase().includes(search))) return;
+        const status = (r[14] || "pending").toLowerCase();
+        const bayar = (r[15] || "belum_bayar").toLowerCase();
+        const link = r[16];
 
-    total++;
-    if(status==="pending") pending++;
-    if(status==="disetujui") approved++;
-    if(bayar==="lunas") paid++;
+        // FILTER
+        if(search && !(`${id} ${nama}`.toLowerCase().includes(search))) return;
+        if(fStatus && status !== fStatus) return;
+        if(fBayar && bayar !== fBayar) return;
 
-    html += `
-    <tr class="border-b">
-      <td>${id}</td>
-      <td>${nama}</td>
-      <td>${hp}</td>
-      <td>${status}</td>
-      <td>${bayar}</td>
-      <td class="space-x-2">
+        total++;
+        if(status==="pending") pending++;
+        if(status==="disetujui") approved++;
+        if(bayar==="lunas") paid++;
 
-        <button onclick="approve('${id}')" class="bg-green-500 text-white px-2 rounded">✔</button>
-        <button onclick="lunas('${id}')" class="bg-blue-500 text-white px-2 rounded">💳</button>
-        <button onclick="tolak('${id}')" class="bg-red-500 text-white px-2 rounded">✖</button>
+        html += `
+        <tr class="border">
+        <td>${id}</td>
+        <td>${nama}</td>
+        <td>${hp}</td>
 
-      </td>
-    </tr>
-    `;
-  });
+        <td><span class="badge bg-yellow-100">${status}</span></td>
+        <td><span class="badge bg-green-100">${bayar}</span></td>
 
-  tbody.innerHTML = html || `<tr><td colspan="6">Tidak ada data</td></tr>`;
+        <td>
+        ${link ? `<a href="${link}" target="_blank">Buka</a>` : "-"}
+        </td>
 
-  document.getElementById("total").innerText=total;
-  document.getElementById("pending").innerText=pending;
-  document.getElementById("approved").innerText=approved;
-  document.getElementById("paid").innerText=paid;
+        <td class="flex gap-1">
+        <button onclick="approve('${id}')" class="btn-action bg-green-600">✔</button>
+        <button onclick="lunas('${id}')" class="btn-action bg-blue-600">💳</button>
+        <button onclick="tolak('${id}')" class="btn-action bg-red-600">✖</button>
+        </td>
+        </tr>`;
+    });
+
+    tbody.innerHTML = html || `<tr><td colspan="7">Tidak ada data</td></tr>`;
+
+    document.getElementById("total").innerText = total;
+    document.getElementById("pending").innerText = pending;
+    document.getElementById("approved").innerText = approved;
+    document.getElementById("paid").innerText = paid;
 }
 
-// ================= ACTION =================
+/* ================= ACTION ================= */
+
 async function approve(id){
-  await post("update_order",{id,status_order:"disetujui"},token);
-  loadData();
-}
-
-async function lunas(id){
-  await post("update_order",{id,status_bayar:"lunas"},token);
-  loadData();
+    await post("update_order",{id, status_order:"disetujui"}, token);
+    loadData();
 }
 
 async function tolak(id){
-  await post("update_order",{id,status_order:"ditolak"},token);
-  loadData();
+    await post("update_order",{id, status_order:"ditolak"}, token);
+    loadData();
 }
 
-// ================= SEARCH =================
-document.getElementById("search").oninput = render;
+async function lunas(id){
+    await post("update_pembayaran",{pendaftaran_id:id, status:"lunas"}, token);
+    loadData();
+}
 
-// ================= INIT =================
+/* ================= FILTER ================= */
+
+document.getElementById("search").oninput = render;
+document.getElementById("filterStatus").onchange = render;
+document.getElementById("filterBayar").onchange = render;
+
 loadData();
 </script>
 
