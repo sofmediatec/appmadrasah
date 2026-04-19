@@ -1,87 +1,192 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <title>CBT Online Madrasah</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  <!-- BOOTSTRAP -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+
+  <!-- STYLE OPTIONAL -->
+  <style>
+    body {
+      background: #f5f7fa;
+    }
+
+    .hero {
+      background: linear-gradient(135deg, #0d6efd, #0a58ca);
+      color: white;
+      padding: 50px;
+      border-radius: 10px;
+    }
+
+    .card:hover {
+      transform: translateY(-5px);
+      transition: 0.3s;
+    }
+  </style>
+</head>
+
+<body>
+
+<div class="container py-5">
+
+  <!-- HERO -->
+  <div class="hero text-center mb-5">
+    <h1>CBT Online Madrasah</h1>
+    <p>Solusi ujian online cepat, mudah & profesional</p>
+    <a href="form.html" class="btn btn-light btn-lg mt-3">Ajukan Sekarang</a>
+  </div>
+
+  <!-- PAKET -->
+  <h4 class="mb-3">Paket CBT</h4>
+  <div class="row mb-5" id="paketList">
+    <div class="text-center">Loading paket...</div>
+  </div>
+
+  <!-- DATA USER -->
+  <h4 class="mb-3">Daftar Pengguna CBT</h4>
+
+  <div class="table-responsive">
+    <table class="table table-bordered table-striped align-middle">
+      <thead class="table-dark text-center">
+        <tr>
+          <th>No</th>
+          <th>Madrasah</th>
+          <th>Kabupaten</th>
+          <th>Paket</th>
+          <th>Status</th>
+          <th>Pembayaran</th>
+          <th>Aksi</th>
+          <th>CBT</th>
+        </tr>
+      </thead>
+
+      <tbody id="userList">
+        <tr>
+          <td colspan="8" class="text-center">Loading data...</td>
+        </tr>
+      </tbody>
+
+    </table>
+  </div>
+
+</div>
+
+
+<!-- APP JS -->
 <script src="assets/app.js"></script>
 
 <script>
+
+// ===================
+// UTIL
+// ===================
+function val(v, d="-"){
+  return (v === undefined || v === null || v === "") ? d : v;
+}
+
+
 // ===================
 // LOAD PAKET
 // ===================
 async function loadPaket(){
+
+  const container = document.getElementById("paketList");
+
   try{
     const res = await get("paket");
 
-    if(!res || !res.data){
-      throw new Error("Data paket kosong");
+    console.log("PAKET:", res);
+
+    if(!res || res.status !== "success" || !Array.isArray(res.data)){
+      throw new Error("Data paket tidak valid");
+    }
+
+    if(res.data.length === 0){
+      container.innerHTML = `<div class="text-muted">Belum ada paket</div>`;
+      return;
     }
 
     let html = "";
 
-    res.data.slice(1).forEach(p => {
+    res.data.forEach(p => {
+
       html += `
       <div class="col-md-4 mb-3">
         <div class="card shadow text-center p-3">
-          <h4>${p[1] || "-"}</h4>
-          <p>${p[3] || 0} peserta</p>
+          <h4>${val(p[1])}</h4>
+          <p>${val(p[3],0)} peserta</p>
           <h5>Rp ${Number(p[2] || 0).toLocaleString()}</h5>
         </div>
       </div>`;
     });
 
-    document.getElementById("paketList").innerHTML = html;
+    container.innerHTML = html;
 
   }catch(err){
-    document.getElementById("paketList").innerHTML =
+
+    console.error("ERROR LOAD PAKET:", err);
+
+    container.innerHTML =
       `<div class="text-danger">Gagal load paket</div>`;
   }
 }
 
 
 // ===================
-// LOAD DATA USER
+// LOAD USER
 // ===================
 async function loadUser(){
 
   const tbody = document.getElementById("userList");
-  tbody.innerHTML = `<tr><td colspan="8" class="text-center">Loading...</td></tr>`;
+
+  tbody.innerHTML =
+    `<tr><td colspan="8" class="text-center">Loading...</td></tr>`;
 
   try{
 
     const res = await get("pendaftaran");
 
-    if(!res || !res.data){
-      throw new Error("Data tidak ditemukan");
+    console.log("USER DATA:", res);
+
+    if(!res || res.status !== "success" || !Array.isArray(res.data)){
+      throw new Error("Response API tidak valid");
+    }
+
+    if(res.data.length === 0){
+      tbody.innerHTML =
+        `<tr><td colspan="8" class="text-center">Belum ada data</td></tr>`;
+      return;
     }
 
     let html = "";
     let no = 1;
 
-    res.data.slice(1).reverse().forEach(r => {
+    res.data.reverse().forEach(r => {
 
-      const id     = r[0];
-      const nama   = r[3] || "-";
-      const kab    = r[6] || "-";
-      const paket  = r[12] || "-";
-      const status = (r[14] || "pending").toLowerCase();
-      const bayar  = (r[15] || "belum_bayar").toLowerCase();
-      const link   = r[16] || "";
+      const id     = val(r[0]);
+      const nama   = val(r[3]);
+      const kab    = val(r[6]);
+      const paket  = val(r[12]);
+      const status = val(r[14], "pending").toLowerCase();
+      const bayar  = val(r[15], "belum_bayar").toLowerCase();
+      const link   = val(r[16], "");
 
-      // ===================
       // STATUS ORDER
-      // ===================
       let badge = "secondary";
       if(status === "pending") badge = "warning";
       if(status === "disetujui") badge = "success";
       if(status === "ditolak") badge = "danger";
 
-      // ===================
       // STATUS BAYAR
-      // ===================
       let bayarBadge = "secondary";
       if(bayar === "menunggu_verifikasi") bayarBadge = "warning";
       if(bayar === "lunas") bayarBadge = "success";
       if(bayar === "ditolak") bayarBadge = "danger";
 
-      // ===================
       // TOMBOL BAYAR
-      // ===================
       let tombolBayar = "-";
 
       if(bayar === "belum_bayar" || bayar === "ditolak"){
@@ -90,52 +195,44 @@ async function loadUser(){
              class="btn btn-sm btn-warning">
              Bayar
           </a>`;
-      }
-
-      if(bayar === "menunggu_verifikasi"){
-        tombolBayar = `<span class="text-warning">Menunggu Verifikasi</span>`;
-      }
-
-      if(bayar === "lunas"){
+      }else if(bayar === "menunggu_verifikasi"){
+        tombolBayar = `<span class="text-warning">Menunggu</span>`;
+      }else if(bayar === "lunas"){
         tombolBayar = `<span class="text-success">Lunas</span>`;
       }
 
-      // ===================
       // LINK CBT
-      // ===================
       let tombolCBT = "-";
 
-      if(link && link !== ""){
-        tombolCBT = `<a href="${link}" target="_blank" class="btn btn-sm btn-primary">Masuk CBT</a>`;
+      if(link && link !== "-"){
+        tombolCBT = `
+          <a href="${link}" target="_blank" 
+             class="btn btn-sm btn-primary">
+             Masuk CBT
+          </a>`;
       }
 
       html += `
-      <tr>
+      <tr class="text-center">
         <td>${no++}</td>
-        <td>${nama}</td>
+        <td class="text-start">${nama}</td>
         <td>${kab}</td>
         <td>${paket}</td>
 
         <td><span class="badge bg-${badge}">${status}</span></td>
-
         <td><span class="badge bg-${bayarBadge}">${bayar}</span></td>
 
         <td>${tombolBayar}</td>
-
         <td>${tombolCBT}</td>
       </tr>
       `;
     });
 
-    if(html === ""){
-      html = `<tr><td colspan="8" class="text-center">Belum ada data</td></tr>`;
-    }
-
     tbody.innerHTML = html;
 
   }catch(err){
 
-    console.error(err);
+    console.error("ERROR LOAD USER:", err);
 
     tbody.innerHTML =
       `<tr><td colspan="8" class="text-danger text-center">${err.message}</td></tr>`;
@@ -144,9 +241,25 @@ async function loadUser(){
 
 
 // ===================
+// AUTO REFRESH (OPSIONAL)
+// ===================
+function autoRefresh(){
+  setInterval(() => {
+    loadUser();
+  }, 30000); // 30 detik
+}
+
+
+// ===================
 // INIT
 // ===================
-loadPaket();
-loadUser();
+document.addEventListener("DOMContentLoaded", () => {
+  loadPaket();
+  loadUser();
+  autoRefresh(); // bisa dihapus kalau tidak mau auto refresh
+});
 
 </script>
+
+</body>
+</html>
