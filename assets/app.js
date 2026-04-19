@@ -15,15 +15,11 @@ function fetchWithTimeout(resource, options = {}, timeout = 15000) {
 
 async function parseJSON(res) {
   const text = await res.text();
-
   try {
     return JSON.parse(text);
-  } catch (e) {
-    console.error("❌ Bukan JSON:", text);
-    return {
-      status: "error",
-      message: "Response server tidak valid"
-    };
+  } catch {
+    console.error("Response bukan JSON:", text);
+    return { status: "error", message: "Response tidak valid" };
   }
 }
 
@@ -42,15 +38,12 @@ async function request(url, options = {}) {
   try {
     const res = await fetchWithTimeout(url, options);
 
-    if (!res.ok) {
-      throw new Error("HTTP " + res.status);
-    }
+    if (!res.ok) throw new Error("HTTP " + res.status);
 
     const data = await parseJSON(res);
 
-    // 🔥 AUTO HANDLE TOKEN EXPIRED
     if (data.status === "unauthorized") {
-      alert("Session habis, silakan login ulang");
+      alert("Session habis, login ulang");
       logout();
       return;
     }
@@ -58,33 +51,20 @@ async function request(url, options = {}) {
     return data;
 
   } catch (err) {
-    console.error("❌ REQUEST ERROR:", err);
-
-    return {
-      status: "error",
-      message: err.message || "Koneksi gagal"
-    };
+    console.error("REQUEST ERROR:", err);
+    return { status: "error", message: err.message || "Koneksi gagal" };
   }
 }
 
 /* =========================
-   POST (FIX FINAL)
+   POST (KOMPATIBEL GAS)
 ========================= */
 
 function post(action, data = {}, token = "") {
 
-  if (!action) {
-    return Promise.resolve({
-      status: "error",
-      message: "Action kosong"
-    });
-  }
-
-  // 🔥 WAJIB: action & token di URL
   let url = `${API_URL}?action=${encodeURIComponent(action)}`;
   if (token) url += `&token=${encodeURIComponent(token)}`;
 
-  // 🔥 Kirim juga di body (double safe)
   const formData = new URLSearchParams();
 
   formData.append("action", action);
@@ -103,25 +83,23 @@ function post(action, data = {}, token = "") {
 }
 
 /* =========================
-   GET
+   GET (FIX TOKEN)
 ========================= */
 
-function get(action, params = {}) {
+function get(action, params = {}, token = "") {
 
-  if (!action) {
-    return Promise.resolve({
-      status: "error",
-      message: "Action kosong"
-    });
-  }
+  let query = { action, ...params };
 
-  const url = `${API_URL}?${buildQuery({ action, ...params })}`;
+  // 🔥 FIX: token WAJIB ikut
+  if (token) query.token = token;
+
+  const url = `${API_URL}?${buildQuery(query)}`;
 
   return request(url);
 }
 
 /* =========================
-   AUTH HELPER
+   AUTH
 ========================= */
 
 function getToken(){
@@ -132,19 +110,7 @@ function setToken(token){
   localStorage.setItem("token", token);
 }
 
-function isLoggedIn(){
-  return !!getToken();
-}
-
 function logout(){
   localStorage.clear();
   window.location = "login.html";
-}
-
-/* =========================
-   DEBUG
-========================= */
-
-function debugLog(label, data){
-  console.log("🔎", label, data);
 }
