@@ -7,7 +7,6 @@
 
 <script src="https://cdn.tailwindcss.com"></script>
 <script src="https://unpkg.com/lucide@latest"></script>
-
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
 <link rel="icon" href="data:,">
 
@@ -39,6 +38,7 @@ body { font-family: 'Inter', sans-serif; }
     font-size: 11px;
     font-weight: bold;
 }
+
 .skeleton {
     animation: pulse 1.5s infinite;
     background: #e5e7eb;
@@ -72,6 +72,11 @@ body { font-family: 'Inter', sans-serif; }
     <div class="card card-purple"><div>Lunas</div><div id="paid" class="text-3xl font-bold">0</div><i data-lucide="credit-card" class="icon"></i></div>
 </div>
 
+<!-- FILTER -->
+<div class="bg-white p-4 rounded shadow mb-4 flex gap-3 flex-wrap">
+    <input id="search" class="border p-2 rounded" placeholder="Cari nama / ID...">
+</div>
+
 <!-- TABLE -->
 <div class="bg-white rounded shadow overflow-auto">
 <table class="w-full text-sm">
@@ -83,19 +88,30 @@ body { font-family: 'Inter', sans-serif; }
 <th class="p-3">Status</th>
 <th class="p-3">Bayar</th>
 <th class="p-3">Bukti</th>
+<th class="p-3">Aksi</th>
 </tr>
 </thead>
 <tbody id="tbody"></tbody>
 </table>
 </div>
 
+<!-- PAGINATION -->
+<div class="mt-4 flex justify-between">
+    <button onclick="prevPage()" class="bg-gray-300 px-3 py-1 rounded">Prev</button>
+    <button onclick="nextPage()" class="bg-gray-300 px-3 py-1 rounded">Next</button>
+</div>
+
 <script>
 const token = localStorage.getItem("token");
 if(!token) location="login.html";
 
-let allData=[];
+const user = JSON.parse(localStorage.getItem("user")||"{}");
 
-/* ================= FIX DRIVE ================= */
+let allData=[];
+let page=1;
+let limit=10;
+
+/* ================= FIX GOOGLE DRIVE ================= */
 function fixDriveUrl(url){
     if(!url) return "";
     if(url.includes("drive.google.com")){
@@ -105,62 +121,60 @@ function fixDriveUrl(url){
     return url;
 }
 
-/* ================= LOAD ================= */
+/* ================= LOAD DATA ================= */
 async function loadData(){
     const tbody = document.getElementById("tbody");
 
-    tbody.innerHTML = `<tr><td colspan="6" class="p-6 text-center">Loading...</td></tr>`;
+    tbody.innerHTML = `<tr><td colspan="7" class="p-6"><div class="skeleton h-6 w-full"></div></td></tr>`;
 
-    try {
-        // 🔥 GANTI KE ENDPOINT YANG BENAR
+    try{
         const res = await get("pendaftaran");
 
-        console.log("DEBUG RESPONSE:", res);
+        console.log("DEBUG:", res);
 
-        // VALIDASI KERAS
-        if(!res){
-            throw new Error("API tidak merespon");
-        }
-
-        if(res.status !== "success"){
-            throw new Error(res.message || "Status bukan success");
+        if(!res || res.status !== "success"){
+            throw new Error(res?.message || "Gagal ambil data");
         }
 
         if(!Array.isArray(res.data)){
-            throw new Error("Data bukan array");
+            throw new Error("Format data salah");
         }
 
         allData = res.data.slice(1);
-
         render();
 
-    } catch(err){
-        console.error(err);
-        tbody.innerHTML = `<tr><td colspan="6" class="text-red-600 text-center p-6">${err.message}</td></tr>`;
+    }catch(err){
+        tbody.innerHTML = `<tr><td colspan="7" class="text-red-600 text-center p-6">${err.message}</td></tr>`;
     }
 }
 
 /* ================= RENDER ================= */
 function render(){
     const tbody = document.getElementById("tbody");
+    const search = document.getElementById("search").value.toLowerCase();
+
+    let start=(page-1)*limit;
+    let data=allData.slice(start,start+limit);
 
     let html="";
     let stats={total:0,pending:0,approved:0,paid:0};
 
-    allData.forEach(r=>{
+    data.forEach(r=>{
         if(!r) return;
 
-        const id = r[0] || "-";
-        const nama = r[3] || "-";
-        const hp = r[9] || "-";
-        const status = (r[14] || "pending").toLowerCase();
-        const bayar = (r[15] || "belum_bayar").toLowerCase();
-        const bukti = r[r.length - 1];
+        const id=r[0];
+        const nama=r[3]||"-";
+        const hp=r[9]||"-";
+        const status=(r[14]||"pending").toLowerCase();
+        const bayar=(r[15]||"belum_bayar").toLowerCase();
+        const bukti=r[r.length-1];
+
+        if(search && !(`${id} ${nama}`.toLowerCase().includes(search))) return;
 
         stats.total++;
-        if(status==="pending") stats.pending++;
-        if(status==="disetujui") stats.approved++;
-        if(bayar==="lunas") stats.paid++;
+        if(status==="pending")stats.pending++;
+        if(status==="disetujui")stats.approved++;
+        if(bayar==="lunas")stats.paid++;
 
         html+=`
         <tr class="border">
@@ -177,18 +191,45 @@ function render(){
                     : "-"
                 }
             </td>
+            <td class="p-2 flex gap-1">
+                ${user?.role==="admin" ? `
+                    <button onclick="approve('${id}')" class="bg-green-600 text-white px-2 rounded">✔</button>
+                    <button onclick="lunas('${id}')" class="bg-blue-600 text-white px-2 rounded">💳</button>
+                    <button onclick="tolak('${id}')" class="bg-red-600 text-white px-2 rounded">✖</button>
+                ` : '-'}
+            </td>
         </tr>`;
     });
 
-    tbody.innerHTML = html || `<tr><td colspan="6" class="p-6 text-center">Tidak ada data</td></tr>`;
+    tbody.innerHTML = html || `<tr><td colspan="7" class="text-center p-6">Tidak ada data</td></tr>`;
 
-    document.getElementById("total").innerText = stats.total;
+    document.getElementById("total").innerText = allData.length;
     document.getElementById("pending").innerText = stats.pending;
     document.getElementById("approved").innerText = stats.approved;
     document.getElementById("paid").innerText = stats.paid;
 
     lucide.createIcons();
 }
+
+/* ================= ACTION ================= */
+async function approve(id){
+    await post("update_order",{id, status_order:"disetujui"}, token);
+    loadData();
+}
+
+async function tolak(id){
+    await post("update_order",{id, status_order:"ditolak"}, token);
+    loadData();
+}
+
+async function lunas(id){
+    await post("update_order",{id, status_bayar:"lunas"}, token);
+    loadData();
+}
+
+/* ================= PAGINATION ================= */
+function nextPage(){page++;render();}
+function prevPage(){if(page>1)page--;render();}
 
 /* ================= EXPORT ================= */
 function exportExcel(){
@@ -204,10 +245,17 @@ function exportExcel(){
     a.click();
 }
 
-/* ================= INIT ================= */
-window.onload = () => {
-    loadData();
+/* ================= LOGOUT ================= */
+function logout(){
+    localStorage.clear();
+    location="login.html";
 }
+
+/* ================= INIT ================= */
+window.onload=()=>{
+    loadData();
+    document.getElementById("search").oninput=render;
+};
 </script>
 
 </body>
