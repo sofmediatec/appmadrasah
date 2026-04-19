@@ -27,15 +27,6 @@ body { font-family: 'Inter', sans-serif; }
     font-size: 11px;
     font-weight: bold;
 }
-
-.skeleton {
-    animation: pulse 1.5s infinite;
-    background: #e5e7eb;
-    border-radius: 6px;
-}
-@keyframes pulse {
-    0%{opacity:1} 50%{opacity:.5} 100%{opacity:1}
-}
 </style>
 </head>
 
@@ -85,9 +76,10 @@ body { font-family: 'Inter', sans-serif; }
 </div>
 
 <!-- MODAL -->
-<div id="modal" class="fixed inset-0 bg-black/50 hidden items-center justify-center">
-<div class="bg-white p-6 rounded w-96">
+<div id="modal" class="fixed inset-0 bg-black/50 hidden z-50">
+<div class="flex items-center justify-center min-h-screen">
 
+<div class="bg-white p-6 rounded w-96 shadow-lg">
 <h2 class="font-bold mb-3">Detail</h2>
 
 <div>ID: <span id="dId"></span></div>
@@ -113,6 +105,8 @@ body { font-family: 'Inter', sans-serif; }
 </div>
 
 </div>
+
+</div>
 </div>
 
 <script>
@@ -124,35 +118,23 @@ const user = JSON.parse(localStorage.getItem("user")||"{}");
 let allData=[];
 let selectedId=null;
 
-/* ===== FIX GOOGLE DRIVE (VERSI STABIL) ===== */
+/* FIX DRIVE */
 function fixDriveUrl(url){
     if(!url) return "";
 
-    try{
-        // format utama
-        let match = url.match(/\/d\/([a-zA-Z0-9_-]+)/);
-        if(match) return `https://drive.google.com/uc?export=view&id=${match[1]}`;
+    let match = url.match(/\/d\/([a-zA-Z0-9_-]+)/);
+    if(match) return `https://drive.google.com/uc?export=view&id=${match[1]}`;
 
-        // fallback
-        match = url.match(/[-\w]{25,}/);
-        if(match) return `https://drive.google.com/uc?export=view&id=${match[0]}`;
-
-    }catch(e){
-        console.log("URL ERROR:", url);
-    }
-
-    return url;
+    return "";
 }
 
-/* ===== LOAD ===== */
+/* LOAD */
 async function loadData(){
     const tbody=document.getElementById("tbody");
-    tbody.innerHTML=`<tr><td colspan="7" class="p-6"><div class="skeleton h-6 w-full"></div></td></tr>`;
+    tbody.innerHTML=`<tr><td colspan="7" class="p-6 text-center">Loading...</td></tr>`;
 
     try{
         const res = await get("pendaftaran");
-
-        console.log("DATA RAW:", res);
 
         if(res.status!=="success") throw new Error(res.message);
 
@@ -164,7 +146,7 @@ async function loadData(){
     }
 }
 
-/* ===== RENDER ===== */
+/* RENDER */
 function render(){
     const tbody=document.getElementById("tbody");
     const search=document.getElementById("search").value.toLowerCase();
@@ -181,11 +163,9 @@ function render(){
         const status=(r[14]||"pending").toLowerCase();
         const bayar=(r[15]||"belum_bayar").toLowerCase();
 
-        // 🔥 ambil bukti lebih aman
-        const rawBukti = r[6] || r[17] || r[r.length-1] || "";
+        // ✅ FIX FINAL
+        const rawBukti = r[6] || "";
         const bukti = fixDriveUrl(rawBukti);
-
-        console.log("Bukti:", rawBukti, "=>", bukti);
 
         if(search && !(`${id} ${nama}`.toLowerCase().includes(search))) return;
 
@@ -219,44 +199,43 @@ function render(){
 
     tbody.innerHTML=html;
 
-    document.getElementById("total").innerText=allData.length;
-    document.getElementById("pending").innerText=stats.pending;
-    document.getElementById("approved").innerText=stats.approved;
-    document.getElementById("paid").innerText=stats.paid;
+    total.innerText=allData.length;
+    pending.innerText=stats.pending;
+    approved.innerText=stats.approved;
+    paid.innerText=stats.paid;
 }
 
-/* ===== MODAL ===== */
+/* MODAL */
 function openDetail(id){
     const r = allData.find(x=>x[0]==id);
     if(!r) return;
 
     selectedId=id;
 
-    document.getElementById("dId").innerText=id;
-    document.getElementById("dStatus").value=r[14]||"pending";
-    document.getElementById("dBayar").value=r[15]||"belum_bayar";
-    document.getElementById("dLink").value=r[16]||"";
+    dId.innerText=id;
+    dStatus.value=r[14]||"pending";
+    dBayar.value=r[15]||"belum_bayar";
+    dLink.value=r[16]||"";
 
-    const raw = r[6] || r[r.length-1];
+    const raw = r[6] || "";
     const bukti = fixDriveUrl(raw);
 
-    const img = document.getElementById("dBukti");
-
     if(bukti){
-        img.src=bukti;
-        img.classList.remove("hidden");
+        dBukti.src=bukti;
+        dBukti.classList.remove("hidden");
     }else{
-        img.classList.add("hidden");
+        dBukti.classList.add("hidden");
     }
 
-    document.getElementById("modal").classList.remove("hidden");
+    modal.classList.remove("hidden");
 }
 
+/* CLOSE */
 function closeModal(){
-    document.getElementById("modal").classList.add("hidden");
+    modal.classList.add("hidden");
 }
 
-/* ===== SAVE ===== */
+/* SAVE */
 async function saveDetail(){
     await post("update_order",{
         id:selectedId,
@@ -269,7 +248,7 @@ async function saveDetail(){
     loadData();
 }
 
-/* ===== EXPORT ===== */
+/* EXPORT */
 function exportExcel(){
     let csv="ID,Nama,HP\n";
     allData.forEach(r=>{
@@ -288,10 +267,10 @@ function logout(){
     location="login.html";
 }
 
-/* ===== INIT ===== */
+/* INIT */
 window.onload=()=>{
     loadData();
-    document.getElementById("search").oninput=render;
+    search.oninput=render;
 };
 </script>
 
