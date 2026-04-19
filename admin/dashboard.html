@@ -119,16 +119,38 @@ let selectedId=null;
 /* FIX DRIVE */
 function fixDriveUrl(url){
     if(!url) return "";
-    const match = url.match(/\/d\/([a-zA-Z0-9_-]+)/);
-    if(match) return `https://drive.google.com/uc?export=view&id=${match[1]}`;
+
+    try{
+        // format /file/d/
+        let match = url.match(/\/d\/([a-zA-Z0-9_-]+)/);
+        if(match) return `https://drive.google.com/uc?export=view&id=${match[1]}`;
+
+        // fallback (kadang format beda)
+        match = url.match(/[-\w]{25,}/);
+        if(match) return `https://drive.google.com/uc?export=view&id=${match[0]}`;
+
+    }catch(e){
+        console.log("URL ERROR:", url);
+    }
+
     return "";
 }
 
 /* 🔥 AMBIL BUKTI DARI SHEET PEMBAYARAN */
 function getBuktiById(pendaftaranId){
-    const row = paymentsData.find(p => p[1] == pendaftaranId);
-    if(!row) return "";
-    return row[6]; // kolom bukti_transfer
+    if(!paymentsData.length) return "";
+
+    // paksa string biar pasti match
+    const row = paymentsData.find(p => String(p[1]).trim() === String(pendaftaranId).trim());
+
+    if(!row){
+        console.log("❌ TIDAK KETEMU BUKTI UNTUK ID:", pendaftaranId);
+        return "";
+    }
+
+    console.log("✅ KETEMU BUKTI:", row);
+
+    return row[6] || "";
 }
 
 /* LOAD */
