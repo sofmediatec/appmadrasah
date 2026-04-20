@@ -158,17 +158,24 @@
 
     document.getElementById("form").onsubmit = function(e){
         e.preventDefault();
-
+    
         const btn = document.getElementById("btnSubmit");
         const originalText = btn.innerText;
         btn.innerText = "MEMPROSES DATA...";
         btn.disabled = true;
-
+    
+        // 🔥 Ambil data form
         const data = Object.fromEntries(new FormData(this));
-
+    
+        // 🔥 TAMBAHKAN DI SINI
         data.harga = getHarga(data.paket_id);
+        data.user_id = "guest";
+        data.jenjang = "madrasah";
+    
+        // optional (kalau masih dipakai)
         data.created_by = ref || "";
-
+    
+        // 🔥 kirim ke backend
         post("daftar", data).then(res => {
             if(res.status !== "success"){
                 alert(res.message || "Pendaftaran gagal, silakan coba lagi.");
@@ -177,7 +184,6 @@
                 return;
             }
             
-            // Redirect ke halaman pembayaran
             window.location = "bayar.html?id=" + res.id + "&kode=" + res.kode;
         }).catch(err => {
             console.error(err);
