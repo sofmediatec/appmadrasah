@@ -203,18 +203,15 @@ function fixDriveUrl(url){
 
     let id = "";
 
-    if(url.includes("id=")){
-        id = url.split("id=")[1].split("&")[0];
-    } else if(url.includes("/file/d/")){
+    if(url.includes("/file/d/")){
         id = url.split("/file/d/")[1].split("/")[0];
-    } else {
-        const match = url.match(/[-\w]{25,}/);
-        if(match) id = match[0];
+    } else if(url.includes("id=")){
+        id = url.split("id=")[1].split("&")[0];
     }
 
-    // ✅ WAJIB pakai ini (bisa tampil di <img>)
+    // 🔥 INI YANG BENAR UNTUK <img>
     return id 
-        ? `https://drive.google.com/uc?export=view&id=${id}`
+        ? `https://lh3.googleusercontent.com/d/${id}`
         : "";
 }
 
