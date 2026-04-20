@@ -180,26 +180,40 @@
 
     async function loadPaket(){
         try {
-            const res = await get("paket");
-            if(!res || !res.data) throw new Error("Data paket kosong");
-
+            const res = await get("paket_v2");
+    
+            if(!res || res.status !== "success" || !res.data){
+                throw new Error(res?.message || "Data paket gagal dimuat");
+            }
+    
             let html = "";
-            res.data.slice(1).forEach((p, index) => {
+    
+            res.data.forEach((p, index) => {
+    
+                const nama  = p.nama || "-";
+                const harga = p.harga || 0;
+    
+                // 👉 jika kolom deskripsi kamu pakai untuk jumlah siswa
+                const siswa = p.deskripsi || 0;
+    
                 html += `
                 <div class="bg-white rounded-3xl p-10 shadow-xl border border-slate-100 text-center relative group transition-all hover:border-blue-500" data-aos="fade-up" data-aos-delay="${index * 100}">
-                    <h3 class="text-xl font-black text-slate-900 mb-2">${p[1] || "-"}</h3>
-                    <p class="text-blue-600 text-xs mb-6 uppercase tracking-widest font-black">${p[3] || 0} Peserta Aktif</p>
+                    <h3 class="text-xl font-black text-slate-900 mb-2">${nama}</h3>
+                    <p class="text-blue-600 text-xs mb-6 uppercase tracking-widest font-black">${siswa} Peserta Aktif</p>
                     <div class="text-3xl font-black text-slate-900 mb-8">
-                        <span class="text-sm font-bold text-slate-400 mr-1">Rp</span>${Number(p[2] || 0).toLocaleString()}
+                        <span class="text-sm font-bold text-slate-400 mr-1">Rp</span>${Number(harga).toLocaleString()}
                     </div>
                     <a href="form.html" class="block w-full py-4 rounded-2xl font-black bg-slate-900 text-white hover:bg-blue-700 transition-all shadow-lg shadow-slate-200">
                         Ambil Paket
                     </a>
                 </div>`;
             });
+    
             document.getElementById("paketList").innerHTML = html;
+    
         } catch(err) {
-            document.getElementById("paketList").innerHTML = `<div class="col-span-3 text-red-600 font-bold text-center py-10">${err.message}</div>`;
+            document.getElementById("paketList").innerHTML =
+            `<div class="col-span-3 text-red-600 font-bold text-center py-10">${err.message}</div>`;
         }
     }
 
