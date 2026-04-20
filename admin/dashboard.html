@@ -209,12 +209,11 @@ function fixDriveUrl(url){
         id = url.split("id=")[1].split("&")[0];
     }
 
-    // 🔥 INI YANG BENAR UNTUK <img>
+    // 🔥 gunakan thumbnail Google (PALING STABIL)
     return id 
-        ? `https://lh3.googleusercontent.com/d/${id}`
+        ? `https://drive.google.com/thumbnail?id=${id}`
         : "";
 }
-
 async function loadData(){
     const tbody=document.getElementById("tbody");
     tbody.innerHTML=`<tr><td colspan="7" class="p-6 text-center">Loading...</td></tr>`;
