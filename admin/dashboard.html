@@ -199,14 +199,29 @@ let selectedId=null;
 
 function fixDriveUrl(url){
     if(!url) return "";
-    let id="";
+
+    let id = "";
+
+    // format 1: open?id=
     if(url.includes("id=")){
-        id = url.split("id=")[1];
-    } else {
+        id = url.split("id=")[1].split("&")[0];
+    }
+
+    // format 2: /file/d/
+    else if(url.includes("/file/d/")){
+        id = url.split("/file/d/")[1].split("/")[0];
+    }
+
+    // fallback regex
+    else {
         const match = url.match(/[-\w]{25,}/);
         if(match) id = match[0];
     }
-    return id ? `https://drive.google.com/uc?export=view&id=${id}` : url;
+
+    // ⛔ PENTING: gunakan VIEWER universal (bisa PDF & image)
+    return id 
+        ? `https://drive.google.com/file/d/${id}/preview`
+        : "";
 }
 
 async function loadData(){
