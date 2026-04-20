@@ -6,7 +6,9 @@
 <title>Dashboard Admin CBT</title>
 
 <script src="https://cdn.tailwindcss.com"></script>
+<script src="https://unpkg.com/lucide@latest"></script>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
+<link rel="icon" href="data:,">
 
 <style>
 body { font-family: 'Inter', sans-serif; }
@@ -15,6 +17,7 @@ body { font-family: 'Inter', sans-serif; }
     border-radius: 16px;
     padding: 18px;
     color: white;
+    position: relative;
 }
 .card-blue { background: linear-gradient(135deg,#3b82f6,#1e3a8a); }
 .card-yellow { background: linear-gradient(135deg,#f59e0b,#b45309); }
@@ -27,6 +30,15 @@ body { font-family: 'Inter', sans-serif; }
     font-size: 11px;
     font-weight: bold;
 }
+
+.skeleton {
+    animation: pulse 1.5s infinite;
+    background: #e5e7eb;
+    border-radius: 6px;
+}
+@keyframes pulse {
+    0%{opacity:1} 50%{opacity:.5} 100%{opacity:1}
+}
 </style>
 </head>
 
@@ -35,7 +47,7 @@ body { font-family: 'Inter', sans-serif; }
 <script src="../assets/app.js"></script>
 
 <!-- NAVBAR -->
-<div class="flex justify-between mb-6">
+<div class="flex justify-between items-center mb-6">
     <h1 class="text-2xl font-bold">Dashboard CBT</h1>
     <div class="flex gap-2">
         <button onclick="exportExcel()" class="bg-green-600 text-white px-3 py-2 rounded">Excel</button>
@@ -75,15 +87,17 @@ body { font-family: 'Inter', sans-serif; }
 </table>
 </div>
 
-<!-- MODAL (TENGAH) -->
-<div id="modal" class="fixed inset-0 bg-black/50 hidden z-50 flex items-center justify-center">
-<div class="bg-white p-6 rounded w-96 shadow-lg">
+<!-- MODAL -->
+<div id="modal" class="fixed inset-0 bg-black/50 hidden items-center justify-center">
+<div class="bg-white p-6 rounded w-96">
 
-<h2 class="font-bold mb-3">Detail</h2>
+<h2 class="font-bold mb-3">Detail Pendaftaran</h2>
 
-<div>ID: <span id="dId"></span></div>
+<div class="mb-2 text-sm text-gray-600">
+ID: <span id="dId"></span>
+</div>
 
-<img id="dBukti" class="w-full h-40 object-cover rounded my-3 border hidden">
+<img id="dBukti" class="w-full h-40 object-cover rounded mb-3 border hidden">
 
 <select id="dStatus" class="border w-full p-2 mb-2">
 <option value="pending">Pending</option>
@@ -92,7 +106,8 @@ body { font-family: 'Inter', sans-serif; }
 </select>
 
 <select id="dBayar" class="border w-full p-2 mb-2">
-<option value="belum_bayar">Belum</option>
+<option value="belum_bayar">Belum Bayar</option>
+<option value="menunggu_verifikasi">Menunggu</option>
 <option value="lunas">Lunas</option>
 </select>
 
@@ -113,63 +128,34 @@ if(!token) location="login.html";
 const user = JSON.parse(localStorage.getItem("user")||"{}");
 
 let allData=[];
-let paymentsData=[]; // tetap ada (tidak dihapus)
 let selectedId=null;
 
-/* FIX DRIVE */
+/* ================= FIX GOOGLE DRIVE ================= */
 function fixDriveUrl(url){
     if(!url) return "";
 
-    try{
-        let match = url.match(/\/d\/([a-zA-Z0-9_-]+)/);
+    // format /file/d/
+    let match = url.match(/\/d\/([a-zA-Z0-9_-]+)/);
+    if(match) return `https://drive.google.com/uc?export=view&id=${match[1]}`;
 
-        if(match){
-            const id = match[1];
+    // format id random
+    match = url.match(/[-\w]{25,}/);
+    if(match) return `https://drive.google.com/uc?export=view&id=${match[0]}`;
 
-            // ✅ pakai thumbnail (ANTI BLOKIR)
-            return `https://drive.google.com/thumbnail?id=${id}&sz=w1000`;
-        }
-
-    }catch(e){
-        console.log("URL ERROR:", url);
-    }
-
-    return "";
+    return url;
 }
 
-/* 🔥 UPDATED: fallback ke dashboard */
-function getBuktiById(pendaftaranId){
-    // 🔥 PRIORITAS: dari dashboard (sudah join backend)
-    const row = allData.find(r => String(r[0]) === String(pendaftaranId));
-    if(row){
-        const bukti = row[row.length - 1];
-        if(bukti) return bukti;
-    }
-
-    // 🔥 fallback lama (tetap dipertahankan)
-    if(!paymentsData.length) return "";
-
-    const rowPay = paymentsData.find(p => String(p[1]).trim() === String(pendaftaranId).trim());
-    if(!rowPay) return "";
-
-    return rowPay[6] || "";
-}
-
-/* LOAD */
+/* ================= LOAD ================= */
 async function loadData(){
     const tbody=document.getElementById("tbody");
-    tbody.innerHTML=`<tr><td colspan="7" class="p-6 text-center">Loading...</td></tr>`;
+    tbody.innerHTML=`<tr><td colspan="7" class="p-6"><div class="skeleton h-6 w-full"></div></td></tr>`;
 
     try{
-        // ✅ pakai dashboard (SUDAH include bukti)
-        const res = await get("dashboard");
-
-        console.log("DASHBOARD:", res);
+        const res = await get("pendaftaran");
 
         if(res.status!=="success") throw new Error(res.message);
 
-        allData = res.data; // ⚠️ TIDAK slice(1) karena sudah tanpa header
-
+        allData = res.data.slice(1);
         render();
 
     }catch(err){
@@ -177,7 +163,7 @@ async function loadData(){
     }
 }
 
-/* RENDER */
+/* ================= RENDER ================= */
 function render(){
     const tbody=document.getElementById("tbody");
     const search=document.getElementById("search").value.toLowerCase();
@@ -193,9 +179,8 @@ function render(){
         const hp=r[9]||"-";
         const status=(r[14]||"pending").toLowerCase();
         const bayar=(r[15]||"belum_bayar").toLowerCase();
-
-        const rawBukti = r[r.length-1] || "";
-        const bukti = fixDriveUrl(rawBukti);
+        const rawBukti=r[r.length-1];
+        const bukti=fixDriveUrl(rawBukti);
 
         if(search && !(`${id} ${nama}`.toLowerCase().includes(search))) return;
 
@@ -208,13 +193,13 @@ function render(){
             <td class="p-2">${id}</td>
             <td class="p-2">${nama}</td>
             <td class="p-2">${hp}</td>
-            <td class="p-2">${status}</td>
-            <td class="p-2">${bayar}</td>
+            <td class="p-2"><span class="badge bg-yellow-100">${status}</span></td>
+            <td class="p-2"><span class="badge bg-green-100">${bayar}</span></td>
             <td class="p-2">
                 ${bukti ? `
                     <img src="${bukti}"
                         class="w-12 h-12 object-cover rounded border cursor-pointer"
-                        onclick="window.open('${rawBukti}')"
+                        onclick="window.open('${bukti}')"
                         onerror="this.src='https://via.placeholder.com/50?text=No+Image'">
                 ` : "-"}
             </td>
@@ -229,42 +214,42 @@ function render(){
 
     tbody.innerHTML=html;
 
-    total.innerText=allData.length;
-    pending.innerText=stats.pending;
-    approved.innerText=stats.approved;
-    paid.innerText=stats.paid;
+    document.getElementById("total").innerText=allData.length;
+    document.getElementById("pending").innerText=stats.pending;
+    document.getElementById("approved").innerText=stats.approved;
+    document.getElementById("paid").innerText=stats.paid;
 }
 
-/* MODAL */
+/* ================= MODAL ================= */
 function openDetail(id){
     const r = allData.find(x=>x[0]==id);
     if(!r) return;
 
     selectedId=id;
 
-    dId.innerText=id;
-    dStatus.value=r[14]||"pending";
-    dBayar.value=r[15]||"belum_bayar";
-    dLink.value=r[16]||"";
+    document.getElementById("dId").innerText=id;
+    document.getElementById("dStatus").value=r[14]||"pending";
+    document.getElementById("dBayar").value=r[15]||"belum_bayar";
+    document.getElementById("dLink").value=r[16]||"";
 
-    const raw = r[r.length-1] || "";
-    const bukti = fixDriveUrl(raw);
+    const bukti = fixDriveUrl(r[r.length-1]);
+    const img = document.getElementById("dBukti");
 
     if(bukti){
-        dBukti.src=bukti;
-        dBukti.classList.remove("hidden");
+        img.src=bukti;
+        img.classList.remove("hidden");
     }else{
-        dBukti.classList.add("hidden");
+        img.classList.add("hidden");
     }
 
-    modal.classList.remove("hidden");
+    document.getElementById("modal").classList.remove("hidden");
 }
 
 function closeModal(){
-    modal.classList.add("hidden");
+    document.getElementById("modal").classList.add("hidden");
 }
 
-/* SAVE */
+/* ================= SAVE ================= */
 async function saveDetail(){
     await post("update_order",{
         id:selectedId,
@@ -277,7 +262,7 @@ async function saveDetail(){
     loadData();
 }
 
-/* EXPORT */
+/* ================= EXPORT ================= */
 function exportExcel(){
     let csv="ID,Nama,HP\n";
     allData.forEach(r=>{
@@ -296,11 +281,12 @@ function logout(){
     location="login.html";
 }
 
-/* INIT */
+/* ================= INIT ================= */
 window.onload=()=>{
     loadData();
-    search.oninput=render;
+    document.getElementById("search").oninput=render;
 };
 </script>
+
 </body>
 </html>
