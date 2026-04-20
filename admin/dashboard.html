@@ -164,7 +164,8 @@ body { font-family: 'Plus Jakarta Sans', sans-serif; }
 ID: <span id="dId"></span>
 </div>
 
-<img id="dBukti" class="w-full h-40 object-cover rounded mb-3 border hidden">
+<img id="dBukti" onclick="window.open(this.src)" 
+class="w-full h-40 object-cover rounded mb-3 border hidden cursor-pointer">
 
 <select id="dStatus" class="border w-full p-2 mb-2 rounded">
 <option value="pending">⏳ Pending</option>
@@ -202,25 +203,18 @@ function fixDriveUrl(url){
 
     let id = "";
 
-    // format 1: open?id=
     if(url.includes("id=")){
         id = url.split("id=")[1].split("&")[0];
-    }
-
-    // format 2: /file/d/
-    else if(url.includes("/file/d/")){
+    } else if(url.includes("/file/d/")){
         id = url.split("/file/d/")[1].split("/")[0];
-    }
-
-    // fallback regex
-    else {
+    } else {
         const match = url.match(/[-\w]{25,}/);
         if(match) id = match[0];
     }
 
-    // ⛔ PENTING: gunakan VIEWER universal (bisa PDF & image)
+    // ✅ WAJIB pakai ini (bisa tampil di <img>)
     return id 
-        ? `https://drive.google.com/file/d/${id}/preview`
+        ? `https://drive.google.com/uc?export=view&id=${id}`
         : "";
 }
 
@@ -274,16 +268,11 @@ function render(){
 
             <td class="p-2 text-center">
                 ${
-                    !bukti ? "-"
-                    : bukti.includes("preview") // dari Drive
-                    ? `<button onclick="window.open('${bukti}')"
-                         class="text-blue-600 underline text-xs">Lihat</button>`
-                    : bukti.match(/\.(jpg|jpeg|png|webp)$/i)
-                    ? `<img src="${bukti}"
+                    !bukti 
+                    ? "-" 
+                    : `<img src="${bukti}"
                          class="w-12 h-12 object-cover rounded cursor-pointer border"
-                         onclick="window.open('${bukti}')">`
-                    : `<button onclick="window.open('${bukti}')"
-                         class="text-blue-600 underline text-xs">File</button>`
+                         onclick="openDetail('${id}')">`
                 }
             </td>
 
@@ -302,25 +291,21 @@ function render(){
 }
 
 function openDetail(id){
-    const r=allData.find(x=>x.id==id);
-    if(!r)return;
+    const r = allData.find(x=>x.id==id);
+    if(!r) return;
 
-    selectedId=id;
-    dId.innerText=id;
-    dStatus.value=r.status_order||"pending";
-    dBayar.value=r.status_pembayaran||"belum_bayar";
-    dLink.value=r.link_cbt||"";
+    selectedId = id;
+    dId.innerText = id;
+    dStatus.value = r.status_order || "pending";
+    dBayar.value = r.status_pembayaran || "belum_bayar";
+    dLink.value = r.link_cbt || "";
 
-    const bukti=fixDriveUrl(r.bukti_url);
-        if(bukti){
-        if(bukti.match(/\.(jpg|jpeg|png|webp)$/i)){
-            dBukti.src=bukti;
-            dBukti.classList.remove("hidden");
-        } else {
-            dBukti.classList.add("hidden");
-            window.open(bukti); // buka PDF
-        }
-    }else{
+    const bukti = fixDriveUrl(r.bukti_url);
+
+    if(bukti){
+        dBukti.src = bukti;
+        dBukti.classList.remove("hidden");
+    } else {
         dBukti.classList.add("hidden");
     }
 
