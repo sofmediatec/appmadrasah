@@ -72,7 +72,7 @@ required>
 <label for="file"
 class="mt-2 block border-2 border-dashed border-slate-300 rounded-xl p-6 text-center cursor-pointer hover:border-emerald-400">
 
-<input type="file" id="file" class="hidden">
+<input type="file" id="file" name="file" accept="image/*" class="hidden" required>
 
 <div id="fileInfo">
 <p class="text-slate-500">Klik pilih file</p>
@@ -112,48 +112,76 @@ document.getElementById("kodeText").innerText = kode || "-";
 const fileInput = document.getElementById("file");
 const fileInfo = document.getElementById("fileInfo");
 
+// ✅ VALIDASI + PREVIEW NAMA FILE
 fileInput.onchange = function(){
-if(this.files[0]){
-fileInfo.innerHTML = `<b class="text-emerald-600">${this.files[0].name}</b>`;
-}
+    const file = this.files[0];
+
+    if(!file) return;
+
+    // validasi harus gambar
+    if(!file.type.startsWith("image/")){
+        alert("Wajib upload gambar!");
+        this.value="";
+        fileInfo.innerHTML = `<p class="text-red-500 text-xs">File harus gambar</p>`;
+        return;
+    }
+
+    // max 2MB
+    if(file.size > 2 * 1024 * 1024){
+        alert("Max file 2MB");
+        this.value="";
+        fileInfo.innerHTML = `<p class="text-red-500 text-xs">File terlalu besar</p>`;
+        return;
+    }
+
+    fileInfo.innerHTML = `<b class="text-emerald-600">${file.name}</b>`;
 };
 
+// convert ke base64
 function toBase64(file){
-return new Promise((res,rej)=>{
-const r=new FileReader();
-r.onload=()=>res(r.result.split(",")[1]);
-r.readAsDataURL(file);
-});
+    return new Promise((res,rej)=>{
+        const r = new FileReader();
+        r.onload = () => res(r.result.split(",")[1]);
+        r.onerror = err => rej(err);
+        r.readAsDataURL(file);
+    });
 }
 
-document.getElementById("formBayar").onsubmit=async function(e){
-e.preventDefault();
+// SUBMIT FORM
+document.getElementById("formBayar").onsubmit = async function(e){
+    e.preventDefault();
 
-const btnText = document.getElementById("btnText");
-btnText.innerText="Loading...";
+    const btnText = document.getElementById("btnText");
+    btnText.innerText = "Loading...";
 
-try{
-const file=fileInput.files[0];
-if(!file) throw "Pilih file";
+    try{
+        const file = fileInput.files[0];
 
-const base64=await toBase64(file);
+        if(!file) throw "Pilih gambar dulu";
 
-await post("bayar",{
-  pendaftaran_id: id,
-  nama_pengirim: this.nama_pengirim.value,
-  bank: this.bank.value,
-  jumlah_transfer: this.jumlah_transfer.value,
-  file: base64,
-  filename: file.name
-});
+        // double check keamanan
+        if(!file.type.startsWith("image/")) throw "File harus gambar";
+        if(file.size > 2 * 1024 * 1024) throw "Max file 2MB";
 
-alert("Berhasil");
-location.href="index.html";
+        const base64 = await toBase64(file);
 
-}catch(err){
-alert(err);
-btnText.innerText="Kirim Bukti Pembayaran";
-}
+        await post("bayar",{
+            pendaftaran_id: id,
+            nama_pengirim: this.nama_pengirim.value,
+            bank: this.bank.value,
+            jumlah_transfer: this.jumlah_transfer.value,
+            file: base64,
+            filename: file.name,
+            mimeType: file.type // ✅ penting untuk backend
+        });
+
+        alert("Berhasil upload bukti");
+        location.href = "index.html";
+
+    }catch(err){
+        alert(err);
+        btnText.innerText = "Kirim Bukti Pembayaran";
+    }
 };
 </script>
 
