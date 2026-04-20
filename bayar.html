@@ -101,8 +101,13 @@ shadow-lg transition">
 <script src="assets/app.js"></script>
 
 <script>
-const id = new URLSearchParams(location.search).get("id");
+const params = new URLSearchParams(location.search);
+
+const id = params.get("id");
+const kode = params.get("kode");
+
 document.getElementById("idText").innerText = id || "-";
+document.getElementById("kodeText").innerText = kode || "-";
 
 const fileInput = document.getElementById("file");
 const fileInfo = document.getElementById("fileInfo");
@@ -134,11 +139,12 @@ if(!file) throw "Pilih file";
 const base64=await toBase64(file);
 
 await post("bayar",{
-pendaftaran_id:id,
-nama_pengirim:this.nama_pengirim.value,
-bank:this.bank.value,
-jumlah_transfer:this.jumlah_transfer.value,
-file:base64
+  pendaftaran_id: id,
+  nama_pengirim: this.nama_pengirim.value,
+  bank: this.bank.value,
+  jumlah_transfer: this.jumlah_transfer.value,
+  file: base64,
+  filename: file.name
 });
 
 alert("Berhasil");
