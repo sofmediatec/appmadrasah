@@ -165,16 +165,21 @@ document.getElementById("formBayar").onsubmit = async function(e){
 
         const base64 = await toBase64(file);
 
-        await post("bayar",{
+        const res = await post("bayar",{
             pendaftaran_id: id,
             nama_pengirim: this.nama_pengirim.value,
             bank: this.bank.value,
             jumlah_transfer: this.jumlah_transfer.value,
             file: base64,
             filename: file.name,
-            mimeType: file.type // ✅ penting untuk backend
+            mimeType: file.type
         });
-
+        
+        // ⛔ WAJIB CEK RESPONSE
+        if(!res || res.status !== "success"){
+            throw res?.message || "Gagal simpan ke server";
+        }
+        
         alert("Berhasil upload bukti");
         location.href = "index.html";
 
