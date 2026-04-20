@@ -193,7 +193,7 @@ const token = localStorage.getItem("token");
 if(!token) location="login.html";
 
 const user = JSON.parse(localStorage.getItem("user")||"{}");
-
+if(bukti){
 let allData=[];
 let selectedId=null;
 
@@ -272,8 +272,19 @@ function render(){
                 <span class="badge bg-green-100">${bayar}</span>
             </td>
 
-            <td class="p-2">
-                ${bukti ? `<img src="${bukti}" class="w-12 h-12 rounded cursor-pointer" onclick="window.open('${bukti}')">` : "-"}
+            <td class="p-2 text-center">
+                ${
+                    !bukti ? "-"
+                    : bukti.includes("preview") // dari Drive
+                    ? `<button onclick="window.open('${bukti}')"
+                         class="text-blue-600 underline text-xs">Lihat</button>`
+                    : bukti.match(/\.(jpg|jpeg|png|webp)$/i)
+                    ? `<img src="${bukti}"
+                         class="w-12 h-12 object-cover rounded cursor-pointer border"
+                         onclick="window.open('${bukti}')">`
+                    : `<button onclick="window.open('${bukti}')"
+                         class="text-blue-600 underline text-xs">File</button>`
+                }
             </td>
 
             <td class="p-2">
@@ -301,9 +312,14 @@ function openDetail(id){
     dLink.value=r.link_cbt||"";
 
     const bukti=fixDriveUrl(r.bukti_url);
-    if(bukti){
-        dBukti.src=bukti;
-        dBukti.classList.remove("hidden");
+        if(bukti){
+        if(bukti.match(/\.(jpg|jpeg|png|webp)$/i)){
+            dBukti.src=bukti;
+            dBukti.classList.remove("hidden");
+        } else {
+            dBukti.classList.add("hidden");
+            window.open(bukti); // buka PDF
+        }
     }else{
         dBukti.classList.add("hidden");
     }
