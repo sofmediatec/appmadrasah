@@ -192,154 +192,169 @@
     <script src="assets/app.js"></script>
 
     <script>
-    AOS.init({ duration: 800, once: true });
-
-    async function loadPaket(){
-        try {
-            const res = await get("paket_v2");
-    
-            if(!res || res.status !== "success" || !res.data){
-                throw new Error(res?.message || "Data paket gagal dimuat");
-            }
-    
-            let html = "";
-    
-            res.data.forEach((p, index) => {
-    
-                const nama  = p.nama || "-";
-                const harga = p.harga || 0;
-    
-                // 👉 jika kolom deskripsi kamu pakai untuk jumlah siswa
-                const siswa = p.deskripsi || 0;
-    
-                html += `
-                <div class="bg-white rounded-3xl p-10 shadow-xl border border-slate-100 text-center relative group transition-all hover:border-blue-500" data-aos="fade-up" data-aos-delay="${index * 100}">
-                    <h3 class="text-xl font-black text-slate-900 mb-2">${nama}</h3>
-                    <p class="text-blue-600 text-xs mb-6 uppercase tracking-widest font-black">${siswa} Peserta Aktif</p>
-                    <div class="text-3xl font-black text-slate-900 mb-8">
-                        <span class="text-sm font-bold text-slate-400 mr-1">Rp</span>${Number(harga).toLocaleString()}
-                    </div>
-                    <a href="form.html" class="block w-full py-4 rounded-2xl font-black bg-slate-900 text-white hover:bg-blue-700 transition-all shadow-lg shadow-slate-200">
-                        Ambil Paket
-                    </a>
-                </div>`;
-            });
-    
-            document.getElementById("paketList").innerHTML = html;
-    
-        } catch(err) {
-            document.getElementById("paketList").innerHTML =
-            `<div class="col-span-3 text-red-600 font-bold text-center py-10">${err.message}</div>`;
-        }
-    }
-
-    async function loadRekening(){
-        const el = document.getElementById("rekeningList");
-    
-        try{
-            const res = await get("rekening");
-    
-            if(!res || res.status !== "success" || !res.data){
-                throw new Error("Data rekening gagal dimuat");
-            }
-    
-            let html = "";
-    
-            res.data.forEach((r, i) => {
-                html += `
-                <div class="bg-white p-6 rounded-2xl shadow-lg border border-slate-200 text-center" data-aos="fade-up" data-aos-delay="${i * 100}">
-                    <h3 class="text-lg font-black text-blue-700 mb-2">${r.bank}</h3>
-                    <div class="text-xl font-bold text-slate-900 tracking-wider">${r.no_rekening}</div>
-                    <div class="text-sm text-slate-600 mt-2 font-semibold">a.n ${r.nama}</div>
-                    ${r.keterangan ? `<p class="text-xs text-slate-500 mt-3 italic">${r.keterangan}</p>` : ""}
-                </div>`;
-            });
-    
-            el.innerHTML = html || `<div class="col-span-3 text-center text-slate-500">Tidak ada rekening aktif</div>`;
-    
-        }catch(err){
-            el.innerHTML = `<div class="col-span-3 text-red-600 text-center font-bold">${err.message}</div>`;
-        }
-    }
+        AOS.init({ duration: 800, once: true });
         
-    async function loadUser(){
-        const tbody = document.getElementById("userList");
-        try {
-            const res = await get("pendaftaran");
-            if(!res || !res.data) throw new Error("Gagal mengambil data pendaftaran");
-
-            let html = "";
-            let no = 1;
-
-            res.data.slice(1).reverse().forEach(r => {
-                const id     = r[0];
-                const nama   = r[3] || "-";
-                const kab    = r[6] || "-";
-                const paket  = r[12] || "-";
-                const status = (r[14] || "pending").toLowerCase();
-                const bayar  = (r[15] || "belum_bayar").toLowerCase();
-                const link   = r[16] || "";
-
-                // Kontras Tinggi Badge Status Order
-                let badgeClass = "bg-slate-100 text-slate-700";
-                if(status === "pending") badgeClass = "bg-amber-100 text-amber-800 border border-amber-200";
-                if(status === "disetujui") badgeClass = "bg-emerald-100 text-emerald-800 border border-emerald-200";
-                if(status === "ditolak") badgeClass = "bg-red-100 text-red-800 border border-red-200";
-
-                // Kontras Tinggi Badge Status Bayar
-                let bayarBadgeClass = "bg-slate-100 text-slate-700";
-                if(bayar === "menunggu_verifikasi") bayarBadgeClass = "bg-amber-100 text-amber-800 border border-amber-200";
-                if(bayar === "lunas") bayarBadgeClass = "bg-emerald-100 text-emerald-800 border border-emerald-200";
-                if(bayar === "ditolak") bayarBadgeClass = "bg-red-100 text-red-800 border border-red-200";
-
-                // Tombol Aksi - Warna Bold
-                let tombolBayar = "-";
-                if(bayar === "belum_bayar" || bayar === "ditolak"){
-                    tombolBayar = `<a href="bayar.html?id=${id}" class="bg-amber-600 hover:bg-amber-700 text-white text-[10px] px-4 py-2 rounded-lg font-black transition-all shadow-md uppercase tracking-wider">Bayar</a>`;
-                } else if(bayar === "menunggu_verifikasi"){
-                    tombolBayar = `<span class="text-amber-700 font-black text-[10px] uppercase">Verifikasi...</span>`;
-                } else if(bayar === "lunas"){
-                    tombolBayar = `<span class="text-emerald-700 font-black text-[10px] uppercase">Lengkap</span>`;
+        async function loadPaket(){
+            try {
+                const res = await get("paket_v2");
+        
+                if(!res || res.status !== "success" || !res.data){
+                    throw new Error(res?.message || "Data paket gagal dimuat");
                 }
-
-                // Tombol Link CBT - Biru Pekat
-                let tombolCBT = "-";
-                if(link && link !== ""){
-                    tombolCBT = `<a href="${link}" target="_blank" class="bg-blue-700 hover:bg-blue-800 text-white text-[10px] px-4 py-2 rounded-lg font-black transition-all shadow-md uppercase tracking-wider inline-flex items-center">Buka Link</a>`;
-                }
-
-                html += `
-                <tr class="hover:bg-blue-50/50 transition-colors">
-                    <td class="px-6 py-6 text-slate-500 font-black">${no++}</td>
-                    <td class="px-6 py-6">
-                        <div class="text-sm font-black text-slate-900 uppercase tracking-tight">${nama}</div>
-                    </td>
-                    <td class="px-6 py-6 text-sm text-slate-600 font-bold">${kab}</td>
-                    <td class="px-6 py-6">
-                        <span class="text-xs font-black text-blue-700 italic uppercase">${paket}</span>
-                    </td>
-                    <td class="px-6 py-6 text-center">
-                        <span class="px-3 py-1.5 ${badgeClass} text-[10px] font-black rounded-md uppercase tracking-tighter shadow-sm">${status}</span>
-                    </td>
-                    <td class="px-6 py-6 text-center">
-                        <span class="px-3 py-1.5 ${bayarBadgeClass} text-[10px] font-black rounded-md uppercase tracking-tighter shadow-sm">${bayar.replace('_', ' ')}</span>
-                    </td>
-                    <td class="px-6 py-6 text-center">${tombolBayar}</td>
-                    <td class="px-6 py-6 text-center">${tombolCBT}</td>
-                </tr>`;
-            });
-
-            tbody.innerHTML = html || `<tr><td colspan="8" class="px-8 py-10 text-center text-slate-500 font-bold italic uppercase">Data masih kosong.</td></tr>`;
-        } catch(err) {
-            tbody.innerHTML = `<tr><td colspan="8" class="p-8 text-center text-red-600 font-black uppercase tracking-widest">${err.message}</td></tr>`;
+        
+                let html = "";
+        
+                res.data.forEach((p, index) => {
+        
+                    const nama  = p.nama || "-";
+                    const harga = p.harga || 0;
+                    const siswa = p.deskripsi || 0;
+        
+                    html += `
+                    <div class="bg-white rounded-3xl p-10 shadow-xl border border-slate-100 text-center relative group transition-all hover:border-blue-500" data-aos="fade-up" data-aos-delay="${index * 100}">
+                        <h3 class="text-xl font-black text-slate-900 mb-2">${nama}</h3>
+                        <p class="text-blue-600 text-xs mb-6 uppercase tracking-widest font-black">${siswa} Peserta Aktif</p>
+                        <div class="text-3xl font-black text-slate-900 mb-8">
+                            <span class="text-sm font-bold text-slate-400 mr-1">Rp</span>${Number(harga).toLocaleString()}
+                        </div>
+                        <a href="form.html" class="block w-full py-4 rounded-2xl font-black bg-slate-900 text-white hover:bg-blue-700 transition-all shadow-lg shadow-slate-200">
+                            Ambil Paket
+                        </a>
+                    </div>`;
+                });
+        
+                document.getElementById("paketList").innerHTML = html;
+        
+            } catch(err) {
+                document.getElementById("paketList").innerHTML =
+                `<div class="col-span-3 text-red-600 font-bold text-center py-10">${err.message}</div>`;
+            }
         }
-    }
-
-    window.onload = () => {
-        loadPaket();
-        loadUser();
-        loadRekening();
-    };
-    </script>
+        
+        async function loadRekening(){
+            const el = document.getElementById("rekeningList");
+        
+            try{
+                const res = await get("rekening");
+        
+                if(!res || res.status !== "success" || !res.data){
+                    throw new Error("Data rekening gagal dimuat");
+                }
+        
+                let html = "";
+        
+                res.data.forEach((r, i) => {
+                    html += `
+                    <div class="bg-white p-6 rounded-2xl shadow-lg border border-slate-200 text-center" data-aos="fade-up" data-aos-delay="${i * 100}">
+                        <h3 class="text-lg font-black text-blue-700 mb-2">${r.bank}</h3>
+                        <div class="text-xl font-bold text-slate-900 tracking-wider">${r.no_rekening}</div>
+                        <div class="text-sm text-slate-600 mt-2 font-semibold">a.n ${r.nama}</div>
+                        ${r.keterangan ? `<p class="text-xs text-slate-500 mt-3 italic">${r.keterangan}</p>` : ""}
+                    </div>`;
+                });
+        
+                el.innerHTML = html || `<div class="col-span-3 text-center text-slate-500">Tidak ada rekening aktif</div>`;
+        
+            }catch(err){
+                el.innerHTML = `<div class="col-span-3 text-red-600 text-center font-bold">${err.message}</div>`;
+            }
+        }
+        
+        /* =========================
+           ✅ VERSI BARU (AMAN)
+        ========================= */
+        async function loadUser(){
+          const tbody = document.getElementById("userList");
+        
+          try{
+            const res = await get("pendaftaran");
+        
+            if(!res || res.status !== "success" || !res.data){
+              throw new Error("Gagal mengambil data");
+            }
+        
+            const data = res.data.slice(1).reverse().map(r => ({
+              id: r[0],
+              madrasah: r[3] || "-",
+              kabupaten: r[6] || "-",
+              paket: r[12] || "-",
+              status: (r[14] || "pending").toLowerCase(),
+              bayar: (r[15] || "belum_bayar").toLowerCase(),
+              link_cbt: r[16] || ""
+            }));
+        
+            renderTable(data);
+        
+          }catch(err){
+            tbody.innerHTML =
+              `<tr><td colspan="8" class="text-center text-red-600 py-10 font-bold">${err.message}</td></tr>`;
+          }
+        }
+        
+        /* =========================
+           ✅ RENDER TABEL (FUNGSI LAMA DIPERTAHANKAN)
+        ========================= */
+        function renderTable(data){
+          const tbody = document.getElementById("userList");
+        
+          let html = "";
+          let no = 1;
+        
+          data.forEach(r => {
+        
+            let badgeClass = "bg-slate-100 text-slate-700";
+            if(r.status === "pending") badgeClass = "bg-amber-100 text-amber-800 border border-amber-200";
+            if(r.status === "disetujui") badgeClass = "bg-emerald-100 text-emerald-800 border border-emerald-200";
+            if(r.status === "ditolak") badgeClass = "bg-red-100 text-red-800 border border-red-200";
+        
+            let bayarBadgeClass = "bg-slate-100 text-slate-700";
+            if(r.bayar === "menunggu_verifikasi") bayarBadgeClass = "bg-amber-100 text-amber-800 border border-amber-200";
+            if(r.bayar === "lunas") bayarBadgeClass = "bg-emerald-100 text-emerald-800 border border-emerald-200";
+            if(r.bayar === "ditolak") bayarBadgeClass = "bg-red-100 text-red-800 border border-red-200";
+        
+            let tombolBayar = "-";
+            if(r.bayar === "belum_bayar" || r.bayar === "ditolak"){
+                tombolBayar = `<a href="bayar.html?id=${r.id}" class="bg-amber-600 hover:bg-amber-700 text-white text-[10px] px-4 py-2 rounded-lg font-black transition-all shadow-md uppercase tracking-wider">Bayar</a>`;
+            } else if(r.bayar === "menunggu_verifikasi"){
+                tombolBayar = `<span class="text-amber-700 font-black text-[10px] uppercase">Verifikasi...</span>`;
+            } else if(r.bayar === "lunas"){
+                tombolBayar = `<span class="text-emerald-700 font-black text-[10px] uppercase">Lengkap</span>`;
+            }
+        
+            let tombolCBT = "-";
+            if(r.link_cbt){
+                tombolCBT = `<a href="${r.link_cbt}" target="_blank" class="bg-blue-700 hover:bg-blue-800 text-white text-[10px] px-4 py-2 rounded-lg font-black transition-all shadow-md uppercase tracking-wider inline-flex items-center">Buka Link</a>`;
+            }
+        
+            html += `
+            <tr class="hover:bg-blue-50/50 transition-colors">
+                <td class="px-6 py-6 text-slate-500 font-black">${no++}</td>
+                <td class="px-6 py-6">
+                    <div class="text-sm font-black text-slate-900 uppercase tracking-tight">${r.madrasah}</div>
+                </td>
+                <td class="px-6 py-6 text-sm text-slate-600 font-bold">${r.kabupaten}</td>
+                <td class="px-6 py-6">
+                    <span class="text-xs font-black text-blue-700 italic uppercase">${r.paket}</span>
+                </td>
+                <td class="px-6 py-6 text-center">
+                    <span class="px-3 py-1.5 ${badgeClass} text-[10px] font-black rounded-md uppercase tracking-tighter shadow-sm">${r.status}</span>
+                </td>
+                <td class="px-6 py-6 text-center">
+                    <span class="px-3 py-1.5 ${bayarBadgeClass} text-[10px] font-black rounded-md uppercase tracking-tighter shadow-sm">${r.bayar.replace('_',' ')}</span>
+                </td>
+                <td class="px-6 py-6 text-center">${tombolBayar}</td>
+                <td class="px-6 py-6 text-center">${tombolCBT}</td>
+            </tr>`;
+          });
+        
+          tbody.innerHTML = html || `<tr><td colspan="8" class="text-center py-10 text-slate-500 font-bold">Data kosong</td></tr>`;
+        }
+        
+        window.onload = () => {
+            loadPaket();
+            loadUser();
+            loadRekening();
+        };
+        </script>
 </body>
 </html>
