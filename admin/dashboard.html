@@ -6,9 +6,7 @@
 <title>Dashboard Admin CBT</title>
 
 <script src="https://cdn.tailwindcss.com"></script>
-<script src="https://unpkg.com/lucide@latest"></script>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
-<link rel="icon" href="data:,">
 
 <style>
 body { font-family: 'Inter', sans-serif; }
@@ -17,7 +15,6 @@ body { font-family: 'Inter', sans-serif; }
     border-radius: 16px;
     padding: 18px;
     color: white;
-    position: relative;
 }
 .card-blue { background: linear-gradient(135deg,#3b82f6,#1e3a8a); }
 .card-yellow { background: linear-gradient(135deg,#f59e0b,#b45309); }
@@ -88,7 +85,7 @@ body { font-family: 'Inter', sans-serif; }
 </div>
 
 <!-- MODAL -->
-<div id="modal" class="fixed inset-0 bg-black/50 hidden items-center justify-center">
+<div id="modal" class="fixed inset-0 bg-black/50 hidden flex items-center justify-center z-50">
 <div class="bg-white p-6 rounded w-96">
 
 <h2 class="font-bold mb-3">Detail Pendaftaran</h2>
@@ -130,32 +127,37 @@ const user = JSON.parse(localStorage.getItem("user")||"{}");
 let allData=[];
 let selectedId=null;
 
-/* ================= FIX GOOGLE DRIVE ================= */
+/* ================= FIX DRIVE ================= */
 function fixDriveUrl(url){
     if(!url) return "";
 
-    // format /file/d/
-    let match = url.match(/\/d\/([a-zA-Z0-9_-]+)/);
-    if(match) return `https://drive.google.com/uc?export=view&id=${match[1]}`;
+    let id="";
+    if(url.includes("id=")){
+        id = url.split("id=")[1];
+    } else {
+        const match = url.match(/[-\w]{25,}/);
+        if(match) id = match[0];
+    }
 
-    // format id random
-    match = url.match(/[-\w]{25,}/);
-    if(match) return `https://drive.google.com/uc?export=view&id=${match[0]}`;
-
-    return url;
+    return id
+        ? `https://drive.google.com/uc?export=view&id=${id}`
+        : url;
 }
 
 /* ================= LOAD ================= */
 async function loadData(){
     const tbody=document.getElementById("tbody");
-    tbody.innerHTML=`<tr><td colspan="7" class="p-6"><div class="skeleton h-6 w-full"></div></td></tr>`;
+
+    tbody.innerHTML=`<tr><td colspan="7" class="p-6">
+        <div class="skeleton h-6 w-full"></div>
+    </td></tr>`;
 
     try{
-        const res = await get("pendaftaran");
+        const res = await get("dashboard");
 
         if(res.status!=="success") throw new Error(res.message);
 
-        allData = res.data.slice(1);
+        allData = res.data;
         render();
 
     }catch(err){
@@ -172,15 +174,13 @@ function render(){
     let stats={pending:0,approved:0,paid:0};
 
     allData.forEach(r=>{
-        if(!r) return;
 
-        const id=r[0];
-        const nama=r[3]||"-";
-        const hp=r[9]||"-";
-        const status=(r[14]||"pending").toLowerCase();
-        const bayar=(r[15]||"belum_bayar").toLowerCase();
-        const rawBukti=r[r.length-1];
-        const bukti=fixDriveUrl(rawBukti);
+        const id=r.id;
+        const nama=r.nama_madrasah||"-";
+        const hp=r.no_hp||"-";
+        const status=(r.status_order||"pending").toLowerCase();
+        const bayar=(r.status_pembayaran||"belum_bayar").toLowerCase();
+        const bukti=fixDriveUrl(r.bukti_url);
 
         if(search && !(`${id} ${nama}`.toLowerCase().includes(search))) return;
 
@@ -193,16 +193,24 @@ function render(){
             <td class="p-2">${id}</td>
             <td class="p-2">${nama}</td>
             <td class="p-2">${hp}</td>
-            <td class="p-2"><span class="badge bg-yellow-100">${status}</span></td>
-            <td class="p-2"><span class="badge bg-green-100">${bayar}</span></td>
+
+            <td class="p-2">
+                <span class="badge bg-yellow-100">${status}</span>
+            </td>
+
+            <td class="p-2">
+                <span class="badge bg-green-100">${bayar}</span>
+            </td>
+
             <td class="p-2">
                 ${bukti ? `
                     <img src="${bukti}"
                         class="w-12 h-12 object-cover rounded border cursor-pointer"
                         onclick="window.open('${bukti}')"
-                        onerror="this.src='https://via.placeholder.com/50?text=No+Image'">
+                        onerror="this.src='https://via.placeholder.com/50?text=Error'">
                 ` : "-"}
             </td>
+
             <td class="p-2">
                 ${user?.role==="admin"
                     ? `<button onclick="openDetail('${id}')" class="bg-blue-600 text-white px-2 py-1 rounded text-xs">Detail</button>`
@@ -222,18 +230,18 @@ function render(){
 
 /* ================= MODAL ================= */
 function openDetail(id){
-    const r = allData.find(x=>x[0]==id);
+    const r = allData.find(x=>x.id==id);
     if(!r) return;
 
     selectedId=id;
 
-    document.getElementById("dId").innerText=id;
-    document.getElementById("dStatus").value=r[14]||"pending";
-    document.getElementById("dBayar").value=r[15]||"belum_bayar";
-    document.getElementById("dLink").value=r[16]||"";
+    dId.innerText=id;
+    dStatus.value=r.status_order||"pending";
+    dBayar.value=r.status_pembayaran||"belum_bayar";
+    dLink.value=r.link_cbt||"";
 
-    const bukti = fixDriveUrl(r[r.length-1]);
-    const img = document.getElementById("dBukti");
+    const bukti=fixDriveUrl(r.bukti_url);
+    const img=document.getElementById("dBukti");
 
     if(bukti){
         img.src=bukti;
@@ -251,11 +259,10 @@ function closeModal(){
 
 /* ================= SAVE ================= */
 async function saveDetail(){
-    await post("update_order",{
+    await post("updateStatus",{
         id:selectedId,
-        status_order:dStatus.value,
-        status_bayar:dBayar.value,
-        link_cbt:dLink.value
+        status:dStatus.value,
+        admin_id:user.id
     },token);
 
     closeModal();
@@ -265,8 +272,9 @@ async function saveDetail(){
 /* ================= EXPORT ================= */
 function exportExcel(){
     let csv="ID,Nama,HP\n";
+
     allData.forEach(r=>{
-        csv+=`${r[0]},${r[3]},${r[9]}\n`;
+        csv+=`${r.id},${r.nama_madrasah},${r.no_hp}\n`;
     });
 
     const blob=new Blob([csv]);
