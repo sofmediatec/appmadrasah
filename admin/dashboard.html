@@ -3,73 +3,103 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Dashboard Admin CBT</title>
+<title>Admin Dashboard | CBT System</title>
 
 <script src="https://cdn.tailwindcss.com"></script>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 
 <style>
-body { font-family: 'Inter', sans-serif; }
+body { font-family: 'Plus Jakarta Sans', sans-serif; }
 
-.card {
-    border-radius: 16px;
-    padding: 18px;
-    color: white;
-}
-.card-blue { background: linear-gradient(135deg,#3b82f6,#1e3a8a); }
-.card-yellow { background: linear-gradient(135deg,#f59e0b,#b45309); }
-.card-green { background: linear-gradient(135deg,#10b981,#065f46); }
-.card-purple { background: linear-gradient(135deg,#8b5cf6,#4c1d95); }
-
-.badge {
-    padding: 4px 10px;
-    border-radius: 999px;
-    font-size: 11px;
-    font-weight: bold;
+/* GLASS UI */
+.glass-card {
+    background: rgba(255,255,255,0.9);
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(226,232,240,0.8);
 }
 
-.skeleton {
-    animation: pulse 1.5s infinite;
-    background: #e5e7eb;
-    border-radius: 6px;
+/* HOVER CARD */
+.stat-card {
+    transition: 0.2s;
 }
-@keyframes pulse {
-    0%{opacity:1} 50%{opacity:.5} 100%{opacity:1}
+.stat-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 10px 15px rgba(0,0,0,0.1);
 }
+
+/* SCROLL */
+.custom-scrollbar::-webkit-scrollbar { width:6px;height:6px }
+.custom-scrollbar::-webkit-scrollbar-thumb { background:#cbd5e1;border-radius:10px }
+
+/* ANIMATION */
+@keyframes fadeIn {
+    from {opacity:0; transform:translateY(10px)}
+    to {opacity:1; transform:translateY(0)}
+}
+.animate-fade-in { animation: fadeIn .3s ease-out }
 </style>
 </head>
 
-<body class="bg-slate-100 p-6">
+<body class="bg-[#f8fafc] text-slate-800">
 
 <script src="../assets/app.js"></script>
 
-<!-- NAVBAR -->
-<div class="flex justify-between items-center mb-6">
-    <h1 class="text-2xl font-bold">Dashboard CBT</h1>
+<div class="min-h-screen flex">
+
+<!-- SIDEBAR -->
+<aside class="hidden md:flex w-64 bg-slate-900 text-white p-6 flex-col">
+    <div class="mb-10 font-extrabold text-xl">CBT ADMIN</div>
+
+    <nav class="space-y-2">
+        <div class="bg-blue-600 p-3 rounded-xl">Dashboard</div>
+    </nav>
+
+    <button onclick="logout()" class="mt-auto text-red-400">Logout</button>
+</aside>
+
+<!-- MAIN -->
+<main class="flex-1 p-6">
+
+<!-- HEADER -->
+<div class="flex justify-between mb-6">
+    <div>
+        <h1 class="text-3xl font-extrabold">Data Registrasi CBT</h1>
+    </div>
     <div class="flex gap-2">
-        <button onclick="exportExcel()" class="bg-green-600 text-white px-3 py-2 rounded">Excel</button>
-        <button onclick="window.print()" class="bg-purple-600 text-white px-3 py-2 rounded">PDF</button>
-        <button onclick="logout()" class="bg-red-600 text-white px-3 py-2 rounded">Logout</button>
+        <button onclick="exportExcel()" class="bg-emerald-100 px-4 py-2 rounded-xl">Excel</button>
+        <button onclick="window.print()" class="bg-indigo-100 px-4 py-2 rounded-xl">Print</button>
     </div>
 </div>
 
 <!-- STATS -->
 <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
-    <div class="card card-blue"><div>Total</div><div id="total" class="text-3xl font-bold">0</div></div>
-    <div class="card card-yellow"><div>Pending</div><div id="pending" class="text-3xl font-bold">0</div></div>
-    <div class="card card-green"><div>Disetujui</div><div id="approved" class="text-3xl font-bold">0</div></div>
-    <div class="card card-purple"><div>Lunas</div><div id="paid" class="text-3xl font-bold">0</div></div>
+    <div class="glass-card stat-card p-4 rounded-2xl">
+        <div>Total</div>
+        <div id="total" class="text-3xl font-bold">0</div>
+    </div>
+    <div class="glass-card stat-card p-4 rounded-2xl">
+        <div>Pending</div>
+        <div id="pending" class="text-3xl font-bold text-yellow-500">0</div>
+    </div>
+    <div class="glass-card stat-card p-4 rounded-2xl">
+        <div>Disetujui</div>
+        <div id="approved" class="text-3xl font-bold text-green-600">0</div>
+    </div>
+    <div class="glass-card stat-card p-4 rounded-2xl">
+        <div>Lunas</div>
+        <div id="paid" class="text-3xl font-bold text-indigo-600">0</div>
+    </div>
 </div>
 
 <!-- SEARCH -->
-<div class="bg-white p-4 rounded shadow mb-4">
-    <input id="search" class="border p-2 rounded w-full" placeholder="Cari nama / ID...">
+<div class="bg-white p-4 rounded-2xl mb-6">
+    <input id="search" class="w-full p-3 border rounded-xl" placeholder="Cari...">
 </div>
 
 <!-- TABLE -->
-<div class="bg-white rounded shadow overflow-auto">
-<table class="w-full text-sm">
-<thead class="bg-slate-900 text-white">
+<div class="bg-white rounded-2xl overflow-hidden">
+<table class="w-full">
+<thead class="bg-slate-100">
 <tr>
 <th class="p-3">ID</th>
 <th class="p-3">Madrasah</th>
@@ -84,31 +114,32 @@ body { font-family: 'Inter', sans-serif; }
 </table>
 </div>
 
-<!-- MODAL -->
-<div id="modal" class="fixed inset-0 bg-black/50 hidden flex items-center justify-center z-50">
-<div class="bg-white p-6 rounded w-96">
-
-<h2 class="font-bold mb-3">Detail Pendaftaran</h2>
-
-<div class="mb-2 text-sm text-gray-600">
-ID: <span id="dId"></span>
+</main>
 </div>
 
-<img id="dBukti" class="w-full h-40 object-cover rounded mb-3 border hidden">
+<!-- MODAL -->
+<div id="modal" class="fixed inset-0 bg-black/50 hidden flex items-center justify-center">
+<div class="bg-white p-6 rounded-2xl w-96 animate-fade-in">
 
-<select id="dStatus" class="border w-full p-2 mb-2">
+<h2 class="font-bold mb-3">Detail</h2>
+
+<div>ID: <span id="dId"></span></div>
+
+<img id="dBukti" class="w-full h-40 object-cover rounded my-3 hidden">
+
+<select id="dStatus" class="w-full border p-2 mb-2">
 <option value="pending">Pending</option>
 <option value="disetujui">Disetujui</option>
 <option value="ditolak">Ditolak</option>
 </select>
 
-<select id="dBayar" class="border w-full p-2 mb-2">
+<select id="dBayar" class="w-full border p-2 mb-2">
 <option value="belum_bayar">Belum Bayar</option>
 <option value="menunggu_verifikasi">Menunggu</option>
 <option value="lunas">Lunas</option>
 </select>
 
-<input id="dLink" class="border w-full p-2 mb-3" placeholder="Link CBT">
+<input id="dLink" class="w-full border p-2 mb-3" placeholder="Link CBT">
 
 <div class="flex justify-end gap-2">
 <button onclick="closeModal()">Batal</button>
@@ -127,45 +158,26 @@ const user = JSON.parse(localStorage.getItem("user")||"{}");
 let allData=[];
 let selectedId=null;
 
-/* ================= FIX DRIVE ================= */
+/* FIX DRIVE */
 function fixDriveUrl(url){
     if(!url) return "";
-
     let id="";
-    if(url.includes("id=")){
-        id = url.split("id=")[1];
-    } else {
-        const match = url.match(/[-\w]{25,}/);
-        if(match) id = match[0];
+    if(url.includes("id=")) id=url.split("id=")[1];
+    else{
+        const m=url.match(/[-\w]{25,}/);
+        if(m) id=m[0];
     }
-
-    return id
-        ? `https://drive.google.com/uc?export=view&id=${id}`
-        : url;
+    return id?`https://drive.google.com/uc?export=view&id=${id}`:url;
 }
 
-/* ================= LOAD ================= */
+/* LOAD */
 async function loadData(){
-    const tbody=document.getElementById("tbody");
-
-    tbody.innerHTML=`<tr><td colspan="7" class="p-6">
-        <div class="skeleton h-6 w-full"></div>
-    </td></tr>`;
-
-    try{
-        const res = await get("dashboard");
-
-        if(res.status!=="success") throw new Error(res.message);
-
-        allData = res.data;
-        render();
-
-    }catch(err){
-        tbody.innerHTML=`<tr><td colspan="7" class="text-red-600 text-center">${err.message}</td></tr>`;
-    }
+    const res = await get("dashboard");
+    allData = res.data;
+    render();
 }
 
-/* ================= RENDER ================= */
+/* RENDER */
 function render(){
     const tbody=document.getElementById("tbody");
     const search=document.getElementById("search").value.toLowerCase();
@@ -174,107 +186,77 @@ function render(){
     let stats={pending:0,approved:0,paid:0};
 
     allData.forEach(r=>{
+        if(search && !(`${r.id} ${r.nama_madrasah}`.toLowerCase().includes(search))) return;
 
-        const id=r.id;
-        const nama=r.nama_madrasah||"-";
-        const hp=r.no_hp||"-";
-        const status=(r.status_order||"pending").toLowerCase();
-        const bayar=(r.status_pembayaran||"belum_bayar").toLowerCase();
         const bukti=fixDriveUrl(r.bukti_url);
 
-        if(search && !(`${id} ${nama}`.toLowerCase().includes(search))) return;
-
-        if(status==="pending")stats.pending++;
-        if(status==="disetujui")stats.approved++;
-        if(bayar==="lunas")stats.paid++;
+        if(r.status_order==="pending")stats.pending++;
+        if(r.status_order==="disetujui")stats.approved++;
+        if(r.status_pembayaran==="lunas")stats.paid++;
 
         html+=`
-        <tr class="border">
-            <td class="p-2">${id}</td>
-            <td class="p-2">${nama}</td>
-            <td class="p-2">${hp}</td>
-
-            <td class="p-2">
-                <span class="badge bg-yellow-100">${status}</span>
-            </td>
-
-            <td class="p-2">
-                <span class="badge bg-green-100">${bayar}</span>
-            </td>
-
-            <td class="p-2">
-                ${bukti ? `
-                    <img src="${bukti}"
-                        class="w-12 h-12 object-cover rounded border cursor-pointer"
-                        onclick="window.open('${bukti}')"
-                        onerror="this.src='https://via.placeholder.com/50?text=Error'">
-                ` : "-"}
-            </td>
-
-            <td class="p-2">
-                ${user?.role==="admin"
-                    ? `<button onclick="openDetail('${id}')" class="bg-blue-600 text-white px-2 py-1 rounded text-xs">Detail</button>`
-                    : "-"
-                }
-            </td>
+        <tr class="border-b">
+            <td class="p-3">${r.id}</td>
+            <td>${r.nama_madrasah}</td>
+            <td>${r.no_hp}</td>
+            <td>${r.status_order}</td>
+            <td>${r.status_pembayaran}</td>
+            <td>${bukti?`<img src="${bukti}" class="w-10 h-10" onclick="openDetail('${r.id}')">`:"-"}</td>
+            <td><button onclick="openDetail('${r.id}')" class="bg-blue-600 text-white px-2 py-1 rounded">Detail</button></td>
         </tr>`;
     });
 
     tbody.innerHTML=html;
 
-    document.getElementById("total").innerText=allData.length;
-    document.getElementById("pending").innerText=stats.pending;
-    document.getElementById("approved").innerText=stats.approved;
-    document.getElementById("paid").innerText=stats.paid;
+    total.innerText=allData.length;
+    pending.innerText=stats.pending;
+    approved.innerText=stats.approved;
+    paid.innerText=stats.paid;
 }
 
-/* ================= MODAL ================= */
+/* MODAL */
 function openDetail(id){
-    const r = allData.find(x=>x.id==id);
-    if(!r) return;
-
+    const r=allData.find(x=>x.id==id);
     selectedId=id;
 
     dId.innerText=id;
-    dStatus.value=r.status_order||"pending";
-    dBayar.value=r.status_pembayaran||"belum_bayar";
+    dStatus.value=r.status_order;
+    dBayar.value=r.status_pembayaran;
     dLink.value=r.link_cbt||"";
 
     const bukti=fixDriveUrl(r.bukti_url);
-    const img=document.getElementById("dBukti");
-
     if(bukti){
-        img.src=bukti;
-        img.classList.remove("hidden");
+        dBukti.src=bukti;
+        dBukti.classList.remove("hidden");
     }else{
-        img.classList.add("hidden");
+        dBukti.classList.add("hidden");
     }
 
-    document.getElementById("modal").classList.remove("hidden");
+    modal.classList.remove("hidden");
 }
 
 function closeModal(){
-    document.getElementById("modal").classList.add("hidden");
+    modal.classList.add("hidden");
 }
 
-/* ================= SAVE ================= */
+/* SAVE */
 async function saveDetail(){
     await post("updateStatus",{
         id:selectedId,
-        status:dStatus.value,
-        admin_id:user.id
+        status_order:dStatus.value,
+        status_bayar:dBayar.value,
+        link_cbt:dLink.value
     },token);
 
     closeModal();
     loadData();
 }
 
-/* ================= EXPORT ================= */
+/* EXPORT */
 function exportExcel(){
-    let csv="ID,Nama,HP\n";
-
+    let csv="ID,Nama\n";
     allData.forEach(r=>{
-        csv+=`${r.id},${r.nama_madrasah},${r.no_hp}\n`;
+        csv+=`${r.id},${r.nama_madrasah}\n`;
     });
 
     const blob=new Blob([csv]);
@@ -289,10 +271,9 @@ function logout(){
     location="login.html";
 }
 
-/* ================= INIT ================= */
 window.onload=()=>{
     loadData();
-    document.getElementById("search").oninput=render;
+    search.oninput=render;
 };
 </script>
 
