@@ -147,9 +147,23 @@
         </div>
 
         <div class="space-y-4">
-            <div class="glass p-2 rounded-3xl shadow-sm flex items-center px-6 focus-within:ring-2 focus-within:ring-blue-500 transition-all">
-                <i class="fas fa-search text-slate-400 mr-4"></i>
-                <input id="search" class="bg-transparent border-none py-4 w-full outline-none text-slate-700 font-medium" placeholder="Cari berdasarkan nama madrasah atau ID pendaftaran...">
+            <div class="flex flex-col md:flex-row gap-3">
+
+                <!-- SEARCH -->
+                <div class="glass p-2 rounded-3xl shadow-sm flex items-center px-6 flex-1">
+                    <i class="fas fa-search text-slate-400 mr-4"></i>
+                    <input id="search" class="bg-transparent border-none py-4 w-full outline-none text-slate-700 font-medium" placeholder="Cari nama atau ID...">
+                </div>
+        
+                <!-- FILTER STATUS -->
+                <select id="filterStatus" class="glass px-5 py-4 rounded-2xl font-bold text-slate-700 outline-none">
+                    <option value="">Semua Status</option>
+                    <option value="pending">⏳ Pending</option>
+                    <option value="disetujui">✅ Disetujui</option>
+                    <option value="ditolak">❌ Ditolak</option>
+                    <option value="lunas">💰 Lunas</option>
+                </select>
+        
             </div>
 
             <div class="glass rounded-[2rem] shadow-sm overflow-hidden border border-slate-200">
@@ -232,7 +246,9 @@
 
             <div class="grid grid-cols-2 gap-3 mt-8">
                 <button onclick="closeModal()" class="py-3.5 rounded-2xl font-bold text-slate-600 bg-slate-100 hover:bg-slate-200 transition-colors">Batal</button>
-                <button onclick="saveDetail()" class="py-3.5 rounded-2xl font-bold text-white bg-blue-600 hover:bg-blue-700 shadow-lg shadow-blue-200 transition-all">Simpan Perubahan</button>
+                <button id="btnSave" onclick="saveDetail()" class="py-3.5 rounded-2xl font-bold text-white bg-blue-600 hover:bg-blue-700 shadow-lg shadow-blue-200 transition-all">
+                    Simpan Perubahan
+                </button>
             </div>
         </div>
     </div>
@@ -246,17 +262,21 @@
         let selectedId = null;
 
         // Mock functions for demonstration if app.js is missing
-        if (typeof get === "undefined") {
+        if (!window.get) {
             window.get = async () => ({ status: "error", message: "get() tidak ditemukan" });
         }
         
-        if (typeof post === "undefined") {
+        if (!window.post) {
             window.post = async () => ({ status: "error", message: "post() tidak ditemukan" });
         }
+        
         function fixDriveUrl(url) {
             if(!url) return "";
             let id = "";
-            if(url.includes("/file/d/")) id = url.split("/file/d/")[1].split("/")[0];
+            if (url.includes("/file/d/")) {
+                const parts = url.split("/file/d/");
+                if (parts[1]) id = parts[1].split("/")[0];
+            }
             else if(url.includes("id=")) id = url.split("id=")[1].split("&")[0];
             return id ? `https://drive.google.com/thumbnail?id=${id}&sz=w400` : "";
         }
@@ -276,7 +296,8 @@
         }
 
         function getStatusColor(status) {
-            status = status.toLowerCase();
+            if (!status) return 'bg-slate-100 text-slate-600';
+            status = String(status).toLowerCase();
             if(status === 'disetujui' || status === 'lunas') return 'bg-emerald-100 text-emerald-700';
             if(status === 'pending' || status === 'menunggu_verifikasi') return 'bg-amber-100 text-amber-700';
             if(status === 'ditolak') return 'bg-rose-100 text-rose-700';
@@ -286,7 +307,9 @@
         function render() {
             const tbody = document.getElementById("tbody");
             const emptyState = document.getElementById("emptyState");
-            const search = document.getElementById("search").value.toLowerCase();
+            const searchInput = document.getElementById("search");
+            const search = searchInput ? searchInput.value.toLowerCase() : "";
+            const filterStatus = document.getElementById("filterStatus").value;
 
             let html = "";
             let stats = { pending: 0, approved: 0, paid: 0 };
@@ -300,7 +323,17 @@
                 const bayar = (r.status_pembayaran || "belum_bayar").toLowerCase();
                 const bukti = fixDriveUrl(r.bukti_url);
 
+                // 🔍 FILTER SEARCH
                 if(search && !(`${id} ${nama} ${hp}`.toLowerCase().includes(search))) return;
+            
+                // 🎯 FILTER STATUS
+                if (filterStatus) {
+                    if (filterStatus === "lunas") {
+                        if (bayar !== "lunas") return;
+                    } else if (filterStatus === "pending" || filterStatus === "disetujui" || filterStatus === "ditolak") {
+                        if (status !== filterStatus) return;
+                    }
+                }
 
                 count++;
                 if(status === "pending") stats.pending++;
@@ -315,10 +348,10 @@
                         <div class="text-xs text-slate-400 mt-0.5"><i class="fas fa-phone-alt mr-1"></i> ${hp}</div>
                     </td>
                     <td class="p-5">
-                        <span class="badge ${getStatusColor(status)}">${status}</span>
+                        <span class="badge ${getStatusColor(status)}">${status.charAt(0).toUpperCase() + status.slice(1)}</span>
                     </td>
                     <td class="p-5">
-                        <span class="badge ${getStatusColor(bayar)}">${bayar.replace('_', ' ')}</span>
+                        <span class="badge ${getStatusColor(bayar)}">${bayar.replaceAll('_',' ').replace(/\b\w/g, c => c.toUpperCase())}</span>
                     </td>
                     <td class="p-5 text-center">
                         ${bukti ? `<img src="${bukti}" class="w-10 h-10 object-cover rounded-lg border border-slate-200 mx-auto shadow-sm group-hover:scale-110 transition-transform cursor-pointer" onclick="openVerifikasi('${id}')">` : `<span class="text-slate-300">-</span>`}
@@ -343,7 +376,7 @@
             emptyState.classList.toggle("hidden", count > 0);
 
             // Update Stats with basic animation feel
-            document.getElementById("total").innerText = allData.length;
+            document.getElementById("total").innerText = count;
             document.getElementById("pending").innerText = stats.pending;
             document.getElementById("approved").innerText = stats.approved;
             document.getElementById("paid").innerText = stats.paid;
@@ -354,21 +387,21 @@
             if(!r) return;
 
             const fields = [
-                { l: "ID Pendaftaran", v: r.id },
-                { l: "Nama Madrasah", v: r.nama_madrasah },
-                { l: "NPSN", v: r.npsn },
-                { l: "Alamat", v: r.alamat },
-                { l: "Kabupaten", v: r.kabupaten },
-                { l: "Provinsi", v: r.provinsi },
-                { l: "Penanggung Jawab", v: r.nama_penanggung_jawab },
-                { l: "No. HP / WhatsApp", v: r.no_hp },
-                { l: "Email", v: r.email },
-                { l: "Jumlah Peserta", v: r.jumlah_peserta },
-                { l: "Paket Layanan", v: r.paket_id },
+                { l: "ID Pendaftaran", v: r.id || "-" },
+                { l: "Nama Madrasah", v: r.nama_madrasah || "-" },
+                { l: "NPSN", v: r.npsn || "-" },
+                { l: "Alamat", v: r.alamat || "-" },
+                { l: "Kabupaten", v: r.kabupaten || "-" },
+                { l: "Provinsi", v: r.provinsi || "-" },
+                { l: "Penanggung Jawab", v: r.nama_penanggung_jawab || "-" },
+                { l: "No. HP / WhatsApp", v: r.no_hp || "-" },
+                { l: "Email", v: r.email || "-" },
+                { l: "Jumlah Peserta", v: r.jumlah_peserta || "-" },
+                { l: "Paket Layanan", v: r.paket_id || "-" },
                 { l: "Total Biaya", v: `Rp ${Number(r.harga||0).toLocaleString()}`, highlight: true },
                 { l: "Status Order", v: r.status_order, badge: true },
                 { l: "Status Bayar", v: r.status_pembayaran, badge: true },
-                { l: "Link CBT", v: r.link_cbt || "Belum diset" }
+                { l: "Link CBT", v: r.link_cbt || "Belum diset" || "-" }
             ];
 
             let html = `<div class="grid grid-cols-1 md:grid-cols-2 gap-4">`;
@@ -414,7 +447,7 @@
         function closeModal() { document.getElementById("modal").classList.add("hidden"); }
 
         async function saveDetail() {
-            const btn = document.querySelector("#modal button[onclick='saveDetail()']");
+            const btn = document.getElementById("btnSave");
             const originalText = btn.innerText;
             btn.disabled = true;
             btn.innerText = "Menyimpan...";
@@ -462,6 +495,7 @@
         window.onload = () => {
             loadData();
             document.getElementById("search").oninput = render;
+            document.getElementById("filterStatus").onchange = render;
         };
     </script>
 </body>
