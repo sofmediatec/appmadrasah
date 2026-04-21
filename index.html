@@ -1,379 +1,237 @@
 <!DOCTYPE html>
 <html lang="id">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>CBT Online Madrasah | Solusi Ujian Digital</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CBT Online Madrasah | Solusi Ujian Digital</title>
 
-    <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
-    <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
-    <!-- Font Awesome for Icons -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+<script src="https://cdn.tailwindcss.com"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+<link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
 
-    <style>
-        html { scroll-behavior: smooth; }
+<style>
+html { scroll-behavior: smooth; }
 
-        body {
-            font-family: 'Inter', sans-serif;
-            background-color: #f1f5f9;
-            overflow-x: hidden;
-        }
+body {
+    font-family: 'Inter', sans-serif;
+    background-color: #f1f5f9;
+}
 
-        .hero-gradient {
-            background: linear-gradient(135deg, #1e40af 0%, #1e3a8a 100%);
-        }
+.hero-gradient {
+    background: linear-gradient(135deg, #1e40af 0%, #1e3a8a 100%);
+}
 
-        .glass-nav {
-            background: rgba(255,255,255,0.85);
-            backdrop-filter: blur(10px);
-            transition: all 0.3s ease;
-        }
+.glass-nav {
+    background: rgba(255,255,255,0.95);
+    backdrop-filter: blur(12px);
+    transition: all .3s;
+}
 
-        .nav-scrolled {
-            backdrop-filter: blur(16px);
-            background: rgba(255,255,255,0.95);
-            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
-        }
+.nav-scrolled {
+    backdrop-filter: blur(16px);
+    background: rgba(255,255,255,0.98);
+    box-shadow: 0 10px 30px rgba(0,0,0,.1);
+}
 
-        .feature-card {
-            transition: all 0.4s cubic-bezier(.175,.885,.32,1.275);
-        }
-        .feature-card:hover {
-            transform: translateY(-15px);
-            background: white;
-            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.15);
-        }
-
-        /* Mobile menu animation */
-        .mobile-menu {
-            transform: translateY(-20px);
-            opacity: 0;
-            pointer-events: none;
-            transition: all 0.3s ease;
-        }
-
-        .mobile-menu.active {
-            transform: translateY(0);
-            opacity: 1;
-            pointer-events: auto;
-        }
-
-        .status-badge {
-            padding: 4px 12px;
-            border-radius: 8px;
-            font-size: 10px;
-            font-weight: 800;
-            text-transform: uppercase;
-            letter-spacing: 0.05em;
-        }
-    </style>
+/* Skeleton */
+.skeleton {
+    animation: pulse 1.5s infinite;
+    background: #e2e8f0;
+    border-radius: 6px;
+}
+@keyframes pulse {
+    0% {opacity:.6}
+    50% {opacity:1}
+    100% {opacity:.6}
+}
+</style>
 </head>
 
 <body class="text-slate-900">
 
+<!-- NAVBAR -->
 <header id="navbar" class="glass-nav border-b sticky top-0 z-50">
-    <div class="max-w-6xl mx-auto px-6 h-20 flex items-center justify-between">
+<div class="max-w-6xl mx-auto px-6 h-20 flex justify-between items-center">
 
-        <!-- LOGO -->
-        <div class="flex items-center space-x-3">
-            <div class="w-10 h-10 bg-blue-700 rounded-xl flex items-center justify-center shadow-lg shadow-blue-200">
-                <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5h6v4H9zM9 14h6v4H9z"/>
-                </svg>
-            </div>
-            <span class="text-xl font-black italic">CBT<span class="text-blue-700">Madrasah</span></span>
-        </div>
+<div class="flex items-center space-x-3">
+<div class="w-10 h-10 bg-blue-700 rounded-xl flex items-center justify-center"></div>
+<span class="text-2xl font-black">CBT<span class="text-blue-700">Madrasah</span></span>
+</div>
 
-        <!-- MENU DESKTOP -->
-        <nav class="hidden md:flex space-x-8 font-bold text-sm text-slate-600">
-            <a href="#" class="hover:text-blue-700 transition-colors">Beranda</a>
-            <a href="#keunggulan" class="hover:text-blue-700 transition-colors">Keunggulan</a>
-            <a href="#paketSection" class="hover:text-blue-700 transition-colors">Paket</a>
-            <a href="#userListSection" class="hover:text-blue-700 transition-colors">Pengguna</a>
-        </nav>
+<nav class="hidden md:flex gap-8 font-bold text-sm">
+<a href="#">Beranda</a>
+<a href="#keunggulan">Keunggulan</a>
+<a href="#paketSection">Paket</a>
+<a href="#userListSection">Pengguna</a>
+<a href="#footer">Kontak</a>
+</nav>
 
-        <!-- BUTTON + HAMBURGER -->
-        <div class="flex items-center gap-3">
-            <a href="form.html" class="hidden md:block bg-blue-700 text-white px-6 py-2.5 rounded-full text-sm font-bold shadow-lg shadow-blue-200 hover:bg-blue-800 transition-all active:scale-95">
-                Daftar Sekarang
-            </a>
+<div class="flex items-center gap-3">
+<a href="form.html" class="hidden md:block bg-blue-700 text-white px-6 py-3 rounded-full text-sm font-bold">Mulai</a>
+<button id="menuBtn" class="md:hidden text-xl">☰</button>
+</div>
 
-            <!-- HAMBURGER -->
-            <button id="menuBtn" class="md:hidden w-10 h-10 flex items-center justify-center bg-slate-100 rounded-lg text-xl">
-                ☰
-            </button>
-        </div>
-    </div>
+</div>
 
-    <!-- MOBILE MENU -->
-    <div id="mobileMenu" class="mobile-menu md:hidden bg-white border-b shadow-xl">
-        <div class="flex flex-col p-6 space-y-4 font-bold text-slate-700">
-            <a href="#" onclick="toggleMenu()">Beranda</a>
-            <a href="#keunggulan" onclick="toggleMenu()">Keunggulan</a>
-            <a href="#paketSection" onclick="toggleMenu()">Paket</a>
-            <a href="#userListSection" onclick="toggleMenu()">Pengguna</a>
-            <hr class="border-slate-100">
-            <a href="form.html" class="text-blue-700">Mulai Pendaftaran</a>
-        </div>
-    </div>
+<div id="mobileMenu" class="hidden bg-white border-t">
+<div class="flex flex-col p-6 gap-4 font-bold">
+<a href="#">Beranda</a>
+<a href="#keunggulan">Keunggulan</a>
+<a href="#paketSection">Paket</a>
+<a href="#userListSection">Pengguna</a>
+<a href="#footer">Kontak</a>
+</div>
+</div>
 </header>
 
 <main>
 
-<section class="hero-gradient text-white pt-24 pb-44 text-center relative overflow-hidden">
-    <!-- Decorative Circles -->
-    <div class="absolute top-0 left-0 w-64 h-64 bg-white opacity-5 rounded-full -translate-x-1/2 -translate-y-1/2"></div>
-    <div class="absolute bottom-0 right-0 w-96 h-96 bg-white opacity-5 rounded-full translate-x-1/3 translate-y-1/3"></div>
-
-    <div class="max-w-4xl mx-auto px-6 relative z-10">
-        <span class="inline-block px-4 py-1.5 bg-blue-900/40 border border-blue-400 rounded-full text-[10px] font-black uppercase tracking-[0.2em] mb-6" data-aos="fade-down">
-            Digitalisasi Pendidikan
-        </span>
-        <h1 class="text-4xl md:text-7xl font-black leading-tight mb-6" data-aos="fade-up" data-aos-delay="100">
-            Sistem Ujian Online <br> <span class="text-blue-300">Tanpa Batas.</span>
-        </h1>
-        <p class="text-lg md:text-xl text-blue-100 mb-10 max-w-2xl mx-auto font-medium" data-aos="fade-up" data-aos-delay="200">
-            Platform asesmen digital modern yang aman, cepat, dan terpercaya untuk Madrasah masa kini.
-        </p>
-        <div data-aos="zoom-in" data-aos-delay="400">
-            <a href="form.html" class="bg-white text-blue-800 px-10 py-5 rounded-full font-black text-lg shadow-2xl hover:bg-slate-50 transition-all transform hover:-translate-y-1 inline-block">
-                Coba Gratis Sekarang
-            </a>
-        </div>
-    </div>
+<section class="hero-gradient text-white py-32 text-center">
+<h1 class="text-5xl font-black">Sistem Ujian Online</h1>
 </section>
 
-<div id="keunggulan" class="max-w-6xl mx-auto px-6 -mt-20 relative z-20">
-    <div class="bg-white rounded-[2.5rem] shadow-2xl p-4 md:p-10 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4 md:gap-8 border border-slate-100" data-aos="fade-up">
-        
-        <div class="feature-card flex flex-col items-center text-center p-6 rounded-3xl group">
-            <div class="w-14 h-14 bg-blue-50 text-blue-700 rounded-2xl flex items-center justify-center mb-4 transition-transform group-hover:scale-110 group-hover:rotate-6 shadow-sm">
-                <i class="fas fa-shield-halved text-2xl"></i>
-            </div>
-            <h4 class="font-extrabold text-sm text-slate-900 uppercase tracking-widest">Sistem Aman</h4>
-            <p class="text-[11px] text-slate-500 mt-2 font-medium">Anti-cheat & proteksi soal real-time.</p>
-        </div>
-
-        <div class="feature-card flex flex-col items-center text-center p-6 rounded-3xl group">
-            <div class="w-14 h-14 bg-emerald-50 text-emerald-700 rounded-2xl flex items-center justify-center mb-4 transition-transform group-hover:scale-110 group-hover:rotate-6 shadow-sm">
-                <i class="fas fa-bolt-lightning text-2xl"></i>
-            </div>
-            <h4 class="font-extrabold text-sm text-slate-900 uppercase tracking-widest">Akses Cepat</h4>
-            <p class="text-[11px] text-slate-500 mt-2 font-medium">Server ringan & akses lancar dari HP.</p>
-        </div>
-
-        <div class="feature-card flex flex-col items-center text-center p-6 rounded-3xl group">
-            <div class="w-14 h-14 bg-violet-50 text-violet-700 rounded-2xl flex items-center justify-center mb-4 transition-transform group-hover:scale-110 group-hover:rotate-6 shadow-sm">
-                <i class="fas fa-chart-pie text-2xl"></i>
-            </div>
-            <h4 class="font-extrabold text-sm text-slate-900 uppercase tracking-widest">Hasil Instan</h4>
-            <p class="text-[11px] text-slate-500 mt-2 font-medium">Analisis nilai & laporan otomatis.</p>
-        </div>
-
-        <div class="feature-card flex flex-col items-center text-center p-6 rounded-3xl group">
-            <div class="w-14 h-14 bg-orange-50 text-orange-700 rounded-2xl flex items-center justify-center mb-4 transition-transform group-hover:scale-110 group-hover:rotate-6 shadow-sm">
-                <i class="fas fa-headset text-2xl"></i>
-            </div>
-            <h4 class="font-extrabold text-sm text-slate-900 uppercase tracking-widest">Support 24/7</h4>
-            <p class="text-[11px] text-slate-500 mt-2 font-medium">Pendampingan teknis selama ujian.</p>
-        </div>
-
-    </div>
+<div id="keunggulan" class="py-20 text-center">
+<h2 class="text-3xl font-black">Keunggulan</h2>
 </div>
 
-<section id="paketSection" class="max-w-6xl mx-auto px-6 py-32">
-    <div class="text-center mb-16" data-aos="fade-up">
-        <h2 class="text-4xl font-black text-slate-900 mb-4">Pilihan Paket Layanan</h2>
-        <p class="text-slate-500 font-medium">Pilih kapasitas yang paling sesuai untuk Madrasah Anda.</p>
-    </div>
-    <div class="grid grid-cols-1 md:grid-cols-3 gap-8" id="paketList">
-        <!-- JS Injection -->
-         <div class="col-span-full py-20 text-center animate-pulse text-slate-400 font-bold">
-            <i class="fas fa-sync fa-spin mr-2"></i> Menghubungkan ke server...
-         </div>
-    </div>
+<section id="paketSection" class="max-w-6xl mx-auto py-20 px-6">
+<div id="paketList"></div>
 </section>
 
-<section id="userListSection" class="bg-slate-200 py-32 px-6">
-    <div class="max-w-7xl mx-auto">
-        <div class="flex items-end justify-between mb-12" data-aos="fade-right">
-            <div>
-                <h2 class="text-3xl font-black text-slate-900">Pengguna Aktif</h2>
-                <p class="text-slate-600 font-medium mt-1">Lembaga yang telah mempercayakan ujian digital mereka pada kami.</p>
-            </div>
-        </div>
+<!-- USER LIST -->
+<section id="userListSection" class="bg-slate-200 py-24 px-6">
+<div class="max-w-7xl mx-auto">
 
-        <div class="bg-white rounded-[2.5rem] shadow-xl overflow-hidden border border-slate-300" data-aos="fade-up">
-            <div class="overflow-x-auto">
-                <table class="w-full text-left">
-                    <thead>
-                        <tr class="bg-slate-900 text-white text-[10px] uppercase font-black tracking-widest">
-                            <th class="px-8 py-6">ID</th>
-                            <th class="px-8 py-6">Madrasah</th>
-                            <th class="px-8 py-6">Kabupaten</th>
-                            <th class="px-8 py-6 text-center">Status</th>
-                            <th class="px-8 py-6 text-center">Pembayaran</th>
-                            <th class="px-8 py-6 text-center">Akses</th>
-                        </tr>
-                    </thead>
-                    <tbody id="userList" class="divide-y divide-slate-100">
-                        <tr><td colspan="6" class="px-8 py-20 text-center text-slate-400 font-bold italic">Sinkronisasi data sistem...</td></tr>
-                    </tbody>
-                </table>
-            </div>
-        </div>
-    </div>
+<!-- SEARCH -->
+<div class="mb-6">
+<input id="searchInput" type="text" placeholder="Cari madrasah..."
+class="w-full md:w-1/3 px-4 py-3 rounded-xl border font-semibold">
+</div>
+
+<div class="bg-white rounded-3xl shadow-xl overflow-hidden">
+
+<table class="w-full text-sm">
+<thead>
+<tr class="bg-slate-800 text-white text-xs uppercase">
+<th class="px-6 py-4">No</th>
+<th class="px-6 py-4">Madrasah</th>
+<th class="px-6 py-4">Kabupaten</th>
+<th class="px-6 py-4">Paket</th>
+<th class="px-6 py-4 text-center">Status</th>
+<th class="px-6 py-4 text-center">Pembayaran</th>
+<th class="px-6 py-4 text-center">Aksi</th>
+<th class="px-6 py-4 text-center">Akses CBT</th>
+</tr>
+</thead>
+
+<tbody id="userList">
+<tr>
+<td colspan="8" class="p-6">
+<div class="space-y-3">
+<div class="skeleton h-4 w-full"></div>
+<div class="skeleton h-4 w-full"></div>
+<div class="skeleton h-4 w-full"></div>
+</div>
+</td>
+</tr>
+</tbody>
+</table>
+
+</div>
+
+<!-- PAGINATION -->
+<div class="flex justify-center mt-6 gap-2" id="pagination"></div>
+
+</div>
 </section>
 
 </main>
 
-<footer id="footer" class="bg-slate-900 text-white py-20 px-6">
-    <div class="max-w-6xl mx-auto">
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-16 mb-20 items-center">
-            <div class="text-center md:text-left">
-                <div class="text-3xl font-black italic mb-4">CBT<span class="text-blue-500">Madrasah</span></div>
-                <p class="text-slate-400 leading-relaxed font-medium">Solusi platform ujian online terintegrasi untuk Madrasah Indonesia yang lebih unggul dan digital.</p>
-            </div>
-            <div class="bg-slate-800/50 p-8 rounded-[2rem] border border-slate-700">
-                <h3 class="text-xl font-bold mb-6 flex items-center gap-3">
-                    <i class="fas fa-university text-blue-500"></i>
-                    Rekening Pembayaran
-                </h3>
-                <div id="rekeningList" class="space-y-4">
-                    <p class="text-slate-500 italic text-sm animate-pulse">Memverifikasi data finansial...</p>
-                </div>
-            </div>
-        </div>
-        
-        <div class="pt-10 border-t border-slate-800 text-center text-slate-500 text-sm font-medium">
-            &copy; 2024 CBT Online Madrasah. Powered by Digitalization Team.
-        </div>
-    </div>
+<footer id="footer" class="bg-slate-900 text-white p-10 text-center">
+Footer
 </footer>
 
-<script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
 <script src="assets/app.js"></script>
 
 <script>
-AOS.init({ duration: 800, once: true });
-
-// Scroll Effect for Navbar
-window.addEventListener("scroll", () => {
-    const nav = document.getElementById("navbar");
-    if (window.scrollY > 50) {
-        nav.classList.add("nav-scrolled");
-    } else {
-        nav.classList.remove("nav-scrolled");
-    }
+/* NAVBAR SCROLL */
+window.addEventListener("scroll",()=>{
+document.getElementById("navbar").classList.toggle("nav-scrolled",window.scrollY>50);
 });
 
-// Mobile Menu Toggle
-const menuBtn = document.getElementById("menuBtn");
-const mobileMenu = document.getElementById("mobileMenu");
-function toggleMenu() { mobileMenu.classList.toggle("active"); }
-menuBtn.onclick = toggleMenu;
+/* MOBILE MENU */
+menuBtn.onclick=()=>mobileMenu.classList.toggle("hidden");
 
-// Bank Details Helper
-function getBankDetails(bankName) {
-    const name = bankName.toUpperCase();
-    if (name.includes('BCA')) return { color: 'bg-blue-600', icon: 'fa-building-columns' };
-    if (name.includes('MANDIRI')) return { color: 'bg-amber-500', icon: 'fa-landmark' };
-    if (name.includes('BRI')) return { color: 'bg-blue-800', icon: 'fa-piggy-bank' };
-    if (name.includes('BNI')) return { color: 'bg-orange-600', icon: 'fa-vault' };
-    if (name.includes('BSI') || name.includes('SYARIAH')) return { color: 'bg-emerald-600', icon: 'fa-mosque' };
-    return { color: 'bg-slate-700', icon: 'fa-credit-card' };
-}
+/* DATA GLOBAL */
+let allData=[];
+let currentPage=1;
+const perPage=10;
 
-// LOAD PAKET
-async function loadPaket(){
-    const el = document.getElementById("paketList");
-    try {
-        const res = await get("paket_v2");
-        if(!res || res.status !== "success") throw "Gagal muat";
-        
-        let html = "";
-        res.data.forEach((p, i) => {
-            html += `
-            <div class="bg-white rounded-[2.5rem] p-10 shadow-xl border border-slate-100 flex flex-col items-center text-center transition-all hover:border-blue-500 group" data-aos="fade-up" data-aos-delay="${i*100}">
-                <h3 class="text-2xl font-black text-slate-900 mb-2">${p.nama}</h3>
-                <div class="text-blue-600 font-black text-[10px] uppercase tracking-widest mb-6">${p.deskripsi} Siswa</div>
-                <div class="text-4xl font-black text-slate-900 mb-8">
-                    <span class="text-lg font-bold text-slate-300">Rp</span>${Number(p.harga).toLocaleString()}
-                </div>
-                <a href="form.html" class="w-full py-4 bg-slate-900 text-white rounded-2xl font-black shadow-lg hover:bg-blue-700 transition-all">Pilih Paket</a>
-            </div>`;
-        });
-        el.innerHTML = html;
-    } catch(err) {
-        el.innerHTML = `<div class="col-span-full text-center text-red-500 font-bold">${err}</div>`;
-    }
-}
-
-// LOAD USER
+/* LOAD USER */
 async function loadUser(){
-    const tbody = document.getElementById("userList");
-    try {
-        const res = await get("pendaftaran");
-        if(!res || res.status !== "success") throw "Error";
-        
-        const data = res.data.slice(1).reverse().slice(0, 10); // Ambil 10 terbaru
-        let html = "";
-        data.forEach(r => {
-            const status = (r[14] || "pending").toLowerCase();
-            const bayar = (r[15] || "belum").toLowerCase();
-            
-            const stColor = status === 'disetujui' ? 'bg-emerald-100 text-emerald-700' : 'bg-amber-100 text-amber-700';
-            const byColor = bayar === 'lunas' ? 'bg-emerald-100 text-emerald-700' : 'bg-slate-100 text-slate-500';
-
-            html += `
-            <tr class="hover:bg-slate-50 transition-colors">
-                <td class="px-8 py-5 font-mono text-xs font-bold text-slate-400">#${r[0]}</td>
-                <td class="px-8 py-5 font-bold text-slate-800">${r[3] || '-'}</td>
-                <td class="px-8 py-5 text-sm font-semibold text-slate-500">${r[6] || '-'}</td>
-                <td class="px-8 py-5 text-center"><span class="status-badge ${stColor}">${status}</span></td>
-                <td class="px-8 py-5 text-center"><span class="status-badge ${byColor}">${bayar.replace('_',' ')}</span></td>
-                <td class="px-8 py-5 text-center">
-                    ${r[16] ? `<a href="${r[16]}" target="_blank" class="text-blue-600 font-black text-xs hover:underline">OPEN CBT <i class="fas fa-external-link-alt ml-1"></i></a>` : `<span class="text-slate-300 font-bold text-[10px]">MENUNGGU</span>`}
-                </td>
-            </tr>`;
-        });
-        tbody.innerHTML = html;
-    } catch(err) {
-        tbody.innerHTML = `<tr><td colspan="6" class="px-8 py-10 text-center text-red-400 font-bold">Gagal sinkronisasi data.</td></tr>`;
-    }
+const res=await get("pendaftaran");
+allData=res.data.slice(1).reverse().map(r=>({
+id:r[0],kode:r[1]||"",madrasah:r[3]||"-",
+kabupaten:r[6]||"-",paket:r[12]||"-",
+status:(r[14]||"pending").toLowerCase(),
+bayar:(r[15]||"belum_bayar").toLowerCase(),
+link_cbt:r[16]||""
+}));
+renderTable();
 }
 
-// LOAD REKENING
-async function loadRekening(){
-    const el = document.getElementById("rekeningList");
-    try {
-        const res = await get("rekening");
-        let html = "";
-        res.data.forEach(r => {
-            const bank = getBankDetails(r.bank);
-            html += `
-            <div class="flex items-center gap-4 bg-slate-900/40 p-4 rounded-2xl border border-slate-700 hover:border-blue-500 transition-colors group">
-                <div class="w-12 h-12 ${bank.color} rounded-xl flex items-center justify-center text-white text-xl shadow-lg group-hover:scale-110 transition-transform">
-                    <i class="fas ${bank.icon}"></i>
-                </div>
-                <div>
-                    <div class="text-[10px] font-black text-slate-500 uppercase tracking-widest">${r.bank}</div>
-                    <div class="text-lg font-mono font-bold tracking-wider">${r.no_rekening}</div>
-                    <div class="text-[10px] font-bold text-blue-400 italic">a.n ${r.nama}</div>
-                </div>
-            </div>`;
-        });
-        el.innerHTML = html;
-    } catch(err) {
-        el.innerHTML = `<p class="text-red-400 text-xs">Gagal memuat data rekening.</p>`;
-    }
+/* RENDER TABLE */
+function renderTable(){
+let data=filterData();
+let start=(currentPage-1)*perPage;
+let pageData=data.slice(start,start+perPage);
+
+let html="";
+let no=start+1;
+
+pageData.forEach(r=>{
+let tombol=(r.bayar==="belum_bayar")
+? `<a href="bayar.html?id=${r.id}&kode=${r.kode}" class="bg-amber-600 text-white px-3 py-1 rounded">Bayar</a>`
+: `<span class="text-green-600 font-bold">Lunas</span>`;
+
+html+=`
+<tr>
+<td class="px-4 py-3">${no++}</td>
+<td>${r.madrasah}</td>
+<td>${r.kabupaten}</td>
+<td>${r.paket}</td>
+<td>${r.status}</td>
+<td>${r.bayar}</td>
+<td>${tombol}</td>
+<td>${r.link_cbt?`<a href="${r.link_cbt}" target="_blank">Buka</a>`:"-"}</td>
+</tr>`;
+});
+
+userList.innerHTML=html||`<tr><td colspan="8" class="text-center p-6">Kosong</td></tr>`;
+renderPagination(data.length);
 }
 
-window.onload = () => {
-    loadPaket();
-    loadUser();
-    loadRekening();
+/* SEARCH */
+function filterData(){
+let q=searchInput.value.toLowerCase();
+return allData.filter(d=>d.madrasah.toLowerCase().includes(q));
+}
+searchInput.oninput=()=>{currentPage=1;renderTable();};
+
+/* PAGINATION */
+function renderPagination(total){
+let pages=Math.ceil(total/perPage);
+let html="";
+for(let i=1;i<=pages;i++){
+html+=`<button onclick="gotoPage(${i})" class="px-3 py-1 border ${i===currentPage?'bg-blue-700 text-white':''}">${i}</button>`;
+}
+pagination.innerHTML=html;
+}
+function gotoPage(p){currentPage=p;renderTable();}
+
+/* INIT */
+window.onload=()=>{
+loadUser();
 };
 </script>
 
