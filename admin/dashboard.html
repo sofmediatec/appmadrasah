@@ -9,7 +9,6 @@
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 
-    <!-- GANTI HANYA BAGIAN <style> SAJA -->
 <style>
     body { 
         font-family: 'Plus Jakarta Sans', sans-serif; 
@@ -55,7 +54,6 @@
     .card-green { background: linear-gradient(135deg,#059669,#064e3b); }
     .card-purple { background: linear-gradient(135deg,#7c3aed,#5b21b6); }
 
-    /* 🔥 PENTING: SAMAKAN DENGAN JS */
     .badge {
         padding: 6px 14px;
         border-radius: 12px;
@@ -79,104 +77,91 @@
         color:#fff;
         font-weight:700;
     }
+
+    /* Styles for pagination buttons */
+    .btn-pagination {
+        transition: all 0.2s;
+        padding: 8px 16px;
+        border-radius: 12px;
+        font-weight: 600;
+        font-size: 14px;
+    }
+    .btn-pagination:disabled {
+        opacity: 0.5;
+        cursor: not-allowed;
+    }
 </style>
 </head>
 
 <body class="min-h-screen text-slate-800">
-    <!-- NAVBAR -->
 <header class="sticky top-0 z-50 backdrop-blur-lg bg-white/80 border-b border-slate-200 shadow-sm">
     <div class="p-4 md:px-10 flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
-
-        <!-- KIRI -->
         <div>
-            <h1 class="text-2xl md:text-3xl font-extrabold tracking-tight text-slate-900">
-                Dashboard Admin
-            </h1>
-            <p class="text-slate-500 text-sm font-medium">
-                Manajemen Pendaftaran CBT Madrasah
-            </p>
+            <h1 class="text-2xl md:text-3xl font-extrabold tracking-tight text-slate-900">Dashboard Admin</h1>
+            <p class="text-slate-500 text-sm font-medium">Manajemen Pendaftaran CBT Madrasah</p>
         </div>
-
-        <!-- KANAN -->
         <div class="flex items-center gap-2 w-full md:w-auto">
-
-            <button onclick="exportExcel()" 
-                class="flex-1 md:flex-none bg-white border border-slate-200 text-slate-700 px-4 py-2 rounded-xl font-semibold hover:bg-slate-50 transition flex items-center justify-center gap-2">
-                <i class="fas fa-file-excel text-emerald-600"></i>
-                <span class="hidden md:inline">Excel</span>
+            <button onclick="exportExcel()" class="flex-1 md:flex-none bg-white border border-slate-200 text-slate-700 px-4 py-2 rounded-xl font-semibold hover:bg-slate-50 transition flex items-center justify-center gap-2">
+                <i class="fas fa-file-excel text-emerald-600"></i><span class="hidden md:inline">Excel</span>
             </button>
-
-            <button onclick="window.print()" 
-                class="flex-1 md:flex-none bg-white border border-slate-200 text-slate-700 px-4 py-2 rounded-xl font-semibold hover:bg-slate-50 transition flex items-center justify-center gap-2">
-                <i class="fas fa-file-pdf text-rose-600"></i>
-                <span class="hidden md:inline">PDF</span>
+            <button onclick="window.print()" class="flex-1 md:flex-none bg-white border border-slate-200 text-slate-700 px-4 py-2 rounded-xl font-semibold hover:bg-slate-50 transition flex items-center justify-center gap-2">
+                <i class="fas fa-file-pdf text-rose-600"></i><span class="hidden md:inline">PDF</span>
             </button>
-
-            <button onclick="logout()" 
-                class="flex-1 md:flex-none bg-slate-900 text-white px-4 py-2 rounded-xl font-semibold hover:bg-slate-800 transition flex items-center justify-center gap-2">
-                <i class="fas fa-sign-out-alt"></i>
-                <span class="hidden md:inline">Logout</span>
+            <button onclick="logout()" class="flex-1 md:flex-none bg-slate-900 text-white px-4 py-2 rounded-xl font-semibold hover:bg-slate-800 transition flex items-center justify-center gap-2">
+                <i class="fas fa-sign-out-alt"></i><span class="hidden md:inline">Logout</span>
             </button>
-
         </div>
     </div>
 </header>
 
-    <main class="p-6 md:px-10 space-y-8">
-        
-        <!-- STATS CARDS -->
-        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-            <div class="card card-blue shadow-blue-100">
-                <div class="flex justify-between items-start">
-                    <div>
-                        <p class="text-sm font-bold opacity-80 uppercase tracking-wider">Total Pendaftar</p>
-                        <h2 id="total" class="text-4xl font-black mt-1">0</h2>
-                    </div>
-                    <div class="bg-white/20 p-3 rounded-2xl"><i class="fas fa-users text-2xl"></i></div>
+<main class="p-6 md:px-10 space-y-8">
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+        <div class="card card-blue shadow-blue-100">
+            <div class="flex justify-between items-start">
+                <div>
+                    <p class="text-sm font-bold opacity-80 uppercase tracking-wider">Total Pendaftar</p>
+                    <h2 id="total" class="text-4xl font-black mt-1">0</h2>
                 </div>
-            </div>
-
-            <div class="card card-yellow shadow-yellow-100">
-                <div class="flex justify-between items-start">
-                    <div>
-                        <p class="text-sm font-bold opacity-80 uppercase tracking-wider">Menunggu</p>
-                        <h2 id="pending" class="text-4xl font-black mt-1">0</h2>
-                    </div>
-                    <div class="bg-white/20 p-3 rounded-2xl"><i class="fas fa-clock text-2xl"></i></div>
-                </div>
-            </div>
-
-            <div class="card card-green shadow-emerald-100">
-                <div class="flex justify-between items-start">
-                    <div>
-                        <p class="text-sm font-bold opacity-80 uppercase tracking-wider">Disetujui</p>
-                        <h2 id="approved" class="text-4xl font-black mt-1">0</h2>
-                    </div>
-                    <div class="bg-white/20 p-3 rounded-2xl"><i class="fas fa-check-double text-2xl"></i></div>
-                </div>
-            </div>
-
-            <div class="card card-purple shadow-purple-100">
-                <div class="flex justify-between items-start">
-                    <div>
-                        <p class="text-sm font-bold opacity-80 uppercase tracking-wider">Lunas</p>
-                        <h2 id="paid" class="text-4xl font-black mt-1">0</h2>
-                    </div>
-                    <div class="bg-white/20 p-3 rounded-2xl"><i class="fas fa-wallet text-2xl"></i></div>
-                </div>
+                <div class="bg-white/20 p-3 rounded-2xl"><i class="fas fa-users text-2xl"></i></div>
             </div>
         </div>
-
-        <div class="space-y-4">
-            <div class="flex flex-col md:flex-row gap-3">
-
-                <!-- SEARCH -->
-                <div class="glass p-2 rounded-3xl shadow-sm flex items-center px-6 flex-1">
-                    <i class="fas fa-search text-slate-400 mr-4"></i>
-                    <input id="search" class="bg-transparent border-none py-4 w-full outline-none text-slate-700 font-medium" placeholder="Cari nama atau ID...">
+        <div class="card card-yellow shadow-yellow-100">
+            <div class="flex justify-between items-start">
+                <div>
+                    <p class="text-sm font-bold opacity-80 uppercase tracking-wider">Menunggu</p>
+                    <h2 id="pending" class="text-4xl font-black mt-1">0</h2>
                 </div>
-        
-                <!-- FILTER STATUS -->
+                <div class="bg-white/20 p-3 rounded-2xl"><i class="fas fa-clock text-2xl"></i></div>
+            </div>
+        </div>
+        <div class="card card-green shadow-emerald-100">
+            <div class="flex justify-between items-start">
+                <div>
+                    <p class="text-sm font-bold opacity-80 uppercase tracking-wider">Disetujui</p>
+                    <h2 id="approved" class="text-4xl font-black mt-1">0</h2>
+                </div>
+                <div class="bg-white/20 p-3 rounded-2xl"><i class="fas fa-check-double text-2xl"></i></div>
+            </div>
+        </div>
+        <div class="card card-purple shadow-purple-100">
+            <div class="flex justify-between items-start">
+                <div>
+                    <p class="text-sm font-bold opacity-80 uppercase tracking-wider">Lunas</p>
+                    <h2 id="paid" class="text-4xl font-black mt-1">0</h2>
+                </div>
+                <div class="bg-white/20 p-3 rounded-2xl"><i class="fas fa-wallet text-2xl"></i></div>
+            </div>
+        </div>
+    </div>
+
+    <div class="space-y-4">
+        <div class="flex flex-col md:flex-row gap-3">
+            <div class="glass p-2 rounded-3xl shadow-sm flex items-center px-6 flex-1">
+                <i class="fas fa-search text-slate-400 mr-4"></i>
+                <input id="search" class="bg-transparent border-none py-4 w-full outline-none text-slate-700 font-medium" placeholder="Cari nama atau ID...">
+            </div>
+            
+            <div class="flex gap-2">
                 <select id="filterStatus" class="glass px-5 py-4 rounded-2xl font-bold text-slate-700 outline-none">
                     <option value="">Semua Status</option>
                     <option value="pending">⏳ Pending</option>
@@ -184,340 +169,396 @@
                     <option value="ditolak">❌ Ditolak</option>
                     <option value="lunas">💰 Lunas</option>
                 </select>
-        
-            </div>
 
-            <div class="glass rounded-[2rem] shadow-sm overflow-hidden border border-slate-200">
-                <div class="overflow-x-auto custom-scroll">
-                    <table class="w-full text-left border-collapse">
-                        <thead>
-                            <tr class="bg-slate-50 border-b border-slate-200">
-                                <th class="p-5 text-xs font-bold text-slate-500 uppercase tracking-widest">ID</th>
-                                <th class="p-5 text-xs font-bold text-slate-500 uppercase tracking-widest">Madrasah</th>
-                                <th class="p-5 text-xs font-bold text-slate-500 uppercase tracking-widest">Status Order</th>
-                                <th class="p-5 text-xs font-bold text-slate-500 uppercase tracking-widest">Pembayaran</th>
-                                <th class="p-5 text-xs font-bold text-slate-500 uppercase tracking-widest text-center">Bukti</th>
-                                <th class="p-5 text-xs font-bold text-slate-500 uppercase tracking-widest text-right">Aksi</th>
-                            </tr>
-                        </thead>
-                        <tbody id="tbody" class="divide-y divide-slate-100">
-                            <!-- Data will be injected here -->
-                        </tbody>
-                    </table>
+                <!-- NEW: Entries per page -->
+                <select id="entriesPerPage" class="glass px-5 py-4 rounded-2xl font-bold text-slate-700 outline-none">
+                    <option value="5">5 Data</option>
+                    <option value="10" selected>10 Data</option>
+                    <option value="20">20 Data</option>
+                    <option value="50">50 Data</option>
+                </select>
+            </div>
+        </div>
+
+        <div class="glass rounded-[2rem] shadow-sm overflow-hidden border border-slate-200">
+            <div class="overflow-x-auto custom-scroll">
+                <table class="w-full text-left border-collapse">
+                    <thead>
+                        <tr class="bg-slate-50 border-b border-slate-200">
+                            <th class="p-5 text-xs font-bold text-slate-500 uppercase tracking-widest">ID</th>
+                            <th class="p-5 text-xs font-bold text-slate-500 uppercase tracking-widest">Madrasah</th>
+                            <th class="p-5 text-xs font-bold text-slate-500 uppercase tracking-widest">Status Order</th>
+                            <th class="p-5 text-xs font-bold text-slate-500 uppercase tracking-widest">Pembayaran</th>
+                            <th class="p-5 text-xs font-bold text-slate-500 uppercase tracking-widest text-center">Bukti</th>
+                            <th class="p-5 text-xs font-bold text-slate-500 uppercase tracking-widest text-right">Aksi</th>
+                        </tr>
+                    </thead>
+                    <tbody id="tbody" class="divide-y divide-slate-100">
+                        <!-- Data injected here -->
+                    </tbody>
+                </table>
+            </div>
+            
+            <div class="p-6 bg-slate-50/50 flex flex-col md:flex-row justify-between items-center gap-4 border-t border-slate-100">
+                <div id="dataSummary" class="text-sm font-semibold text-slate-500">
+                    Menampilkan 0 sampai 0 dari 0 data
                 </div>
-                <div id="emptyState" class="hidden p-20 text-center">
-                    <div class="w-20 h-20 bg-slate-100 rounded-full flex items-center justify-center mx-auto mb-4 text-slate-400">
-                        <i class="fas fa-folder-open text-3xl"></i>
+                <div class="flex items-center gap-2" id="paginationControls">
+                    <button id="prevPage" class="btn-pagination bg-white border border-slate-200 text-slate-600 hover:bg-slate-100">
+                        <i class="fas fa-chevron-left mr-2"></i> Prev
+                    </button>
+                    <div id="pageNumbers" class="flex gap-1">
+                        <!-- Page buttons injected here -->
                     </div>
-                    <h3 class="text-lg font-bold text-slate-600">Tidak ada data ditemukan</h3>
-                    <p class="text-slate-400">Coba gunakan kata kunci pencarian yang lain.</p>
-                </div>
-            </div>
-        </div>
-    </main>
-
-    <!-- MODAL DETAIL -->
-    <div id="modalDetail" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm hidden flex items-center justify-center z-[60] p-4">
-        <div class="bg-white rounded-[2.5rem] w-full max-w-2xl p-8 shadow-2xl fade-in max-h-[90vh] overflow-y-auto custom-scroll">
-            <div class="flex justify-between items-center mb-6">
-                <h2 class="text-2xl font-extrabold text-slate-900">Detail Lengkap</h2>
-                <button onclick="closeDetail()" class="w-10 h-10 flex items-center justify-center rounded-full bg-slate-100 hover:bg-slate-200 transition-colors">
-                    <i class="fas fa-times"></i>
-                </button>
-            </div>
-            <div id="detailContent" class="space-y-2"></div>
-        </div>
-    </div>
-
-    <!-- MODAL VERIFIKASI -->
-    <div id="modal" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm hidden flex items-center justify-center z-[70] p-4">
-        <div class="bg-white rounded-[2.5rem] w-full max-w-md p-8 shadow-2xl fade-in">
-            <h2 class="text-2xl font-extrabold text-slate-900 mb-1">Verifikasi</h2>
-            <p class="text-slate-500 text-sm mb-6">Update status pendaftaran ID: <span id="dId" class="font-bold text-blue-600"></span></p>
-
-            <div class="space-y-5">
-                <div id="buktiWrap" class="hidden">
-                    <label class="block text-xs font-bold text-slate-500 uppercase mb-2">Bukti Transfer</label>
-                    <img id="dBukti" onclick="window.open(this.src)" class="w-full h-48 object-cover rounded-2xl border-2 border-slate-100 cursor-pointer hover:opacity-90 transition-opacity">
-                </div>
-
-                <div>
-                    <label class="block text-xs font-bold text-slate-500 uppercase mb-2">Status Pesanan</label>
-                    <select id="dStatus" class="w-full bg-slate-50 border border-slate-200 p-3.5 rounded-xl outline-none focus:ring-2 focus:ring-blue-500">
-                        <option value="pending">⏳ Pending (Menunggu)</option>
-                        <option value="disetujui">✅ Disetujui</option>
-                        <option value="ditolak">❌ Ditolak</option>
-                    </select>
-                </div>
-
-                <div>
-                    <label class="block text-xs font-bold text-slate-500 uppercase mb-2">Status Pembayaran</label>
-                    <select id="dBayar" class="w-full bg-slate-50 border border-slate-200 p-3.5 rounded-xl outline-none focus:ring-2 focus:ring-blue-500">
-                        <option value="belum_bayar">❌ Belum Bayar</option>
-                        <option value="menunggu_verifikasi">⏳ Menunggu Verifikasi</option>
-                        <option value="lunas">💰 Lunas / Terbayar</option>
-                    </select>
-                </div>
-
-                <div>
-                    <label class="block text-xs font-bold text-slate-500 uppercase mb-2">Link Aplikasi CBT</label>
-                    <input id="dLink" class="w-full bg-slate-50 border border-slate-200 p-3.5 rounded-xl outline-none focus:ring-2 focus:ring-blue-500" placeholder="https://cbt.sekolah.sch.id">
+                    <button id="nextPage" class="btn-pagination bg-white border border-slate-200 text-slate-600 hover:bg-slate-100">
+                        Next <i class="fas fa-chevron-right ml-2"></i>
+                    </button>
                 </div>
             </div>
 
-            <div class="grid grid-cols-2 gap-3 mt-8">
-                <button onclick="closeModal()" class="py-3.5 rounded-2xl font-bold text-slate-600 bg-slate-100 hover:bg-slate-200 transition-colors">Batal</button>
-                <button id="btnSave" onclick="saveDetail()" class="py-3.5 rounded-2xl font-bold text-white bg-blue-600 hover:bg-blue-700 shadow-lg shadow-blue-200 transition-all">
-                    Simpan Perubahan
-                </button>
+            <div id="emptyState" class="hidden p-20 text-center">
+                <div class="w-20 h-20 bg-slate-100 rounded-full flex items-center justify-center mx-auto mb-4 text-slate-400">
+                    <i class="fas fa-folder-open text-3xl"></i>
+                </div>
+                <h3 class="text-lg font-bold text-slate-600">Tidak ada data ditemukan</h3>
+                <p class="text-slate-400">Coba gunakan kata kunci pencarian yang lain.</p>
             </div>
         </div>
     </div>
+</main>
 
-    <script src="../assets/app.js"></script>
-    <script>
-        const token = localStorage.getItem("token");
-        if(!token) location="login.html";
+<!-- MODAL DETAIL -->
+<div id="modalDetail" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm hidden flex items-center justify-center z-[60] p-4">
+    <div class="bg-white rounded-[2.5rem] w-full max-w-2xl p-8 shadow-2xl fade-in max-h-[90vh] overflow-y-auto custom-scroll">
+        <div class="flex justify-between items-center mb-6">
+            <h2 class="text-2xl font-extrabold text-slate-900">Detail Lengkap</h2>
+            <button onclick="closeDetail()" class="w-10 h-10 flex items-center justify-center rounded-full bg-slate-100 hover:bg-slate-200 transition-colors">
+                <i class="fas fa-times"></i>
+            </button>
+        </div>
+        <div id="detailContent" class="space-y-2"></div>
+    </div>
+</div>
 
-        let allData = [];
-        let selectedId = null;
+<!-- MODAL VERIFIKASI -->
+<div id="modal" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm hidden flex items-center justify-center z-[70] p-4">
+    <div class="bg-white rounded-[2.5rem] w-full max-w-md p-8 shadow-2xl fade-in">
+        <h2 class="text-2xl font-extrabold text-slate-900 mb-1">Verifikasi</h2>
+        <p class="text-slate-500 text-sm mb-6">Update status pendaftaran ID: <span id="dId" class="font-bold text-blue-600"></span></p>
+        <div class="space-y-5">
+            <div id="buktiWrap" class="hidden">
+                <label class="block text-xs font-bold text-slate-500 uppercase mb-2">Bukti Transfer</label>
+                <img id="dBukti" onclick="window.open(this.src)" class="w-full h-48 object-cover rounded-2xl border-2 border-slate-100 cursor-pointer hover:opacity-90 transition-opacity">
+            </div>
+            <div>
+                <label class="block text-xs font-bold text-slate-500 uppercase mb-2">Status Pesanan</label>
+                <select id="dStatus" class="w-full bg-slate-50 border border-slate-200 p-3.5 rounded-xl outline-none focus:ring-2 focus:ring-blue-500">
+                    <option value="pending">⏳ Pending (Menunggu)</option>
+                    <option value="disetujui">✅ Disetujui</option>
+                    <option value="ditolak">❌ Ditolak</option>
+                </select>
+            </div>
+            <div>
+                <label class="block text-xs font-bold text-slate-500 uppercase mb-2">Status Pembayaran</label>
+                <select id="dBayar" class="w-full bg-slate-50 border border-slate-200 p-3.5 rounded-xl outline-none focus:ring-2 focus:ring-blue-500">
+                    <option value="belum_bayar">❌ Belum Bayar</option>
+                    <option value="menunggu_verifikasi">⏳ Menunggu Verifikasi</option>
+                    <option value="lunas">💰 Lunas / Terbayar</option>
+                </select>
+            </div>
+            <div>
+                <label class="block text-xs font-bold text-slate-500 uppercase mb-2">Link Aplikasi CBT</label>
+                <input id="dLink" class="w-full bg-slate-50 border border-slate-200 p-3.5 rounded-xl outline-none focus:ring-2 focus:ring-blue-500" placeholder="https://cbt.sekolah.sch.id">
+            </div>
+        </div>
+        <div class="grid grid-cols-2 gap-3 mt-8">
+            <button onclick="closeModal()" class="py-3.5 rounded-2xl font-bold text-slate-600 bg-slate-100 hover:bg-slate-200 transition-colors">Batal</button>
+            <button id="btnSave" onclick="saveDetail()" class="py-3.5 rounded-2xl font-bold text-white bg-blue-600 hover:bg-blue-700 shadow-lg shadow-blue-200 transition-all">
+                Simpan Perubahan
+            </button>
+        </div>
+    </div>
+</div>
 
-        // Mock functions for demonstration if app.js is missing
-        if (!window.get) {
-            window.get = async () => ({ status: "error", message: "get() tidak ditemukan" });
+<script src="../assets/app.js"></script>
+<script>
+    const token = localStorage.getItem("token");
+    if(!token) location="login.html";
+
+    let allData = [];
+    let selectedId = null;
+    
+    // Pagination state
+    let currentPage = 1;
+    let rowsPerPage = 10;
+
+    // Fallback if app.js is missing
+    if (!window.get) window.get = async () => ({ status: "error", message: "get() tidak ditemukan" });
+    if (!window.post) window.post = async () => ({ status: "error", message: "post() tidak ditemukan" });
+    
+    function fixDriveUrl(url) {
+        if(!url) return "";
+        let id = "";
+        if (url.includes("/file/d/")) {
+            const parts = url.split("/file/d/");
+            if (parts[1]) id = parts[1].split("/")[0];
         }
-        
-        if (!window.post) {
-            window.post = async () => ({ status: "error", message: "post() tidak ditemukan" });
-        }
-        
-        function fixDriveUrl(url) {
-            if(!url) return "";
-            let id = "";
-            if (url.includes("/file/d/")) {
-                const parts = url.split("/file/d/");
-                if (parts[1]) id = parts[1].split("/")[0];
-            }
-            else if(url.includes("id=")) id = url.split("id=")[1].split("&")[0];
-            return id ? `https://drive.google.com/thumbnail?id=${id}&sz=w400` : "";
-        }
+        else if(url.includes("id=")) id = url.split("id=")[1].split("&")[0];
+        return id ? `https://drive.google.com/thumbnail?id=${id}&sz=w400` : "";
+    }
 
-        async function loadData() {
-            const tbody = document.getElementById("tbody");
+    async function loadData() {
+        const tbody = document.getElementById("tbody");
+        // Initial state before load
+        if(allData.length === 0) {
             tbody.innerHTML = `<tr><td colspan="6" class="p-20 text-center"><i class="fas fa-spinner fa-spin text-3xl text-blue-500"></i><p class="mt-2 text-slate-400 font-medium">Memuat data...</p></td></tr>`;
-            
-            try {
-                const res = await get("dashboard");
-                if(res.status !== "success") throw new Error(res.message);
-                allData = res.data || [];
-                render();
-            } catch(err) {
-                tbody.innerHTML = `<tr><td colspan="6" class="p-20 text-center text-red-500 font-bold"><i class="fas fa-exclamation-triangle mb-2"></i><br>${err.message}</td></tr>`;
-            }
         }
-
-        function getStatusColor(status) {
-            if (!status) return 'bg-slate-100 text-slate-600';
-            status = String(status).toLowerCase();
-            if(status === 'disetujui' || status === 'lunas') return 'bg-emerald-100 text-emerald-700';
-            if(status === 'pending' || status === 'menunggu_verifikasi') return 'bg-amber-100 text-amber-700';
-            if(status === 'ditolak') return 'bg-rose-100 text-rose-700';
-            return 'bg-slate-100 text-slate-600';
+        
+        try {
+            const res = await get("dashboard");
+            if(res.status !== "success") throw new Error(res.message);
+            allData = res.data || [];
+            render();
+        } catch(err) {
+            tbody.innerHTML = `<tr><td colspan="6" class="p-20 text-center text-red-500 font-bold"><i class="fas fa-exclamation-triangle mb-2"></i><br>${err.message}</td></tr>`;
         }
+    }
 
-        function render() {
-            const tbody = document.getElementById("tbody");
-            const emptyState = document.getElementById("emptyState");
-            const searchInput = document.getElementById("search");
-            const search = searchInput ? searchInput.value.toLowerCase() : "";
-            const filterStatus = document.getElementById("filterStatus").value;
+    function getStatusColor(status) {
+        if (!status) return 'bg-slate-100 text-slate-600';
+        status = String(status).toLowerCase();
+        if(status === 'disetujui' || status === 'lunas') return 'bg-emerald-100 text-emerald-700';
+        if(status === 'pending' || status === 'menunggu_verifikasi') return 'bg-amber-100 text-amber-700';
+        if(status === 'ditolak') return 'bg-rose-100 text-rose-700';
+        return 'bg-slate-100 text-slate-600';
+    }
 
-            let html = "";
-            let stats = { pending: 0, approved: 0, paid: 0 };
-            let count = 0;
+    function render() {
+        const tbody = document.getElementById("tbody");
+        const emptyState = document.getElementById("emptyState");
+        const searchInput = document.getElementById("search");
+        const search = searchInput ? searchInput.value.toLowerCase() : "";
+        const filterStatus = document.getElementById("filterStatus").value;
+        rowsPerPage = parseInt(document.getElementById("entriesPerPage").value);
 
-            allData.forEach(r => {
-                const id = r.id;
-                const nama = r.nama_madrasah || "-";
-                const hp = r.no_hp || "-";
-                const status = (r.status_order || "pending").toLowerCase();
-                const bayar = (r.status_pembayaran || "belum_bayar").toLowerCase();
-                const bukti = fixDriveUrl(r.bukti_url);
+        // 1. FILTERING
+        let filtered = allData.filter(r => {
+            const id = r.id;
+            const nama = r.nama_madrasah || "-";
+            const hp = r.no_hp || "-";
+            const status = (r.status_order || "pending").toLowerCase();
+            const bayar = (r.status_pembayaran || "belum_bayar").toLowerCase();
 
-                // 🔍 FILTER SEARCH
-                if(search && !(`${id} ${nama} ${hp}`.toLowerCase().includes(search))) return;
-            
-                // 🎯 FILTER STATUS
-                if (filterStatus) {
-                    if (filterStatus === "lunas") {
-                        if (bayar !== "lunas") return;
-                    } else if (filterStatus === "pending" || filterStatus === "disetujui" || filterStatus === "ditolak") {
-                        if (status !== filterStatus) return;
-                    }
+            // Search filter
+            if(search && !(`${id} ${nama} ${hp}`.toLowerCase().includes(search))) return false;
+        
+            // Status filter
+            if (filterStatus) {
+                if (filterStatus === "lunas") {
+                    if (bayar !== "lunas") return false;
+                } else {
+                    if (status !== filterStatus) return false;
                 }
+            }
+            return true;
+        });
 
-                count++;
-                if(status === "pending") stats.pending++;
-                if(status === "disetujui") stats.approved++;
-                if(bayar === "lunas") stats.paid++;
+        // 2. STATS UPDATE (Based on TOTAL data)
+        let stats = { pending: 0, approved: 0, paid: 0 };
+        allData.forEach(r => {
+            if((r.status_order||"").toLowerCase() === "pending") stats.pending++;
+            if((r.status_order||"").toLowerCase() === "disetujui") stats.approved++;
+            if((r.status_pembayaran||"").toLowerCase() === "lunas") stats.paid++;
+        });
+        document.getElementById("total").innerText = allData.length;
+        document.getElementById("pending").innerText = stats.pending;
+        document.getElementById("approved").innerText = stats.approved;
+        document.getElementById("paid").innerText = stats.paid;
 
-                html += `
-                <tr class="hover:bg-slate-50/80 transition-colors group">
-                    <td class="p-5 font-mono text-xs font-bold text-slate-400">#${id}</td>
-                    <td class="p-5">
-                        <div class="font-bold text-slate-800">${nama}</div>
-                        <div class="text-xs text-slate-400 mt-0.5"><i class="fas fa-phone-alt mr-1"></i> ${hp}</div>
-                    </td>
-                    <td class="p-5">
-                        <span class="badge ${getStatusColor(status)}">${status.charAt(0).toUpperCase() + status.slice(1)}</span>
-                    </td>
-                    <td class="p-5">
-                        <span class="badge ${getStatusColor(bayar)}">${bayar.replaceAll('_',' ').replace(/\b\w/g, c => c.toUpperCase())}</span>
-                    </td>
-                    <td class="p-5 text-center">
-                        ${bukti ? `<img src="${bukti}" class="w-10 h-10 object-cover rounded-lg border border-slate-200 mx-auto shadow-sm group-hover:scale-110 transition-transform cursor-pointer" onclick="openVerifikasi('${id}')">` : `<span class="text-slate-300">-</span>`}
-                    </td>
-                    <td class="p-5 text-right space-x-1">
-                        <button onclick="openDetailView('${id}')" class="p-2.5 rounded-xl bg-slate-100 text-slate-600 hover:bg-slate-900 hover:text-white transition-all" title="Detail">
-                            <i class="fas fa-eye text-sm"></i>
-                        </button>
-                        <button onclick="openVerifikasi('${id}')" class="p-2.5 rounded-xl bg-blue-50 text-blue-600 hover:bg-blue-600 hover:text-white transition-all shadow-sm" title="Verifikasi">
-                            <i class="fas fa-user-check text-sm"></i>
-                        </button>
-                    </td>
-                </tr>`;
-            });
+        // 3. PAGINATION CALCULATION
+        const totalFiltered = filtered.length;
+        const totalPages = Math.ceil(totalFiltered / rowsPerPage);
+        if (currentPage > totalPages) currentPage = Math.max(1, totalPages);
 
-            tbody.innerHTML = html || `
-            <tr>
-                <td colspan="6" class="p-10 text-center text-slate-500 font-bold">
-                    Tidak ada data
+        const startIndex = (currentPage - 1) * rowsPerPage;
+        const endIndex = startIndex + rowsPerPage;
+        const paginatedData = filtered.slice(startIndex, endIndex);
+
+        // 4. RENDER TABLE ROWS
+        let html = "";
+        paginatedData.forEach(r => {
+            const status = (r.status_order || "pending").toLowerCase();
+            const bayar = (r.status_pembayaran || "belum_bayar").toLowerCase();
+            const bukti = fixDriveUrl(r.bukti_url);
+
+            html += `
+            <tr class="hover:bg-slate-50/80 transition-colors group">
+                <td class="p-5 font-mono text-xs font-bold text-slate-400">#${r.id}</td>
+                <td class="p-5">
+                    <div class="font-bold text-slate-800">${r.nama_madrasah || "-"}</div>
+                    <div class="text-xs text-slate-400 mt-0.5"><i class="fas fa-phone-alt mr-1"></i> ${r.no_hp || "-"}</div>
+                </td>
+                <td class="p-5">
+                    <span class="badge ${getStatusColor(status)}">${status}</span>
+                </td>
+                <td class="p-5">
+                    <span class="badge ${getStatusColor(bayar)}">${bayar.replaceAll('_',' ')}</span>
+                </td>
+                <td class="p-5 text-center">
+                    ${bukti ? `<img src="${bukti}" class="w-10 h-10 object-cover rounded-lg border border-slate-200 mx-auto shadow-sm group-hover:scale-110 transition-transform cursor-pointer" onclick="openVerifikasi('${r.id}')">` : `<span class="text-slate-300">-</span>`}
+                </td>
+                <td class="p-5 text-right space-x-1">
+                    <button onclick="openDetailView('${r.id}')" class="p-2.5 rounded-xl bg-slate-100 text-slate-600 hover:bg-slate-900 hover:text-white transition-all">
+                        <i class="fas fa-eye text-sm"></i>
+                    </button>
+                    <button onclick="openVerifikasi('${r.id}')" class="p-2.5 rounded-xl bg-blue-50 text-blue-600 hover:bg-blue-600 hover:text-white transition-all shadow-sm">
+                        <i class="fas fa-user-check text-sm"></i>
+                    </button>
                 </td>
             </tr>`;
-            emptyState.classList.toggle("hidden", count > 0);
+        });
 
-            // Update Stats with basic animation feel
-            document.getElementById("total").innerText = count;
-            document.getElementById("pending").innerText = stats.pending;
-            document.getElementById("approved").innerText = stats.approved;
-            document.getElementById("paid").innerText = stats.paid;
-        }
+        tbody.innerHTML = html;
+        emptyState.classList.toggle("hidden", totalFiltered > 0);
 
-        function openDetailView(id) {
-            const r = allData.find(x => x.id == id);
-            if(!r) return;
+        // 5. UPDATE SUMMARY & CONTROLS
+        const currentShowStart = totalFiltered === 0 ? 0 : startIndex + 1;
+        const currentShowEnd = Math.min(endIndex, totalFiltered);
+        document.getElementById("dataSummary").innerText = `Menampilkan ${currentShowStart} sampai ${currentShowEnd} dari ${totalFiltered} data`;
 
-            const fields = [
-                { l: "ID Pendaftaran", v: r.id || "-" },
-                { l: "Nama Madrasah", v: r.nama_madrasah || "-" },
-                { l: "NPSN", v: r.npsn || "-" },
-                { l: "Alamat", v: r.alamat || "-" },
-                { l: "Kabupaten", v: r.kabupaten || "-" },
-                { l: "Provinsi", v: r.provinsi || "-" },
-                { l: "Penanggung Jawab", v: r.nama_penanggung_jawab || "-" },
-                { l: "No. HP / WhatsApp", v: r.no_hp || "-" },
-                { l: "Email", v: r.email || "-" },
-                { l: "Jumlah Peserta", v: r.jumlah_peserta || "-" },
-                { l: "Paket Layanan", v: r.paket_id || "-" },
-                { l: "Total Biaya", v: `Rp ${Number(r.harga||0).toLocaleString()}`, highlight: true },
-                { l: "Status Order", v: r.status_order, badge: true },
-                { l: "Status Bayar", v: r.status_pembayaran, badge: true },
-                { l: "Link CBT", v: r.link_cbt || "Belum diset" || "-" }
-            ];
+        // Update Buttons
+        document.getElementById("prevPage").disabled = currentPage === 1;
+        document.getElementById("nextPage").disabled = currentPage === totalPages || totalPages === 0;
 
-            let html = `<div class="grid grid-cols-1 md:grid-cols-2 gap-4">`;
-            fields.forEach(f => {
-                html += `
-                <div class="p-4 rounded-2xl bg-slate-50 border border-slate-100">
-                    <p class="text-[10px] uppercase font-bold text-slate-400 mb-1 tracking-widest">${f.l}</p>
-                    <p class="font-bold ${f.highlight ? 'text-emerald-600' : 'text-slate-700'}">
-                        ${f.badge ? `<span class="badge ${getStatusColor(f.v)}">${f.v}</span>` : (f.v || '-')}
-                    </p>
-                </div>`;
-            });
-            html += `</div>`;
-
-            document.getElementById("detailContent").innerHTML = html;
-            document.getElementById("modalDetail").classList.remove("hidden");
-        }
-
-        function closeDetail() { document.getElementById("modalDetail").classList.add("hidden"); }
-
-        function openVerifikasi(id) {
-            const r = allData.find(x => x.id == id);
-            if(!r) return;
-
-            selectedId = id;
-            document.getElementById("dId").innerText = id;
-            document.getElementById("dStatus").value = r.status_order || "pending";
-            document.getElementById("dBayar").value = r.status_pembayaran || "belum_bayar";
-            document.getElementById("dLink").value = r.link_cbt || "";
-
-            const bukti = fixDriveUrl(r.bukti_url);
-            const container = document.getElementById("buktiWrap");
-            if(bukti) {
-                document.getElementById("dBukti").src = bukti;
-                container.classList.remove("hidden");
-            } else {
-                container.classList.add("hidden");
-            }
-
-            document.getElementById("modal").classList.remove("hidden");
-        }
-
-        function closeModal() { document.getElementById("modal").classList.add("hidden"); }
-
-        async function saveDetail() {
-            const btn = document.getElementById("btnSave");
-            const originalText = btn.innerText;
-            btn.disabled = true;
-            btn.innerText = "Menyimpan...";
-
-            try {
-                const res = await post("updateStatus", {
-                    id: selectedId,
-                    status_order: document.getElementById("dStatus").value,
-                    status_bayar: document.getElementById("dBayar").value,
-                    link_cbt: document.getElementById("dLink").value
-                }, token);
-
-                if(res.status === "success") {
-                    closeModal();
-                    loadData();
-                } else {
-                    throw new Error(res.message);
-                }
-            } catch(err) {
-                alert("Gagal update: " + err.message);
-            } finally {
-                btn.disabled = false;
-                btn.innerText = originalText;
+        // Render Page Numbers
+        let pageHtml = "";
+        for(let i=1; i<=totalPages; i++) {
+            if(i === currentPage) {
+                pageHtml += `<button class="w-10 h-10 rounded-xl bg-blue-600 text-white font-bold">${i}</button>`;
+            } else if (i === 1 || i === totalPages || (i >= currentPage - 1 && i <= currentPage + 1)) {
+                pageHtml += `<button onclick="changePage(${i})" class="w-10 h-10 rounded-xl bg-white border border-slate-200 text-slate-600 hover:bg-slate-100 font-bold transition-colors">${i}</button>`;
+            } else if (i === currentPage - 2 || i === currentPage + 2) {
+                pageHtml += `<span class="px-2 text-slate-400">...</span>`;
             }
         }
+        document.getElementById("pageNumbers").innerHTML = pageHtml;
+    }
 
-        function exportExcel() {
-            let csv = "\uFEFFID,Nama Madrasah,NPSN,HP,Email,Status Order,Status Bayar,Harga\n";
-            allData.forEach(r => {
-                csv += `"${r.id}","${r.nama_madrasah}","${r.npsn}","${r.no_hp}","${r.email}","${r.status_order}","${r.status_pembayaran}","${r.harga}"\n`;
-            });
-            const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
-            const a = document.createElement("a");
-            a.href = URL.createObjectURL(blob);
-            a.download = `Data_Pendaftaran_CBT_${new Date().toLocaleDateString()}.csv`;
-            a.click();
+    function changePage(p) {
+        currentPage = p;
+        render();
+    }
+
+    document.getElementById("prevPage").onclick = () => { if(currentPage > 1) changePage(currentPage - 1); };
+    document.getElementById("nextPage").onclick = () => { currentPage++; render(); };
+
+    function openDetailView(id) {
+        const r = allData.find(x => x.id == id);
+        if(!r) return;
+        const fields = [
+            { l: "ID Pendaftaran", v: r.id || "-" },
+            { l: "Nama Madrasah", v: r.nama_madrasah || "-" },
+            { l: "NPSN", v: r.npsn || "-" },
+            { l: "Alamat", v: r.alamat || "-" },
+            { l: "Kabupaten", v: r.kabupaten || "-" },
+            { l: "Provinsi", v: r.provinsi || "-" },
+            { l: "Penanggung Jawab", v: r.nama_penanggung_jawab || "-" },
+            { l: "No. HP / WhatsApp", v: r.no_hp || "-" },
+            { l: "Email", v: r.email || "-" },
+            { l: "Jumlah Peserta", v: r.jumlah_peserta || "-" },
+            { l: "Paket Layanan", v: r.paket_id || "-" },
+            { l: "Total Biaya", v: `Rp ${Number(r.harga||0).toLocaleString()}`, highlight: true },
+            { l: "Status Order", v: r.status_order, badge: true },
+            { l: "Status Bayar", v: r.status_pembayaran, badge: true },
+            { l: "Link CBT", v: r.link_cbt || "-" }
+        ];
+        let html = `<div class="grid grid-cols-1 md:grid-cols-2 gap-4">`;
+        fields.forEach(f => {
+            html += `<div class="p-4 rounded-2xl bg-slate-50 border border-slate-100">
+                <p class="text-[10px] uppercase font-bold text-slate-400 mb-1 tracking-widest">${f.l}</p>
+                <p class="font-bold ${f.highlight ? 'text-emerald-600' : 'text-slate-700'}">
+                    ${f.badge ? `<span class="badge ${getStatusColor(f.v)}">${f.v}</span>` : (f.v || '-')}
+                </p>
+            </div>`;
+        });
+        document.getElementById("detailContent").innerHTML = html + `</div>`;
+        document.getElementById("modalDetail").classList.remove("hidden");
+    }
+
+    function closeDetail() { document.getElementById("modalDetail").classList.add("hidden"); }
+
+    function openVerifikasi(id) {
+        const r = allData.find(x => x.id == id);
+        if(!r) return;
+        selectedId = id;
+        document.getElementById("dId").innerText = id;
+        document.getElementById("dStatus").value = r.status_order || "pending";
+        document.getElementById("dBayar").value = r.status_pembayaran || "belum_bayar";
+        document.getElementById("dLink").value = r.link_cbt || "";
+        const bukti = fixDriveUrl(r.bukti_url);
+        const container = document.getElementById("buktiWrap");
+        if(bukti) {
+            document.getElementById("dBukti").src = bukti;
+            container.classList.remove("hidden");
+        } else {
+            container.classList.add("hidden");
         }
+        document.getElementById("modal").classList.remove("hidden");
+    }
 
-        function logout() {
-            localStorage.removeItem("token");
-            localStorage.removeItem("user");
-            location = "login.html";
+    function closeModal() { document.getElementById("modal").classList.add("hidden"); }
+
+    async function saveDetail() {
+        const btn = document.getElementById("btnSave");
+        const originalText = btn.innerText;
+        btn.disabled = true;
+        btn.innerText = "Menyimpan...";
+        try {
+            const res = await post("updateStatus", {
+                id: selectedId,
+                status_order: document.getElementById("dStatus").value,
+                status_bayar: document.getElementById("dBayar").value,
+                link_cbt: document.getElementById("dLink").value
+            }, token);
+            if(res.status === "success") {
+                closeModal();
+                loadData();
+            } else throw new Error(res.message);
+        } catch(err) {
+            alert("Gagal update: " + err.message);
+        } finally {
+            btn.disabled = false;
+            btn.innerText = originalText;
         }
+    }
 
-        window.onload = () => {
-            loadData();
-            document.getElementById("search").oninput = render;
-            document.getElementById("filterStatus").onchange = render;
-        };
-    </script>
+    function exportExcel() {
+        let csv = "\uFEFFID,Nama Madrasah,NPSN,HP,Email,Status Order,Status Bayar,Harga\n";
+        allData.forEach(r => {
+            csv += `"${r.id}","${r.nama_madrasah}","${r.npsn}","${r.no_hp}","${r.email}","${r.status_order}","${r.status_pembayaran}","${r.harga}"\n`;
+        });
+        const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+        const a = document.createElement("a");
+        a.href = URL.createObjectURL(blob);
+        a.download = `Data_Pendaftaran_CBT_${new Date().toLocaleDateString()}.csv`;
+        a.click();
+    }
+
+    function logout() {
+        localStorage.removeItem("token");
+        localStorage.removeItem("user");
+        location = "login.html";
+    }
+
+    window.onload = () => {
+        loadData();
+        document.getElementById("search").oninput = () => { currentPage = 1; render(); };
+        document.getElementById("filterStatus").onchange = () => { currentPage = 1; render(); };
+        document.getElementById("entriesPerPage").onchange = () => { currentPage = 1; render(); };
+    };
+    
+    // Auto refresh every 30 seconds
+    setInterval(loadData, 30000);
+</script>
 </body>
 </html>
