@@ -201,7 +201,7 @@
             <p class="text-slate-500 text-sm mb-6">Update status pendaftaran ID: <span id="dId" class="font-bold text-blue-600"></span></p>
 
             <div class="space-y-5">
-                <div id="buktiWrap">
+                <div id="buktiWrap" class="hidden">
                     <label class="block text-xs font-bold text-slate-500 uppercase mb-2">Bukti Transfer</label>
                     <img id="dBukti" onclick="window.open(this.src)" class="w-full h-48 object-cover rounded-2xl border-2 border-slate-100 cursor-pointer hover:opacity-90 transition-opacity">
                 </div>
@@ -311,10 +311,10 @@
                         <div class="text-xs text-slate-400 mt-0.5"><i class="fas fa-phone-alt mr-1"></i> ${hp}</div>
                     </td>
                     <td class="p-5">
-                        <span class="status-badge ${getStatusColor(status)}">${status}</span>
+                        <span class="badge ${getStatusColor(status)}">${status}</span>
                     </td>
                     <td class="p-5">
-                        <span class="status-badge ${getStatusColor(bayar)}">${bayar.replace('_', ' ')}</span>
+                        <span class="badge ${getStatusColor(bayar)}">${bayar.replace('_', ' ')}</span>
                     </td>
                     <td class="p-5 text-center">
                         ${bukti ? `<img src="${bukti}" class="w-10 h-10 object-cover rounded-lg border border-slate-200 mx-auto shadow-sm group-hover:scale-110 transition-transform cursor-pointer" onclick="openVerifikasi('${id}')">` : `<span class="text-slate-300">-</span>`}
@@ -330,7 +330,12 @@
                 </tr>`;
             });
 
-            tbody.innerHTML = html;
+            tbody.innerHTML = html || `
+            <tr>
+                <td colspan="6" class="p-10 text-center text-slate-500 font-bold">
+                    Tidak ada data
+                </td>
+            </tr>`;
             emptyState.classList.toggle("hidden", count > 0);
 
             // Update Stats with basic animation feel
