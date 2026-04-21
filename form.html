@@ -182,7 +182,7 @@
                 throw new Error(res.message);
             }
     
-            window.location = "bayar.html?id=" + res.id + "&kode=" + res.kode;
+            window.location = "bayar.html?id=${r.id}&kode=${r.kode};
     
         } catch(err){
             alert(err.message || "Terjadi kesalahan");
