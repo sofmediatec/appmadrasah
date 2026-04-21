@@ -4,317 +4,378 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>CBT Online Madrasah | Solusi Ujian Digital</title>
-    <!-- Tailwind CSS -->
+
     <script src="https://cdn.tailwindcss.com"></script>
-    <!-- Google Fonts: Inter -->
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
-    <!-- AOS Animation Library -->
     <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
+    <!-- Font Awesome for Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
     <style>
+        html { scroll-behavior: smooth; }
+
         body {
             font-family: 'Inter', sans-serif;
             background-color: #f1f5f9;
             overflow-x: hidden;
-            -webkit-font-smoothing: antialiased;
         }
+
         .hero-gradient {
             background: linear-gradient(135deg, #1e40af 0%, #1e3a8a 100%);
         }
+
         .glass-nav {
-            background: rgba(255, 255, 255, 0.95);
-            backdrop-filter: blur(12px);
-            -webkit-backdrop-filter: blur(12px);
+            background: rgba(255,255,255,0.85);
+            backdrop-filter: blur(10px);
+            transition: all 0.3s ease;
         }
 
-        /* Animasi Mengambang untuk Kartu Keunggulan */
+        .nav-scrolled {
+            backdrop-filter: blur(16px);
+            background: rgba(255,255,255,0.95);
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+        }
+
         .feature-card {
-            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            transition: all 0.4s cubic-bezier(.175,.885,.32,1.275);
         }
         .feature-card:hover {
             transform: translateY(-15px);
+            background: white;
             box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.15);
-            background-color: #ffffff;
         }
-        .feature-card:hover .icon-box {
-            transform: scale(1.1) rotate(8deg);
+
+        /* Mobile menu animation */
+        .mobile-menu {
+            transform: translateY(-20px);
+            opacity: 0;
+            pointer-events: none;
+            transition: all 0.3s ease;
         }
-        
-        @keyframes float {
-            0% { transform: translateY(0px); }
-            50% { transform: translateY(-10px); }
-            100% { transform: translateY(0px); }
+
+        .mobile-menu.active {
+            transform: translateY(0);
+            opacity: 1;
+            pointer-events: auto;
         }
-        .animate-float {
-            animation: float 4s ease-in-out infinite;
+
+        .status-badge {
+            padding: 4px 12px;
+            border-radius: 8px;
+            font-size: 10px;
+            font-weight: 800;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
         }
     </style>
 </head>
+
 <body class="text-slate-900">
 
-    <!-- HEADER / NAVBAR -->
-    <header class="glass-nav border-b border-slate-200 sticky top-0 z-50 shadow-sm">
-        <div class="max-w-6xl mx-auto px-6 h-20 flex items-center justify-between">
-            <div class="flex items-center space-x-3">
-                <div class="w-10 h-10 bg-blue-700 rounded-xl flex items-center justify-center shadow-lg shadow-blue-200">
-                    <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" />
-                    </svg>
-                </div>
-                <span class="text-2xl font-black tracking-tighter text-slate-900 italic">CBT<span class="text-blue-700">Madrasah</span></span>
+<header id="navbar" class="glass-nav border-b sticky top-0 z-50">
+    <div class="max-w-6xl mx-auto px-6 h-20 flex items-center justify-between">
+
+        <!-- LOGO -->
+        <div class="flex items-center space-x-3">
+            <div class="w-10 h-10 bg-blue-700 rounded-xl flex items-center justify-center shadow-lg shadow-blue-200">
+                <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5h6v4H9zM9 14h6v4H9z"/>
+                </svg>
             </div>
-            
+            <span class="text-xl font-black italic">CBT<span class="text-blue-700">Madrasah</span></span>
+        </div>
+
+        <!-- MENU DESKTOP -->
+        <nav class="hidden md:flex space-x-8 font-bold text-sm text-slate-600">
+            <a href="#" class="hover:text-blue-700 transition-colors">Beranda</a>
+            <a href="#keunggulan" class="hover:text-blue-700 transition-colors">Keunggulan</a>
+            <a href="#paketSection" class="hover:text-blue-700 transition-colors">Paket</a>
+            <a href="#userListSection" class="hover:text-blue-700 transition-colors">Pengguna</a>
+        </nav>
+
+        <!-- BUTTON + HAMBURGER -->
+        <div class="flex items-center gap-3">
+            <a href="form.html" class="hidden md:block bg-blue-700 text-white px-6 py-2.5 rounded-full text-sm font-bold shadow-lg shadow-blue-200 hover:bg-blue-800 transition-all active:scale-95">
+                Daftar Sekarang
+            </a>
+
+            <!-- HAMBURGER -->
+            <button id="menuBtn" class="md:hidden w-10 h-10 flex items-center justify-center bg-slate-100 rounded-lg text-xl">
+                ☰
+            </button>
+        </div>
+    </div>
+
+    <!-- MOBILE MENU -->
+    <div id="mobileMenu" class="mobile-menu md:hidden bg-white border-b shadow-xl">
+        <div class="flex flex-col p-6 space-y-4 font-bold text-slate-700">
+            <a href="#" onclick="toggleMenu()">Beranda</a>
+            <a href="#keunggulan" onclick="toggleMenu()">Keunggulan</a>
+            <a href="#paketSection" onclick="toggleMenu()">Paket</a>
+            <a href="#userListSection" onclick="toggleMenu()">Pengguna</a>
+            <hr class="border-slate-100">
+            <a href="form.html" class="text-blue-700">Mulai Pendaftaran</a>
+        </div>
+    </div>
+</header>
+
+<main>
+
+<section class="hero-gradient text-white pt-24 pb-44 text-center relative overflow-hidden">
+    <!-- Decorative Circles -->
+    <div class="absolute top-0 left-0 w-64 h-64 bg-white opacity-5 rounded-full -translate-x-1/2 -translate-y-1/2"></div>
+    <div class="absolute bottom-0 right-0 w-96 h-96 bg-white opacity-5 rounded-full translate-x-1/3 translate-y-1/3"></div>
+
+    <div class="max-w-4xl mx-auto px-6 relative z-10">
+        <span class="inline-block px-4 py-1.5 bg-blue-900/40 border border-blue-400 rounded-full text-[10px] font-black uppercase tracking-[0.2em] mb-6" data-aos="fade-down">
+            Digitalisasi Pendidikan
+        </span>
+        <h1 class="text-4xl md:text-7xl font-black leading-tight mb-6" data-aos="fade-up" data-aos-delay="100">
+            Sistem Ujian Online <br> <span class="text-blue-300">Tanpa Batas.</span>
+        </h1>
+        <p class="text-lg md:text-xl text-blue-100 mb-10 max-w-2xl mx-auto font-medium" data-aos="fade-up" data-aos-delay="200">
+            Platform asesmen digital modern yang aman, cepat, dan terpercaya untuk Madrasah masa kini.
+        </p>
+        <div data-aos="zoom-in" data-aos-delay="400">
+            <a href="form.html" class="bg-white text-blue-800 px-10 py-5 rounded-full font-black text-lg shadow-2xl hover:bg-slate-50 transition-all transform hover:-translate-y-1 inline-block">
+                Coba Gratis Sekarang
+            </a>
+        </div>
+    </div>
+</section>
+
+<div id="keunggulan" class="max-w-6xl mx-auto px-6 -mt-20 relative z-20">
+    <div class="bg-white rounded-[2.5rem] shadow-2xl p-4 md:p-10 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4 md:gap-8 border border-slate-100" data-aos="fade-up">
+        
+        <div class="feature-card flex flex-col items-center text-center p-6 rounded-3xl group">
+            <div class="w-14 h-14 bg-blue-50 text-blue-700 rounded-2xl flex items-center justify-center mb-4 transition-transform group-hover:scale-110 group-hover:rotate-6 shadow-sm">
+                <i class="fas fa-shield-halved text-2xl"></i>
+            </div>
+            <h4 class="font-extrabold text-sm text-slate-900 uppercase tracking-widest">Sistem Aman</h4>
+            <p class="text-[11px] text-slate-500 mt-2 font-medium">Anti-cheat & proteksi soal real-time.</p>
+        </div>
+
+        <div class="feature-card flex flex-col items-center text-center p-6 rounded-3xl group">
+            <div class="w-14 h-14 bg-emerald-50 text-emerald-700 rounded-2xl flex items-center justify-center mb-4 transition-transform group-hover:scale-110 group-hover:rotate-6 shadow-sm">
+                <i class="fas fa-bolt-lightning text-2xl"></i>
+            </div>
+            <h4 class="font-extrabold text-sm text-slate-900 uppercase tracking-widest">Akses Cepat</h4>
+            <p class="text-[11px] text-slate-500 mt-2 font-medium">Server ringan & akses lancar dari HP.</p>
+        </div>
+
+        <div class="feature-card flex flex-col items-center text-center p-6 rounded-3xl group">
+            <div class="w-14 h-14 bg-violet-50 text-violet-700 rounded-2xl flex items-center justify-center mb-4 transition-transform group-hover:scale-110 group-hover:rotate-6 shadow-sm">
+                <i class="fas fa-chart-pie text-2xl"></i>
+            </div>
+            <h4 class="font-extrabold text-sm text-slate-900 uppercase tracking-widest">Hasil Instan</h4>
+            <p class="text-[11px] text-slate-500 mt-2 font-medium">Analisis nilai & laporan otomatis.</p>
+        </div>
+
+        <div class="feature-card flex flex-col items-center text-center p-6 rounded-3xl group">
+            <div class="w-14 h-14 bg-orange-50 text-orange-700 rounded-2xl flex items-center justify-center mb-4 transition-transform group-hover:scale-110 group-hover:rotate-6 shadow-sm">
+                <i class="fas fa-headset text-2xl"></i>
+            </div>
+            <h4 class="font-extrabold text-sm text-slate-900 uppercase tracking-widest">Support 24/7</h4>
+            <p class="text-[11px] text-slate-500 mt-2 font-medium">Pendampingan teknis selama ujian.</p>
+        </div>
+
+    </div>
+</div>
+
+<section id="paketSection" class="max-w-6xl mx-auto px-6 py-32">
+    <div class="text-center mb-16" data-aos="fade-up">
+        <h2 class="text-4xl font-black text-slate-900 mb-4">Pilihan Paket Layanan</h2>
+        <p class="text-slate-500 font-medium">Pilih kapasitas yang paling sesuai untuk Madrasah Anda.</p>
+    </div>
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-8" id="paketList">
+        <!-- JS Injection -->
+         <div class="col-span-full py-20 text-center animate-pulse text-slate-400 font-bold">
+            <i class="fas fa-sync fa-spin mr-2"></i> Menghubungkan ke server...
+         </div>
+    </div>
+</section>
+
+<section id="userListSection" class="bg-slate-200 py-32 px-6">
+    <div class="max-w-7xl mx-auto">
+        <div class="flex items-end justify-between mb-12" data-aos="fade-right">
             <div>
-                <a href="form.html" class="bg-blue-700 text-white text-sm font-bold px-6 py-3 rounded-full hover:bg-blue-800 transition-all shadow-md hover:shadow-blue-300 active:scale-95">
-                    Mulai Sekarang
-                </a>
-            </div>
-        </div>
-    </header>
-
-    <main>
-        <!-- HERO SECTION -->
-        <section class="hero-gradient text-white pt-24 pb-44 px-6 relative overflow-hidden">
-            <div class="absolute top-0 left-0 w-64 h-64 bg-white opacity-5 rounded-full -translate-x-1/2 -translate-y-1/2"></div>
-            <div class="absolute bottom-0 right-0 w-96 h-96 bg-blue-300 opacity-10 rounded-full translate-x-1/3 translate-y-1/3"></div>
-
-            <div class="max-w-4xl mx-auto text-center relative z-10">
-                <span class="inline-block px-4 py-1.5 bg-blue-900 bg-opacity-40 border border-blue-400 rounded-full text-xs font-black uppercase tracking-widest mb-6" data-aos="fade-down">
-                    Digitalisasi Madrasah Indonesia
-                </span>
-                <h1 class="text-5xl md:text-7xl font-black mb-8 tracking-tight leading-tight text-white" data-aos="fade-up" data-aos-delay="100">
-                    Sistem Ujian Online <br> <span class="text-blue-300">Tanpa Batas.</span>
-                </h1>
-                <p class="text-xl md:text-2xl text-blue-50 mb-12 leading-relaxed font-medium" data-aos="fade-up" data-aos-delay="200">
-                    Hadirkan pengalaman evaluasi digital yang modern, aman, dan transparan. Dirancang khusus untuk menunjang standar akademik Madrasah masa depan.
-                </p>
-                <div class="flex flex-wrap items-center justify-center gap-6" data-aos="zoom-in" data-aos-delay="400">
-                    <a href="form.html" class="bg-white text-blue-800 font-extrabold px-10 py-5 rounded-full shadow-2xl hover:bg-slate-50 transition transform hover:-translate-y-1 active:scale-95">
-                        Daftarkan Madrasah
-                    </a>
-                </div>
-            </div>
-        </section>
-
-        <!-- KEUNGGULAN SECTION (INTEGRATED) -->
-        <div id="keunggulan" class="max-w-6xl mx-auto px-6 -mt-20 relative z-20">
-            <div class="bg-white rounded-[2.5rem] shadow-2xl p-4 md:p-8 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4 md:gap-8 border border-slate-100" data-aos="fade-up">
-                
-                <!-- Item 1: Aman -->
-                <div class="feature-card group flex flex-col items-center text-center p-6 rounded-3xl cursor-default">
-                    <div class="icon-box w-14 h-14 bg-blue-100 text-blue-700 rounded-2xl flex items-center justify-center mb-4 shadow-sm transition-all duration-300">
-                        <svg class="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
-                        </svg>
-                    </div>
-                    <h4 class="font-extrabold text-sm text-slate-900 uppercase tracking-widest">Sistem Aman</h4>
-                    <p class="text-[11px] leading-relaxed text-slate-500 mt-3 font-semibold">Proteksi ujian dari kecurangan & kebocoran soal real-time.</p>
-                </div>
-
-                <!-- Item 2: Cepat -->
-                <div class="feature-card group flex flex-col items-center text-center p-6 rounded-3xl cursor-default">
-                    <div class="icon-box w-14 h-14 bg-emerald-100 text-emerald-700 rounded-2xl flex items-center justify-center mb-4 shadow-sm transition-all duration-300">
-                        <svg class="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z" />
-                        </svg>
-                    </div>
-                    <h4 class="font-extrabold text-sm text-slate-900 uppercase tracking-widest">Akses Cepat</h4>
-                    <p class="text-[11px] leading-relaxed text-slate-500 mt-3 font-semibold">Infrastruktur cloud stabil yang ringan diakses dari HP siswa.</p>
-                </div>
-
-                <!-- Item 3: Instan -->
-                <div class="feature-card group flex flex-col items-center text-center p-6 rounded-3xl cursor-default">
-                    <div class="icon-box w-14 h-14 bg-violet-100 text-violet-700 rounded-2xl flex items-center justify-center mb-4 shadow-sm transition-all duration-300">
-                        <svg class="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 17v-2m3 2v-4m3 4v-6m2 10H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
-                        </svg>
-                    </div>
-                    <h4 class="font-extrabold text-sm text-slate-900 uppercase tracking-widest">Hasil Instan</h4>
-                    <p class="text-[11px] leading-relaxed text-slate-500 mt-3 font-semibold">Analisis nilai otomatis & ekspor laporan dalam satu klik saja.</p>
-                </div>
-
-                <!-- Item 4: Support -->
-                <div class="feature-card group flex flex-col items-center text-center p-6 rounded-3xl cursor-default">
-                    <div class="icon-box w-14 h-14 bg-orange-100 text-orange-700 rounded-2xl flex items-center justify-center mb-4 shadow-sm transition-all duration-300">
-                        <svg class="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M18.364 5.636l-3.536 3.536m0 5.656l3.536 3.536M9.172 9.172L5.636 5.636m3.536 9.192l-3.536 3.536M21 12a9 9 0 11-18 0 9 9 0 0118 0zm-5 0a4 4 0 11-8 0 4 4 0 018 0z" />
-                        </svg>
-                    </div>
-                    <h4 class="font-extrabold text-sm text-slate-900 uppercase tracking-widest">Support 24/7</h4>
-                    <p class="text-[11px] leading-relaxed text-slate-500 mt-3 font-semibold">Tim bantuan teknis siap mendampingi selama masa ujian.</p>
-                </div>
-
+                <h2 class="text-3xl font-black text-slate-900">Pengguna Aktif</h2>
+                <p class="text-slate-600 font-medium mt-1">Lembaga yang telah mempercayakan ujian digital mereka pada kami.</p>
             </div>
         </div>
 
-        <!-- PAKET SECTION -->
-        <section id="paketSection" class="max-w-6xl mx-auto px-6 py-24">
-            <div class="text-center mb-16">
-                <h2 class="text-3xl md:text-4xl font-black text-slate-900 mb-4" data-aos="fade-up">Pilihan Paket CBT</h2>
-                <p class="text-slate-600 font-medium max-w-xl mx-auto" data-aos="fade-up" data-aos-delay="100">
-                    Investasi cerdas untuk efisiensi pendidikan. Pilih paket sesuai kebutuhan madrasah Anda.
-                </p>
-            </div>
-            <div class="grid grid-cols-1 md:grid-cols-3 gap-8" id="paketList">
-                <!-- Data diinjeksi via script -->
-            </div>
-        </section>
-        
-        <!-- USER LIST SECTION -->
-        <section class="bg-slate-200 py-24 px-6">
-            <div class="max-w-7xl mx-auto">
-                <div class="flex flex-col md:flex-row items-end justify-between mb-12 gap-6">
-                    <div data-aos="fade-right">
-                        <h2 class="text-3xl font-black text-slate-900 mb-2">Daftar Pengguna CBT</h2>
-                        <p class="text-slate-700 font-semibold italic">Terpercaya oleh berbagai lembaga pendidikan di seluruh Indonesia.</p>
-                    </div>
-                </div>
-                
-                <div class="bg-white rounded-[2.5rem] shadow-xl overflow-hidden border border-slate-300" data-aos="fade-up">
-                    <div class="overflow-x-auto">
-                        <table class="w-full text-left text-sm">
-                            <thead>
-                                <tr class="bg-slate-800 text-slate-200 text-[11px] uppercase font-black tracking-[0.2em]">
-                                    <th class="px-6 py-5 whitespace-nowrap">No</th>
-                                    <th class="px-6 py-5">Madrasah</th>
-                                    <th class="px-6 py-5">Kabupaten</th>
-                                    <th class="px-6 py-5">Paket</th>
-                                    <th class="px-6 py-5 text-center">Status</th>
-                                    <th class="px-6 py-5 text-center">Pembayaran</th>
-                                    <th class="px-6 py-5 text-center">Aksi</th>
-                                    <th class="px-6 py-5 text-center">Akses CBT</th>
-                                </tr>
-                            </thead>
-                            <tbody id="userList" class="divide-y divide-slate-100">
-                                <tr><td colspan="8" class="px-8 py-10 text-center text-slate-500 font-bold italic uppercase tracking-widest">Sinkronisasi Data...</td></tr>
-                            </tbody>
-                        </table>
-                    </div>
-                </div>
-            </div>
-        </section>
-    </main>
-
-    <!-- FOOTER -->
-    <footer class="bg-slate-900 text-slate-400 py-16">
-        <div class="max-w-6xl mx-auto px-6 text-center">
-            
-            <div class="mb-8 font-black text-2xl italic text-white">
-                CBT<span class="text-blue-500">Madrasah</span>
-            </div>
-    
-            <!-- REKENING LIST -->
-            <div class="mt-10">
-                <h3 class="text-xl font-black text-white mb-4">Rekening Pembayaran</h3>
-                <p class="text-slate-400 mb-8 text-sm">Silakan transfer ke salah satu rekening berikut</p>
-    
-                <div id="rekeningList" class="grid grid-cols-1 md:grid-cols-3 gap-6">
-                    <div class="text-center text-slate-500 font-bold">Memuat rekening...</div>
-                </div>
-            </div>
-    
-            <div class="mt-12 border-t border-slate-700 pt-6">
-                <p class="text-sm font-medium">&copy; 2026 SoftMediaTec. Solusi Digital Terpadu.</p>
+        <div class="bg-white rounded-[2.5rem] shadow-xl overflow-hidden border border-slate-300" data-aos="fade-up">
+            <div class="overflow-x-auto">
+                <table class="w-full text-left">
+                    <thead>
+                        <tr class="bg-slate-900 text-white text-[10px] uppercase font-black tracking-widest">
+                            <th class="px-8 py-6">ID</th>
+                            <th class="px-8 py-6">Madrasah</th>
+                            <th class="px-8 py-6">Kabupaten</th>
+                            <th class="px-8 py-6 text-center">Status</th>
+                            <th class="px-8 py-6 text-center">Pembayaran</th>
+                            <th class="px-8 py-6 text-center">Akses</th>
+                        </tr>
+                    </thead>
+                    <tbody id="userList" class="divide-y divide-slate-100">
+                        <tr><td colspan="6" class="px-8 py-20 text-center text-slate-400 font-bold italic">Sinkronisasi data sistem...</td></tr>
+                    </tbody>
+                </table>
             </div>
         </div>
-    </footer>
+    </div>
+</section>
 
-    <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
-    <script src="assets/app.js"></script>
+</main>
 
-    <script>
-        AOS.init({ duration: 800, once: true });
+<footer id="footer" class="bg-slate-900 text-white py-20 px-6">
+    <div class="max-w-6xl mx-auto">
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-16 mb-20 items-center">
+            <div class="text-center md:text-left">
+                <div class="text-3xl font-black italic mb-4">CBT<span class="text-blue-500">Madrasah</span></div>
+                <p class="text-slate-400 leading-relaxed font-medium">Solusi platform ujian online terintegrasi untuk Madrasah Indonesia yang lebih unggul dan digital.</p>
+            </div>
+            <div class="bg-slate-800/50 p-8 rounded-[2rem] border border-slate-700">
+                <h3 class="text-xl font-bold mb-6 flex items-center gap-3">
+                    <i class="fas fa-university text-blue-500"></i>
+                    Rekening Pembayaran
+                </h3>
+                <div id="rekeningList" class="space-y-4">
+                    <p class="text-slate-500 italic text-sm animate-pulse">Memverifikasi data finansial...</p>
+                </div>
+            </div>
+        </div>
         
-        async function loadPaket(){
-            try {
-                const res = await get("paket_v2");
-                if(!res || res.status !== "success" || !res.data) throw new Error("Gagal muat paket");
+        <div class="pt-10 border-t border-slate-800 text-center text-slate-500 text-sm font-medium">
+            &copy; 2024 CBT Online Madrasah. Powered by Digitalization Team.
+        </div>
+    </div>
+</footer>
+
+<script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
+<script src="assets/app.js"></script>
+
+<script>
+AOS.init({ duration: 800, once: true });
+
+// Scroll Effect for Navbar
+window.addEventListener("scroll", () => {
+    const nav = document.getElementById("navbar");
+    if (window.scrollY > 50) {
+        nav.classList.add("nav-scrolled");
+    } else {
+        nav.classList.remove("nav-scrolled");
+    }
+});
+
+// Mobile Menu Toggle
+const menuBtn = document.getElementById("menuBtn");
+const mobileMenu = document.getElementById("mobileMenu");
+function toggleMenu() { mobileMenu.classList.toggle("active"); }
+menuBtn.onclick = toggleMenu;
+
+// Bank Details Helper
+function getBankDetails(bankName) {
+    const name = bankName.toUpperCase();
+    if (name.includes('BCA')) return { color: 'bg-blue-600', icon: 'fa-building-columns' };
+    if (name.includes('MANDIRI')) return { color: 'bg-amber-500', icon: 'fa-landmark' };
+    if (name.includes('BRI')) return { color: 'bg-blue-800', icon: 'fa-piggy-bank' };
+    if (name.includes('BNI')) return { color: 'bg-orange-600', icon: 'fa-vault' };
+    if (name.includes('BSI') || name.includes('SYARIAH')) return { color: 'bg-emerald-600', icon: 'fa-mosque' };
+    return { color: 'bg-slate-700', icon: 'fa-credit-card' };
+}
+
+// LOAD PAKET
+async function loadPaket(){
+    const el = document.getElementById("paketList");
+    try {
+        const res = await get("paket_v2");
+        if(!res || res.status !== "success") throw "Gagal muat";
         
-                let html = "";
-                res.data.forEach((p, index) => {
-                    html += `
-                    <div class="bg-white rounded-3xl p-10 shadow-xl border border-slate-100 text-center relative group transition-all hover:border-blue-500 hover:shadow-2xl hover:shadow-blue-100" data-aos="fade-up" data-aos-delay="${index * 100}">
-                        <h3 class="text-xl font-black text-slate-900 mb-2">${p.nama || "-"}</h3>
-                        <p class="text-blue-600 text-xs mb-6 uppercase tracking-widest font-black">${p.deskripsi || "0"} Peserta Aktif</p>
-                        <div class="text-3xl font-black text-slate-900 mb-8">
-                            <span class="text-sm font-bold text-slate-400 mr-1">Rp</span>${Number(p.harga || 0).toLocaleString()}
-                        </div>
-                        <a href="form.html" class="block w-full py-4 rounded-2xl font-black bg-slate-900 text-white hover:bg-blue-700 transition-all shadow-lg shadow-slate-200">
-                            Ambil Paket
-                        </a>
-                    </div>`;
-                });
-                document.getElementById("paketList").innerHTML = html;
-            } catch(err) {
-                document.getElementById("paketList").innerHTML = `<div class="col-span-3 text-red-600 text-center font-bold">${err.message}</div>`;
-            }
-        }
-        
-        async function loadRekening(){
-            const el = document.getElementById("rekeningList");
-            try{
-                const res = await get("rekening");
-                if(!res || res.status !== "success" || !res.data) throw new Error("Gagal muat rekening");
-                let html = "";
-                res.data.forEach((r, i) => {
-                    html += `
-                    <div class="bg-slate-800/50 p-6 rounded-2xl border border-slate-700 text-center hover:border-blue-500 transition-all" data-aos="fade-up" data-aos-delay="${i * 100}">
-                        <h3 class="text-lg font-black text-blue-400 mb-2">${r.bank}</h3>
-                        <div class="text-xl font-bold text-white tracking-wider">${r.no_rekening}</div>
-                        <div class="text-xs text-slate-400 mt-2 font-semibold italic">a.n ${r.nama}</div>
-                    </div>`;
-                });
-                el.innerHTML = html || `<div class="col-span-3 text-center text-slate-500">Tidak ada rekening aktif</div>`;
-            }catch(err){
-                el.innerHTML = `<div class="col-span-3 text-red-600 text-center font-bold">${err.message}</div>`;
-            }
-        }
-        
-        async function loadUser(){
-          const tbody = document.getElementById("userList");
-          try{
-            const res = await get("pendaftaran");
-            if(!res || res.status !== "success" || !res.data) throw new Error("Gagal mengambil data");
-            const data = res.data.slice(1).reverse().map(r => ({
-              id: r[0], kode: r[1] || "", madrasah: r[3] || "-", kabupaten: r[6] || "-", paket: r[12] || "-", status: (r[14] || "pending").toLowerCase(), bayar: (r[15] || "belum_bayar").toLowerCase(), link_cbt: r[16] || ""
-            }));
-            renderTable(data);
-          }catch(err){
-            tbody.innerHTML = `<tr><td colspan="8" class="text-center text-red-600 py-10 font-bold">${err.message}</td></tr>`;
-          }
-        }
-        
-        function renderTable(data){
-          const tbody = document.getElementById("userList");
-          let html = "";
-          let no = 1;
-          data.forEach(r => {
-            let badgeClass = r.status === "disetujui" ? "bg-emerald-100 text-emerald-800 border-emerald-200" : (r.status === "pending" ? "bg-amber-100 text-amber-800 border-amber-200" : "bg-red-100 text-red-800 border-red-200");
-            let bayarBadgeClass = r.bayar === "lunas" ? "bg-emerald-100 text-emerald-800 border-emerald-200" : (r.bayar === "menunggu_verifikasi" ? "bg-amber-100 text-amber-800 border-amber-200" : "bg-slate-100 text-slate-700");
-        
-            let tombolBayar = (r.bayar === "belum_bayar" || r.bayar === "ditolak") ? 
-                `<a href="bayar.html?id=${r.id}&kode=${r.kode}" class="bg-amber-600 hover:bg-amber-700 text-white text-[10px] px-4 py-2 rounded-lg font-black transition-all shadow-md uppercase tracking-wider">Bayar</a>` : 
-                `<span class="text-${r.bayar === 'lunas' ? 'emerald' : 'amber'}-700 font-black text-[10px] uppercase">${r.bayar === 'lunas' ? 'Lengkap' : 'Verifikasi...'}</span>`;
-        
+        let html = "";
+        res.data.forEach((p, i) => {
             html += `
-            <tr class="hover:bg-blue-50/50 transition-colors">
-                <td class="px-6 py-6 text-slate-400 font-black">${no++}</td>
-                <td class="px-6 py-6 font-black text-slate-900 uppercase tracking-tight text-xs">${r.madrasah}</td>
-                <td class="px-6 py-6 text-xs text-slate-600 font-bold">${r.kabupaten}</td>
-                <td class="px-6 py-6 text-xs font-black text-blue-700 italic uppercase">${r.paket}</td>
-                <td class="px-6 py-6 text-center"><span class="px-3 py-1.5 ${badgeClass} text-[10px] border font-black rounded-md uppercase tracking-tighter shadow-sm">${r.status}</span></td>
-                <td class="px-6 py-6 text-center"><span class="px-3 py-1.5 ${bayarBadgeClass} text-[10px] border font-black rounded-md uppercase tracking-tighter shadow-sm">${r.bayar.replace('_',' ')}</span></td>
-                <td class="px-6 py-6 text-center">${tombolBayar}</td>
-                <td class="px-6 py-6 text-center">${r.link_cbt ? `<a href="${r.link_cbt}" target="_blank" class="bg-blue-700 hover:bg-blue-800 text-white text-[10px] px-4 py-2 rounded-lg font-black transition-all uppercase tracking-wider">Buka Link</a>` : "-"}</td>
-            </tr>`;
-          });
-          tbody.innerHTML = html || `<tr><td colspan="8" class="text-center py-10 text-slate-500 font-bold">Data kosong</td></tr>`;
-        }
+            <div class="bg-white rounded-[2.5rem] p-10 shadow-xl border border-slate-100 flex flex-col items-center text-center transition-all hover:border-blue-500 group" data-aos="fade-up" data-aos-delay="${i*100}">
+                <h3 class="text-2xl font-black text-slate-900 mb-2">${p.nama}</h3>
+                <div class="text-blue-600 font-black text-[10px] uppercase tracking-widest mb-6">${p.deskripsi} Siswa</div>
+                <div class="text-4xl font-black text-slate-900 mb-8">
+                    <span class="text-lg font-bold text-slate-300">Rp</span>${Number(p.harga).toLocaleString()}
+                </div>
+                <a href="form.html" class="w-full py-4 bg-slate-900 text-white rounded-2xl font-black shadow-lg hover:bg-blue-700 transition-all">Pilih Paket</a>
+            </div>`;
+        });
+        el.innerHTML = html;
+    } catch(err) {
+        el.innerHTML = `<div class="col-span-full text-center text-red-500 font-bold">${err}</div>`;
+    }
+}
+
+// LOAD USER
+async function loadUser(){
+    const tbody = document.getElementById("userList");
+    try {
+        const res = await get("pendaftaran");
+        if(!res || res.status !== "success") throw "Error";
         
-        window.onload = () => {
-            loadPaket();
-            loadUser();
-            loadRekening();
-        };
-    </script>
+        const data = res.data.slice(1).reverse().slice(0, 10); // Ambil 10 terbaru
+        let html = "";
+        data.forEach(r => {
+            const status = (r[14] || "pending").toLowerCase();
+            const bayar = (r[15] || "belum").toLowerCase();
+            
+            const stColor = status === 'disetujui' ? 'bg-emerald-100 text-emerald-700' : 'bg-amber-100 text-amber-700';
+            const byColor = bayar === 'lunas' ? 'bg-emerald-100 text-emerald-700' : 'bg-slate-100 text-slate-500';
+
+            html += `
+            <tr class="hover:bg-slate-50 transition-colors">
+                <td class="px-8 py-5 font-mono text-xs font-bold text-slate-400">#${r[0]}</td>
+                <td class="px-8 py-5 font-bold text-slate-800">${r[3] || '-'}</td>
+                <td class="px-8 py-5 text-sm font-semibold text-slate-500">${r[6] || '-'}</td>
+                <td class="px-8 py-5 text-center"><span class="status-badge ${stColor}">${status}</span></td>
+                <td class="px-8 py-5 text-center"><span class="status-badge ${byColor}">${bayar.replace('_',' ')}</span></td>
+                <td class="px-8 py-5 text-center">
+                    ${r[16] ? `<a href="${r[16]}" target="_blank" class="text-blue-600 font-black text-xs hover:underline">OPEN CBT <i class="fas fa-external-link-alt ml-1"></i></a>` : `<span class="text-slate-300 font-bold text-[10px]">MENUNGGU</span>`}
+                </td>
+            </tr>`;
+        });
+        tbody.innerHTML = html;
+    } catch(err) {
+        tbody.innerHTML = `<tr><td colspan="6" class="px-8 py-10 text-center text-red-400 font-bold">Gagal sinkronisasi data.</td></tr>`;
+    }
+}
+
+// LOAD REKENING
+async function loadRekening(){
+    const el = document.getElementById("rekeningList");
+    try {
+        const res = await get("rekening");
+        let html = "";
+        res.data.forEach(r => {
+            const bank = getBankDetails(r.bank);
+            html += `
+            <div class="flex items-center gap-4 bg-slate-900/40 p-4 rounded-2xl border border-slate-700 hover:border-blue-500 transition-colors group">
+                <div class="w-12 h-12 ${bank.color} rounded-xl flex items-center justify-center text-white text-xl shadow-lg group-hover:scale-110 transition-transform">
+                    <i class="fas ${bank.icon}"></i>
+                </div>
+                <div>
+                    <div class="text-[10px] font-black text-slate-500 uppercase tracking-widest">${r.bank}</div>
+                    <div class="text-lg font-mono font-bold tracking-wider">${r.no_rekening}</div>
+                    <div class="text-[10px] font-bold text-blue-400 italic">a.n ${r.nama}</div>
+                </div>
+            </div>`;
+        });
+        el.innerHTML = html;
+    } catch(err) {
+        el.innerHTML = `<p class="text-red-400 text-xs">Gagal memuat data rekening.</p>`;
+    }
+}
+
+window.onload = () => {
+    loadPaket();
+    loadUser();
+    loadRekening();
+};
+</script>
+
 </body>
 </html>
