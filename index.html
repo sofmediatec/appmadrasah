@@ -330,10 +330,10 @@
                 let html = "";
                 res.data.forEach((r, i) => {
                     let bankName = r.bank.toLowerCase();
-                    // Default style (Building)
+                    // Default style
                     let bankStyle = { icon: 'fa-building-columns', color: 'slate-400', accent: 'bg-slate-700' };
 
-                    // 🏢 Specific Building Icons & Colors per Bank
+                    // 🏢 Identifikasi Visual Khusus Bank
                     if(bankName.includes('bca')) {
                         bankStyle = { icon: 'fa-landmark', color: 'blue-500', accent: 'bg-blue-600' };
                     } else if(bankName.includes('mandiri')) {
@@ -343,19 +343,21 @@
                     } else if(bankName.includes('bni')) {
                         bankStyle = { icon: 'fa-building', color: 'orange-500', accent: 'bg-teal-600' };
                     } else if(bankName.includes('bsi') || bankName.includes('syariah')) {
+                        // BSI Menggunakan Ikon Masjid untuk identitas Syariah yang kuat
                         bankStyle = { icon: 'fa-mosque', color: 'emerald-500', accent: 'bg-emerald-600' };
                     } else if(bankName.includes('tunai') || bankName.includes('cash')) {
+                        // Tunai Menggunakan Ikon Transaksi Fisik
                         bankStyle = { icon: 'fa-money-bill-transfer', color: 'amber-500', accent: 'bg-amber-600' };
                     }
 
                     html += `
                     <div class="bg-slate-800/40 p-6 rounded-2xl border border-slate-700 text-center hover:border-blue-500 hover:bg-slate-800 transition-all group relative overflow-hidden" data-aos="fade-up" data-aos-delay="${i * 100}">
-                        <!-- Decorative Watermark Icon -->
+                        <!-- Decorative Watermark Icon (Tampilan Belakang) -->
                         <div class="absolute top-0 right-0 p-2 opacity-5">
                             <i class="fa-solid ${bankStyle.icon} text-6xl"></i>
                         </div>
                         
-                        <!-- Main Icon -->
+                        <!-- Main Icon Box -->
                         <div class="w-12 h-12 ${bankStyle.accent} rounded-xl flex items-center justify-center mx-auto mb-4 shadow-lg group-hover:scale-110 transition-transform">
                             <i class="fa-solid ${bankStyle.icon} text-white text-lg"></i>
                         </div>
