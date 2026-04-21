@@ -156,10 +156,11 @@ body { font-family: 'Plus Jakarta Sans', sans-serif; }
 </div>
 
 <!-- MODAL -->
+<!-- MODAL VERIFIKASI -->
 <div id="modal" class="fixed inset-0 bg-black/50 hidden flex items-center justify-center z-50">
 <div class="bg-white p-6 rounded-2xl w-96 fade-in">
 
-<h2 class="font-bold mb-3">Detail Pendaftaran</h2>
+<h2 class="font-bold mb-3">Verifikasi Pembayaran</h2>
 
 <div class="mb-2 text-sm text-gray-600">
 ID: <span id="dId"></span>
@@ -187,6 +188,11 @@ class="w-full h-40 object-cover rounded mb-3 border hidden cursor-pointer">
 <button onclick="saveDetail()" class="bg-blue-600 text-white px-3 rounded">Simpan</button>
 </div>
 
+</div>
+</div>
+
+
+<!-- MODAL DETAIL (HARUS DI LUAR) -->
 <div id="modalDetail" class="fixed inset-0 bg-black/50 hidden flex items-center justify-center z-50">
 <div class="bg-white p-6 rounded-2xl w-[500px] fade-in max-h-[90vh] overflow-auto">
 
@@ -198,8 +204,6 @@ class="w-full h-40 object-cover rounded mb-3 border hidden cursor-pointer">
 <button onclick="closeDetail()" class="bg-gray-600 text-white px-3 py-1 rounded">Tutup</button>
 </div>
 
-</div>
-</div>
 </div>
 </div>
 
