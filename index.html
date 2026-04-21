@@ -13,19 +13,32 @@
     <style>
         body {
             font-family: 'Inter', sans-serif;
-            background-color: #f1f5f9; /* Lebih gelap dari f8fafc untuk kontras */
+            background-color: #f1f5f9;
             overflow-x: hidden;
             -webkit-font-smoothing: antialiased;
-            -moz-osx-font-smoothing: grayscale;
         }
         .hero-gradient {
-            background: linear-gradient(135deg, #1e40af 0%, #1e3a8a 100%); /* Warna biru yang lebih pekat/deep */
+            background: linear-gradient(135deg, #1e40af 0%, #1e3a8a 100%);
         }
         .glass-nav {
             background: rgba(255, 255, 255, 0.95);
             backdrop-filter: blur(12px);
             -webkit-backdrop-filter: blur(12px);
         }
+
+        /* Animasi Mengambang untuk Kartu Keunggulan */
+        .feature-card {
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+        .feature-card:hover {
+            transform: translateY(-15px);
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.15);
+            background-color: #ffffff;
+        }
+        .feature-card:hover .icon-box {
+            transform: scale(1.1) rotate(8deg);
+        }
+        
         @keyframes float {
             0% { transform: translateY(0px); }
             50% { transform: translateY(-10px); }
@@ -82,37 +95,54 @@
             </div>
         </section>
 
-        <!-- KEUNGGULAN SECTION -->
-        <div id="keunggulan" class="max-w-6xl mx-auto px-6 -mt-16 relative z-20">
-            <div class="bg-white rounded-3xl shadow-2xl p-8 grid grid-cols-1 md:grid-cols-4 gap-8 border border-slate-100" data-aos="fade-up">
-                <div class="flex flex-col items-center text-center p-4">
-                    <div class="w-12 h-12 bg-blue-100 text-blue-700 rounded-full flex items-center justify-center mb-4">
-                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" /></svg>
+        <!-- KEUNGGULAN SECTION (INTEGRATED) -->
+        <div id="keunggulan" class="max-w-6xl mx-auto px-6 -mt-20 relative z-20">
+            <div class="bg-white rounded-[2.5rem] shadow-2xl p-4 md:p-8 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4 md:gap-8 border border-slate-100" data-aos="fade-up">
+                
+                <!-- Item 1: Aman -->
+                <div class="feature-card group flex flex-col items-center text-center p-6 rounded-3xl cursor-default">
+                    <div class="icon-box w-14 h-14 bg-blue-100 text-blue-700 rounded-2xl flex items-center justify-center mb-4 shadow-sm transition-all duration-300">
+                        <svg class="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
+                        </svg>
                     </div>
-                    <h4 class="font-extrabold text-sm text-slate-900 uppercase tracking-wide">Sistem Aman</h4>
-                    <p class="text-xs text-slate-600 mt-2 font-medium">Proteksi ujian dari kecurangan & soal bocor.</p>
+                    <h4 class="font-extrabold text-sm text-slate-900 uppercase tracking-widest">Sistem Aman</h4>
+                    <p class="text-[11px] leading-relaxed text-slate-500 mt-3 font-semibold">Proteksi ujian dari kecurangan & kebocoran soal real-time.</p>
                 </div>
-                <div class="flex flex-col items-center text-center p-4">
-                    <div class="w-12 h-12 bg-emerald-100 text-emerald-700 rounded-full flex items-center justify-center mb-4">
-                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z" /></svg>
+
+                <!-- Item 2: Cepat -->
+                <div class="feature-card group flex flex-col items-center text-center p-6 rounded-3xl cursor-default">
+                    <div class="icon-box w-14 h-14 bg-emerald-100 text-emerald-700 rounded-2xl flex items-center justify-center mb-4 shadow-sm transition-all duration-300">
+                        <svg class="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z" />
+                        </svg>
                     </div>
-                    <h4 class="font-extrabold text-sm text-slate-900 uppercase tracking-wide">Akses Cepat</h4>
-                    <p class="text-xs text-slate-600 mt-2 font-medium">Server stabil & ringan diakses perangkat apa pun.</p>
+                    <h4 class="font-extrabold text-sm text-slate-900 uppercase tracking-widest">Akses Cepat</h4>
+                    <p class="text-[11px] leading-relaxed text-slate-500 mt-3 font-semibold">Infrastruktur cloud stabil yang ringan diakses dari HP siswa.</p>
                 </div>
-                <div class="flex flex-col items-center text-center p-4">
-                    <div class="w-12 h-12 bg-violet-100 text-violet-700 rounded-full flex items-center justify-center mb-4">
-                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 17v-2m3 2v-4m3 4v-6m2 10H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" /></svg>
+
+                <!-- Item 3: Instan -->
+                <div class="feature-card group flex flex-col items-center text-center p-6 rounded-3xl cursor-default">
+                    <div class="icon-box w-14 h-14 bg-violet-100 text-violet-700 rounded-2xl flex items-center justify-center mb-4 shadow-sm transition-all duration-300">
+                        <svg class="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 17v-2m3 2v-4m3 4v-6m2 10H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                        </svg>
                     </div>
-                    <h4 class="font-extrabold text-sm text-slate-900 uppercase tracking-wide">Hasil Instan</h4>
-                    <p class="text-xs text-slate-600 mt-2 font-medium">Analisis nilai otomatis setelah ujian selesai.</p>
+                    <h4 class="font-extrabold text-sm text-slate-900 uppercase tracking-widest">Hasil Instan</h4>
+                    <p class="text-[11px] leading-relaxed text-slate-500 mt-3 font-semibold">Analisis nilai otomatis & ekspor laporan dalam satu klik saja.</p>
                 </div>
-                <div class="flex flex-col items-center text-center p-4">
-                    <div class="w-12 h-12 bg-orange-100 text-orange-700 rounded-full flex items-center justify-center mb-4">
-                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M18.364 5.636l-3.536 3.536m0 5.656l3.536 3.536M9.172 9.172L5.636 5.636m3.536 9.192l-3.536 3.536M21 12a9 9 0 11-18 0 9 9 0 0118 0zm-5 0a4 4 0 11-8 0 4 4 0 018 0z" /></svg>
+
+                <!-- Item 4: Support -->
+                <div class="feature-card group flex flex-col items-center text-center p-6 rounded-3xl cursor-default">
+                    <div class="icon-box w-14 h-14 bg-orange-100 text-orange-700 rounded-2xl flex items-center justify-center mb-4 shadow-sm transition-all duration-300">
+                        <svg class="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M18.364 5.636l-3.536 3.536m0 5.656l3.536 3.536M9.172 9.172L5.636 5.636m3.536 9.192l-3.536 3.536M21 12a9 9 0 11-18 0 9 9 0 0118 0zm-5 0a4 4 0 11-8 0 4 4 0 018 0z" />
+                        </svg>
                     </div>
-                    <h4 class="font-extrabold text-sm text-slate-900 uppercase tracking-wide">Support 24/7</h4>
-                    <p class="text-xs text-slate-600 mt-2 font-medium">Bantuan teknis siaga selama pelaksanaan ujian.</p>
+                    <h4 class="font-extrabold text-sm text-slate-900 uppercase tracking-widest">Support 24/7</h4>
+                    <p class="text-[11px] leading-relaxed text-slate-500 mt-3 font-semibold">Tim bantuan teknis siap mendampingi selama masa ujian.</p>
                 </div>
+
             </div>
         </div>
 
@@ -139,7 +169,7 @@
                     </div>
                 </div>
                 
-                <div class="bg-white rounded-3xl shadow-xl overflow-hidden border border-slate-300" data-aos="fade-up">
+                <div class="bg-white rounded-[2.5rem] shadow-xl overflow-hidden border border-slate-300" data-aos="fade-up">
                     <div class="overflow-x-auto">
                         <table class="w-full text-left text-sm">
                             <thead>
@@ -172,12 +202,12 @@
                 CBT<span class="text-blue-500">Madrasah</span>
             </div>
     
-            <!-- 🔽 REKENING DIPINDAHKAN KE FOOTER -->
+            <!-- REKENING LIST -->
             <div class="mt-10">
                 <h3 class="text-xl font-black text-white mb-4">Rekening Pembayaran</h3>
                 <p class="text-slate-400 mb-8 text-sm">Silakan transfer ke salah satu rekening berikut</p>
     
-                <div id="rekeningList" class="grid md:grid-cols-3 gap-6">
+                <div id="rekeningList" class="grid grid-cols-1 md:grid-cols-3 gap-6">
                     <div class="text-center text-slate-500 font-bold">Memuat rekening...</div>
                 </div>
             </div>
@@ -197,157 +227,86 @@
         async function loadPaket(){
             try {
                 const res = await get("paket_v2");
-        
-                if(!res || res.status !== "success" || !res.data){
-                    throw new Error(res?.message || "Data paket gagal dimuat");
-                }
+                if(!res || res.status !== "success" || !res.data) throw new Error("Gagal muat paket");
         
                 let html = "";
-        
                 res.data.forEach((p, index) => {
-        
-                    const nama  = p.nama || "-";
-                    const harga = p.harga || 0;
-                    const siswa = p.deskripsi || 0;
-        
                     html += `
-                    <div class="bg-white rounded-3xl p-10 shadow-xl border border-slate-100 text-center relative group transition-all hover:border-blue-500" data-aos="fade-up" data-aos-delay="${index * 100}">
-                        <h3 class="text-xl font-black text-slate-900 mb-2">${nama}</h3>
-                        <p class="text-blue-600 text-xs mb-6 uppercase tracking-widest font-black">${siswa} Peserta Aktif</p>
+                    <div class="bg-white rounded-3xl p-10 shadow-xl border border-slate-100 text-center relative group transition-all hover:border-blue-500 hover:shadow-2xl hover:shadow-blue-100" data-aos="fade-up" data-aos-delay="${index * 100}">
+                        <h3 class="text-xl font-black text-slate-900 mb-2">${p.nama || "-"}</h3>
+                        <p class="text-blue-600 text-xs mb-6 uppercase tracking-widest font-black">${p.deskripsi || "0"} Peserta Aktif</p>
                         <div class="text-3xl font-black text-slate-900 mb-8">
-                            <span class="text-sm font-bold text-slate-400 mr-1">Rp</span>${Number(harga).toLocaleString()}
+                            <span class="text-sm font-bold text-slate-400 mr-1">Rp</span>${Number(p.harga || 0).toLocaleString()}
                         </div>
                         <a href="form.html" class="block w-full py-4 rounded-2xl font-black bg-slate-900 text-white hover:bg-blue-700 transition-all shadow-lg shadow-slate-200">
                             Ambil Paket
                         </a>
                     </div>`;
                 });
-        
                 document.getElementById("paketList").innerHTML = html;
-        
             } catch(err) {
-                document.getElementById("paketList").innerHTML =
-                `<div class="col-span-3 text-red-600 font-bold text-center py-10">${err.message}</div>`;
+                document.getElementById("paketList").innerHTML = `<div class="col-span-3 text-red-600 text-center font-bold">${err.message}</div>`;
             }
         }
         
         async function loadRekening(){
             const el = document.getElementById("rekeningList");
-        
             try{
                 const res = await get("rekening");
-        
-                if(!res || res.status !== "success" || !res.data){
-                    throw new Error("Data rekening gagal dimuat");
-                }
-        
+                if(!res || res.status !== "success" || !res.data) throw new Error("Gagal muat rekening");
                 let html = "";
-        
                 res.data.forEach((r, i) => {
                     html += `
-                    <div class="bg-white p-6 rounded-2xl shadow-lg border border-slate-200 text-center" data-aos="fade-up" data-aos-delay="${i * 100}">
-                        <h3 class="text-lg font-black text-blue-700 mb-2">${r.bank}</h3>
-                        <div class="text-xl font-bold text-slate-900 tracking-wider">${r.no_rekening}</div>
-                        <div class="text-sm text-slate-600 mt-2 font-semibold">a.n ${r.nama}</div>
-                        ${r.keterangan ? `<p class="text-xs text-slate-500 mt-3 italic">${r.keterangan}</p>` : ""}
+                    <div class="bg-slate-800/50 p-6 rounded-2xl border border-slate-700 text-center hover:border-blue-500 transition-all" data-aos="fade-up" data-aos-delay="${i * 100}">
+                        <h3 class="text-lg font-black text-blue-400 mb-2">${r.bank}</h3>
+                        <div class="text-xl font-bold text-white tracking-wider">${r.no_rekening}</div>
+                        <div class="text-xs text-slate-400 mt-2 font-semibold italic">a.n ${r.nama}</div>
                     </div>`;
                 });
-        
                 el.innerHTML = html || `<div class="col-span-3 text-center text-slate-500">Tidak ada rekening aktif</div>`;
-        
             }catch(err){
                 el.innerHTML = `<div class="col-span-3 text-red-600 text-center font-bold">${err.message}</div>`;
             }
         }
         
-        /* =========================
-           ✅ VERSI BARU (AMAN)
-        ========================= */
         async function loadUser(){
           const tbody = document.getElementById("userList");
-        
           try{
             const res = await get("pendaftaran");
-        
-            if(!res || res.status !== "success" || !res.data){
-              throw new Error("Gagal mengambil data");
-            }
-        
+            if(!res || res.status !== "success" || !res.data) throw new Error("Gagal mengambil data");
             const data = res.data.slice(1).reverse().map(r => ({
-              id: r[0],
-                kode: r[1] || "",
-              madrasah: r[3] || "-",
-              kabupaten: r[6] || "-",
-              paket: r[12] || "-",
-              status: (r[14] || "pending").toLowerCase(),
-              bayar: (r[15] || "belum_bayar").toLowerCase(),
-              link_cbt: r[16] || ""
+              id: r[0], kode: r[1] || "", madrasah: r[3] || "-", kabupaten: r[6] || "-", paket: r[12] || "-", status: (r[14] || "pending").toLowerCase(), bayar: (r[15] || "belum_bayar").toLowerCase(), link_cbt: r[16] || ""
             }));
-        
             renderTable(data);
-        
           }catch(err){
-            tbody.innerHTML =
-              `<tr><td colspan="8" class="text-center text-red-600 py-10 font-bold">${err.message}</td></tr>`;
+            tbody.innerHTML = `<tr><td colspan="8" class="text-center text-red-600 py-10 font-bold">${err.message}</td></tr>`;
           }
         }
         
-        /* =========================
-           ✅ RENDER TABEL (FUNGSI LAMA DIPERTAHANKAN)
-        ========================= */
         function renderTable(data){
           const tbody = document.getElementById("userList");
-        
           let html = "";
           let no = 1;
-        
           data.forEach(r => {
+            let badgeClass = r.status === "disetujui" ? "bg-emerald-100 text-emerald-800 border-emerald-200" : (r.status === "pending" ? "bg-amber-100 text-amber-800 border-amber-200" : "bg-red-100 text-red-800 border-red-200");
+            let bayarBadgeClass = r.bayar === "lunas" ? "bg-emerald-100 text-emerald-800 border-emerald-200" : (r.bayar === "menunggu_verifikasi" ? "bg-amber-100 text-amber-800 border-amber-200" : "bg-slate-100 text-slate-700");
         
-            let badgeClass = "bg-slate-100 text-slate-700";
-            if(r.status === "pending") badgeClass = "bg-amber-100 text-amber-800 border border-amber-200";
-            if(r.status === "disetujui") badgeClass = "bg-emerald-100 text-emerald-800 border border-emerald-200";
-            if(r.status === "ditolak") badgeClass = "bg-red-100 text-red-800 border border-red-200";
-        
-            let bayarBadgeClass = "bg-slate-100 text-slate-700";
-            if(r.bayar === "menunggu_verifikasi") bayarBadgeClass = "bg-amber-100 text-amber-800 border border-amber-200";
-            if(r.bayar === "lunas") bayarBadgeClass = "bg-emerald-100 text-emerald-800 border border-emerald-200";
-            if(r.bayar === "ditolak") bayarBadgeClass = "bg-red-100 text-red-800 border border-red-200";
-        
-            let tombolBayar = "-";
-            if(r.bayar === "belum_bayar" || r.bayar === "ditolak"){
-                tombolBayar = `<a href="bayar.html?id=${r.id}&kode=${r.kode}" class="bg-amber-600 hover:bg-amber-700 text-white text-[10px] px-4 py-2 rounded-lg font-black transition-all shadow-md uppercase tracking-wider">Bayar</a>`;
-            } else if(r.bayar === "menunggu_verifikasi"){
-                tombolBayar = `<span class="text-amber-700 font-black text-[10px] uppercase">Verifikasi...</span>`;
-            } else if(r.bayar === "lunas"){
-                tombolBayar = `<span class="text-emerald-700 font-black text-[10px] uppercase">Lengkap</span>`;
-            }
-        
-            let tombolCBT = "-";
-            if(r.link_cbt){
-                tombolCBT = `<a href="${r.link_cbt}" target="_blank" class="bg-blue-700 hover:bg-blue-800 text-white text-[10px] px-4 py-2 rounded-lg font-black transition-all shadow-md uppercase tracking-wider inline-flex items-center">Buka Link</a>`;
-            }
+            let tombolBayar = (r.bayar === "belum_bayar" || r.bayar === "ditolak") ? 
+                `<a href="bayar.html?id=${r.id}&kode=${r.kode}" class="bg-amber-600 hover:bg-amber-700 text-white text-[10px] px-4 py-2 rounded-lg font-black transition-all shadow-md uppercase tracking-wider">Bayar</a>` : 
+                `<span class="text-${r.bayar === 'lunas' ? 'emerald' : 'amber'}-700 font-black text-[10px] uppercase">${r.bayar === 'lunas' ? 'Lengkap' : 'Verifikasi...'}</span>`;
         
             html += `
             <tr class="hover:bg-blue-50/50 transition-colors">
-                <td class="px-6 py-6 text-slate-500 font-black">${no++}</td>
-                <td class="px-6 py-6">
-                    <div class="text-sm font-black text-slate-900 uppercase tracking-tight">${r.madrasah}</div>
-                </td>
-                <td class="px-6 py-6 text-sm text-slate-600 font-bold">${r.kabupaten}</td>
-                <td class="px-6 py-6">
-                    <span class="text-xs font-black text-blue-700 italic uppercase">${r.paket}</span>
-                </td>
-                <td class="px-6 py-6 text-center">
-                    <span class="px-3 py-1.5 ${badgeClass} text-[10px] font-black rounded-md uppercase tracking-tighter shadow-sm">${r.status}</span>
-                </td>
-                <td class="px-6 py-6 text-center">
-                    <span class="px-3 py-1.5 ${bayarBadgeClass} text-[10px] font-black rounded-md uppercase tracking-tighter shadow-sm">${r.bayar.replace('_',' ')}</span>
-                </td>
+                <td class="px-6 py-6 text-slate-400 font-black">${no++}</td>
+                <td class="px-6 py-6 font-black text-slate-900 uppercase tracking-tight text-xs">${r.madrasah}</td>
+                <td class="px-6 py-6 text-xs text-slate-600 font-bold">${r.kabupaten}</td>
+                <td class="px-6 py-6 text-xs font-black text-blue-700 italic uppercase">${r.paket}</td>
+                <td class="px-6 py-6 text-center"><span class="px-3 py-1.5 ${badgeClass} text-[10px] border font-black rounded-md uppercase tracking-tighter shadow-sm">${r.status}</span></td>
+                <td class="px-6 py-6 text-center"><span class="px-3 py-1.5 ${bayarBadgeClass} text-[10px] border font-black rounded-md uppercase tracking-tighter shadow-sm">${r.bayar.replace('_',' ')}</span></td>
                 <td class="px-6 py-6 text-center">${tombolBayar}</td>
-                <td class="px-6 py-6 text-center">${tombolCBT}</td>
+                <td class="px-6 py-6 text-center">${r.link_cbt ? `<a href="${r.link_cbt}" target="_blank" class="bg-blue-700 hover:bg-blue-800 text-white text-[10px] px-4 py-2 rounded-lg font-black transition-all uppercase tracking-wider">Buka Link</a>` : "-"}</td>
             </tr>`;
           });
-        
           tbody.innerHTML = html || `<tr><td colspan="8" class="text-center py-10 text-slate-500 font-bold">Data kosong</td></tr>`;
         }
         
@@ -356,6 +315,6 @@
             loadUser();
             loadRekening();
         };
-        </script>
+    </script>
 </body>
 </html>
