@@ -246,9 +246,13 @@
         let selectedId = null;
 
         // Mock functions for demonstration if app.js is missing
-        const get = window.get || (async () => ({status: "error", message: "app.js get() not found"}));
-        const post = window.post || (async () => ({status: "error", message: "app.js post() not found"}));
-
+        if (typeof get === "undefined") {
+            window.get = async () => ({ status: "error", message: "get() tidak ditemukan" });
+        }
+        
+        if (typeof post === "undefined") {
+            window.post = async () => ({ status: "error", message: "post() tidak ditemukan" });
+        }
         function fixDriveUrl(url) {
             if(!url) return "";
             let id = "";
