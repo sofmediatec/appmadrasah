@@ -18,12 +18,50 @@
     }
 
     .glass {
-        background: rgba(255, 255, 255, 0.95);
+        background: rgba(255, 255, 255, 0.98);
         backdrop-filter: blur(10px);
-        border: 1px solid rgba(255, 255, 255, 1);
+        border: 1px solid rgba(203, 213, 225, 1);
         box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1);
     }
 
+    /* 🔥 HIGH CONTRAST TABLE STYLES */
+    .table-container {
+        border: 2px solid #1e293b;
+    }
+
+    thead th {
+        background: #0f172a !important; /* Hitam Pekat */
+        color: #ffffff !important;
+        font-weight: 800;
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+        border-bottom: 3px solid #334155;
+    }
+
+    /* Zebra Striping */
+    tbody tr:nth-child(even) {
+        background-color: #f1f5f9; /* Abu-abu muda untuk baris genap */
+    }
+
+    tbody tr:nth-child(odd) {
+        background-color: #ffffff; /* Putih untuk baris ganjil */
+    }
+
+    /* Hover effect kontras tinggi */
+    tbody tr:hover {
+        background-color: #e2e8f0 !important;
+        border-left: 5px solid #2563eb;
+        cursor: default;
+    }
+
+    tbody td {
+        border-bottom: 1px solid #cbd5e1; /* Border lebih gelap */
+        color: #0f172a; /* Teks hitam pekat */
+        font-weight: 600;
+        padding: 1.25rem 1rem !important;
+    }
+
+    /* Card Stats Styles */
     .card {
         border-radius: 24px;
         padding: 24px;
@@ -33,62 +71,41 @@
         transition: 0.3s;
         box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.2);
     }
-    
-    .card:hover {
-        transform: translateY(-8px);
-    }
-
-    .card::after {
-        content: "";
-        position: absolute;
-        top: -10%;
-        right: -10%;
-        width: 120px;
-        height: 120px;
-        background: rgba(255,255,255,0.2);
-        border-radius: 50%;
-    }
-
+    .card:hover { transform: translateY(-8px); }
     .card-blue { background: linear-gradient(135deg,#2563eb,#1d4ed8); }
     .card-yellow { background: linear-gradient(135deg,#d97706,#b45309); }
     .card-green { background: linear-gradient(135deg,#059669,#064e3b); }
     .card-purple { background: linear-gradient(135deg,#7c3aed,#5b21b6); }
 
+    /* Badges with High Contrast */
     .badge {
-        padding: 6px 14px;
-        border-radius: 12px;
+        padding: 6px 12px;
+        border-radius: 8px;
         font-size: 11px;
         font-weight: 800;
         text-transform: uppercase;
         display: inline-block;
+        border: 1.5px solid currentColor;
     }
+
+    .badge-emerald { background: #ecfdf5; color: #065f46; border-color: #059669; }
+    .badge-amber { background: #fffbeb; color: #92400e; border-color: #d97706; }
+    .badge-rose { background: #fff1f2; color: #9f1239; border-color: #e11d48; }
+    .badge-slate { background: #f8fafc; color: #334155; border-color: #94a3b8; }
 
     .custom-scroll::-webkit-scrollbar { height:6px;width:6px }
-    .custom-scroll::-webkit-scrollbar-thumb { background:#94a3b8;border-radius:10px }
+    .custom-scroll::-webkit-scrollbar-thumb { background:#475569;border-radius:10px }
 
-    .fade-in { animation: fadeIn .4s ease-out; }
-    @keyframes fadeIn{
-        from{opacity:0;transform:translateY(15px)}
-        to{opacity:1;transform:translateY(0)}
-    }
-
-    thead th {
-        background:#0f172a;
-        color:#fff;
-        font-weight:700;
-    }
-
-    /* Styles for pagination buttons */
     .btn-pagination {
         transition: all 0.2s;
         padding: 8px 16px;
         border-radius: 12px;
-        font-weight: 600;
-        font-size: 14px;
+        font-weight: 700;
+        border: 2px solid #e2e8f0;
     }
-    .btn-pagination:disabled {
-        opacity: 0.5;
-        cursor: not-allowed;
+    .btn-pagination:hover:not(:disabled) {
+        border-color: #0f172a;
+        background: #f8fafc;
     }
 </style>
 </head>
@@ -101,13 +118,13 @@
             <p class="text-slate-500 text-sm font-medium">Manajemen Pendaftaran CBT Madrasah</p>
         </div>
         <div class="flex items-center gap-2 w-full md:w-auto">
-            <button onclick="exportExcel()" class="flex-1 md:flex-none bg-white border border-slate-200 text-slate-700 px-4 py-2 rounded-xl font-semibold hover:bg-slate-50 transition flex items-center justify-center gap-2">
+            <button onclick="exportExcel()" class="flex-1 md:flex-none bg-white border-2 border-slate-200 text-slate-700 px-4 py-2 rounded-xl font-bold hover:bg-slate-50 transition flex items-center justify-center gap-2">
                 <i class="fas fa-file-excel text-emerald-600"></i><span class="hidden md:inline">Excel</span>
             </button>
-            <button onclick="window.print()" class="flex-1 md:flex-none bg-white border border-slate-200 text-slate-700 px-4 py-2 rounded-xl font-semibold hover:bg-slate-50 transition flex items-center justify-center gap-2">
+            <button onclick="window.print()" class="flex-1 md:flex-none bg-white border-2 border-slate-200 text-slate-700 px-4 py-2 rounded-xl font-bold hover:bg-slate-50 transition flex items-center justify-center gap-2">
                 <i class="fas fa-file-pdf text-rose-600"></i><span class="hidden md:inline">PDF</span>
             </button>
-            <button onclick="logout()" class="flex-1 md:flex-none bg-slate-900 text-white px-4 py-2 rounded-xl font-semibold hover:bg-slate-800 transition flex items-center justify-center gap-2">
+            <button onclick="logout()" class="flex-1 md:flex-none bg-slate-900 text-white px-4 py-2 rounded-xl font-bold hover:bg-slate-800 transition flex items-center justify-center gap-2">
                 <i class="fas fa-sign-out-alt"></i><span class="hidden md:inline">Logout</span>
             </button>
         </div>
@@ -157,12 +174,12 @@
     <div class="space-y-4">
         <div class="flex flex-col md:flex-row gap-3">
             <div class="glass p-2 rounded-3xl shadow-sm flex items-center px-6 flex-1">
-                <i class="fas fa-search text-slate-400 mr-4"></i>
-                <input id="search" class="bg-transparent border-none py-4 w-full outline-none text-slate-700 font-medium" placeholder="Cari nama atau ID...">
+                <i class="fas fa-search text-slate-500 mr-4"></i>
+                <input id="search" class="bg-transparent border-none py-4 w-full outline-none text-slate-900 font-bold" placeholder="Cari nama atau ID...">
             </div>
             
             <div class="flex gap-2">
-                <select id="filterStatus" class="glass px-5 py-4 rounded-2xl font-bold text-slate-700 outline-none">
+                <select id="filterStatus" class="glass px-5 py-4 rounded-2xl font-bold text-slate-900 border-2 border-slate-300 outline-none">
                     <option value="">Semua Status</option>
                     <option value="pending">⏳ Pending</option>
                     <option value="disetujui">✅ Disetujui</option>
@@ -170,8 +187,7 @@
                     <option value="lunas">💰 Lunas</option>
                 </select>
 
-                <!-- NEW: Entries per page -->
-                <select id="entriesPerPage" class="glass px-5 py-4 rounded-2xl font-bold text-slate-700 outline-none">
+                <select id="entriesPerPage" class="glass px-5 py-4 rounded-2xl font-bold text-slate-900 border-2 border-slate-300 outline-none">
                     <option value="5">5 Data</option>
                     <option value="10" selected>10 Data</option>
                     <option value="20">20 Data</option>
@@ -180,100 +196,90 @@
             </div>
         </div>
 
-        <div class="glass rounded-[2rem] shadow-sm overflow-hidden border border-slate-200">
+        <div class="bg-white rounded-[2rem] shadow-xl overflow-hidden border-2 border-slate-900">
             <div class="overflow-x-auto custom-scroll">
                 <table class="w-full text-left border-collapse">
                     <thead>
-                        <tr class="bg-slate-50 border-b border-slate-200">
-                            <th class="p-5 text-xs font-bold text-slate-500 uppercase tracking-widest">ID</th>
-                            <th class="p-5 text-xs font-bold text-slate-500 uppercase tracking-widest">Madrasah</th>
-                            <th class="p-5 text-xs font-bold text-slate-500 uppercase tracking-widest">Status Order</th>
-                            <th class="p-5 text-xs font-bold text-slate-500 uppercase tracking-widest">Pembayaran</th>
-                            <th class="p-5 text-xs font-bold text-slate-500 uppercase tracking-widest text-center">Bukti</th>
-                            <th class="p-5 text-xs font-bold text-slate-500 uppercase tracking-widest text-right">Aksi</th>
+                        <tr>
+                            <th class="p-5 text-xs">ID</th>
+                            <th class="p-5 text-xs">Madrasah</th>
+                            <th class="p-5 text-xs">Status Order</th>
+                            <th class="p-5 text-xs">Pembayaran</th>
+                            <th class="p-5 text-xs text-center">Bukti</th>
+                            <th class="p-5 text-xs text-right">Aksi</th>
                         </tr>
                     </thead>
-                    <tbody id="tbody" class="divide-y divide-slate-100">
-                        <!-- Data injected here -->
+                    <tbody id="tbody">
+                        <!-- Data injected via JS -->
                     </tbody>
                 </table>
             </div>
             
-            <div class="p-6 bg-slate-50/50 flex flex-col md:flex-row justify-between items-center gap-4 border-t border-slate-100">
-                <div id="dataSummary" class="text-sm font-semibold text-slate-500">
+            <div class="p-6 bg-slate-900 text-white flex flex-col md:flex-row justify-between items-center gap-4">
+                <div id="dataSummary" class="text-sm font-bold">
                     Menampilkan 0 sampai 0 dari 0 data
                 </div>
                 <div class="flex items-center gap-2" id="paginationControls">
-                    <button id="prevPage" class="btn-pagination bg-white border border-slate-200 text-slate-600 hover:bg-slate-100">
+                    <button id="prevPage" class="btn-pagination bg-white text-slate-900 disabled:opacity-30">
                         <i class="fas fa-chevron-left mr-2"></i> Prev
                     </button>
-                    <div id="pageNumbers" class="flex gap-1">
-                        <!-- Page buttons injected here -->
-                    </div>
-                    <button id="nextPage" class="btn-pagination bg-white border border-slate-200 text-slate-600 hover:bg-slate-100">
+                    <div id="pageNumbers" class="flex gap-1"></div>
+                    <button id="nextPage" class="btn-pagination bg-white text-slate-900 disabled:opacity-30">
                         Next <i class="fas fa-chevron-right ml-2"></i>
                     </button>
                 </div>
-            </div>
-
-            <div id="emptyState" class="hidden p-20 text-center">
-                <div class="w-20 h-20 bg-slate-100 rounded-full flex items-center justify-center mx-auto mb-4 text-slate-400">
-                    <i class="fas fa-folder-open text-3xl"></i>
-                </div>
-                <h3 class="text-lg font-bold text-slate-600">Tidak ada data ditemukan</h3>
-                <p class="text-slate-400">Coba gunakan kata kunci pencarian yang lain.</p>
             </div>
         </div>
     </div>
 </main>
 
 <!-- MODAL DETAIL -->
-<div id="modalDetail" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm hidden flex items-center justify-center z-[60] p-4">
-    <div class="bg-white rounded-[2.5rem] w-full max-w-2xl p-8 shadow-2xl fade-in max-h-[90vh] overflow-y-auto custom-scroll">
+<div id="modalDetail" class="fixed inset-0 bg-slate-900/80 backdrop-blur-sm hidden flex items-center justify-center z-[60] p-4">
+    <div class="bg-white rounded-[2.5rem] w-full max-w-2xl p-8 shadow-2xl max-h-[90vh] overflow-y-auto custom-scroll border-4 border-slate-900">
         <div class="flex justify-between items-center mb-6">
-            <h2 class="text-2xl font-extrabold text-slate-900">Detail Lengkap</h2>
-            <button onclick="closeDetail()" class="w-10 h-10 flex items-center justify-center rounded-full bg-slate-100 hover:bg-slate-200 transition-colors">
+            <h2 class="text-2xl font-black text-slate-900">Detail Lengkap</h2>
+            <button onclick="closeDetail()" class="w-10 h-10 flex items-center justify-center rounded-full bg-slate-200 hover:bg-slate-900 hover:text-white transition-all">
                 <i class="fas fa-times"></i>
             </button>
         </div>
-        <div id="detailContent" class="space-y-2"></div>
+        <div id="detailContent" class="space-y-3"></div>
     </div>
 </div>
 
 <!-- MODAL VERIFIKASI -->
-<div id="modal" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm hidden flex items-center justify-center z-[70] p-4">
-    <div class="bg-white rounded-[2.5rem] w-full max-w-md p-8 shadow-2xl fade-in">
-        <h2 class="text-2xl font-extrabold text-slate-900 mb-1">Verifikasi</h2>
-        <p class="text-slate-500 text-sm mb-6">Update status pendaftaran ID: <span id="dId" class="font-bold text-blue-600"></span></p>
+<div id="modal" class="fixed inset-0 bg-slate-900/80 backdrop-blur-sm hidden flex items-center justify-center z-[70] p-4">
+    <div class="bg-white rounded-[2.5rem] w-full max-w-md p-8 shadow-2xl border-4 border-blue-600">
+        <h2 class="text-2xl font-black text-slate-900 mb-1">Verifikasi</h2>
+        <p class="text-slate-500 text-sm mb-6">Update status pendaftaran ID: <span id="dId" class="font-black text-blue-600"></span></p>
         <div class="space-y-5">
             <div id="buktiWrap" class="hidden">
-                <label class="block text-xs font-bold text-slate-500 uppercase mb-2">Bukti Transfer</label>
-                <img id="dBukti" onclick="window.open(this.src)" class="w-full h-48 object-cover rounded-2xl border-2 border-slate-100 cursor-pointer hover:opacity-90 transition-opacity">
+                <label class="block text-xs font-black text-slate-500 uppercase mb-2">Bukti Transfer</label>
+                <img id="dBukti" onclick="window.open(this.src)" class="w-full h-48 object-cover rounded-2xl border-4 border-slate-100 cursor-pointer hover:border-blue-500 transition-all">
             </div>
             <div>
-                <label class="block text-xs font-bold text-slate-500 uppercase mb-2">Status Pesanan</label>
-                <select id="dStatus" class="w-full bg-slate-50 border border-slate-200 p-3.5 rounded-xl outline-none focus:ring-2 focus:ring-blue-500">
+                <label class="block text-xs font-black text-slate-500 uppercase mb-2">Status Pesanan</label>
+                <select id="dStatus" class="w-full bg-slate-50 border-2 border-slate-200 p-3.5 rounded-xl font-bold outline-none focus:border-blue-500">
                     <option value="pending">⏳ Pending (Menunggu)</option>
                     <option value="disetujui">✅ Disetujui</option>
                     <option value="ditolak">❌ Ditolak</option>
                 </select>
             </div>
             <div>
-                <label class="block text-xs font-bold text-slate-500 uppercase mb-2">Status Pembayaran</label>
-                <select id="dBayar" class="w-full bg-slate-50 border border-slate-200 p-3.5 rounded-xl outline-none focus:ring-2 focus:ring-blue-500">
+                <label class="block text-xs font-black text-slate-500 uppercase mb-2">Status Pembayaran</label>
+                <select id="dBayar" class="w-full bg-slate-50 border-2 border-slate-200 p-3.5 rounded-xl font-bold outline-none focus:border-blue-500">
                     <option value="belum_bayar">❌ Belum Bayar</option>
                     <option value="menunggu_verifikasi">⏳ Menunggu Verifikasi</option>
                     <option value="lunas">💰 Lunas / Terbayar</option>
                 </select>
             </div>
             <div>
-                <label class="block text-xs font-bold text-slate-500 uppercase mb-2">Link Aplikasi CBT</label>
-                <input id="dLink" class="w-full bg-slate-50 border border-slate-200 p-3.5 rounded-xl outline-none focus:ring-2 focus:ring-blue-500" placeholder="https://cbt.sekolah.sch.id">
+                <label class="block text-xs font-black text-slate-500 uppercase mb-2">Link Aplikasi CBT</label>
+                <input id="dLink" class="w-full bg-slate-50 border-2 border-slate-200 p-3.5 rounded-xl font-bold outline-none focus:border-blue-500" placeholder="https://cbt.sekolah.sch.id">
             </div>
         </div>
         <div class="grid grid-cols-2 gap-3 mt-8">
-            <button onclick="closeModal()" class="py-3.5 rounded-2xl font-bold text-slate-600 bg-slate-100 hover:bg-slate-200 transition-colors">Batal</button>
-            <button id="btnSave" onclick="saveDetail()" class="py-3.5 rounded-2xl font-bold text-white bg-blue-600 hover:bg-blue-700 shadow-lg shadow-blue-200 transition-all">
+            <button onclick="closeModal()" class="py-3.5 rounded-2xl font-black text-slate-600 bg-slate-100 hover:bg-slate-200 transition-colors">Batal</button>
+            <button id="btnSave" onclick="saveDetail()" class="py-3.5 rounded-2xl font-black text-white bg-blue-600 hover:bg-blue-700 shadow-lg shadow-blue-200 transition-all">
                 Simpan Perubahan
             </button>
         </div>
@@ -287,14 +293,11 @@
 
     let allData = [];
     let selectedId = null;
-    
-    // Pagination state
     let currentPage = 1;
     let rowsPerPage = 10;
 
-    // Fallback if app.js is missing
-    if (!window.get) window.get = async () => ({ status: "error", message: "get() tidak ditemukan" });
-    if (!window.post) window.post = async () => ({ status: "error", message: "post() tidak ditemukan" });
+    if (!window.get) window.get = async () => ({ status: "error", message: "API get() tidak ditemukan" });
+    if (!window.post) window.post = async () => ({ status: "error", message: "API post() tidak ditemukan" });
     
     function fixDriveUrl(url) {
         if(!url) return "";
@@ -309,61 +312,50 @@
 
     async function loadData() {
         const tbody = document.getElementById("tbody");
-        // Initial state before load
         if(allData.length === 0) {
-            tbody.innerHTML = `<tr><td colspan="6" class="p-20 text-center"><i class="fas fa-spinner fa-spin text-3xl text-blue-500"></i><p class="mt-2 text-slate-400 font-medium">Memuat data...</p></td></tr>`;
+            tbody.innerHTML = `<tr><td colspan="6" class="p-20 text-center"><i class="fas fa-spinner fa-spin text-3xl text-blue-500"></i><p class="mt-2 text-slate-500 font-black">Memuat data...</p></td></tr>`;
         }
-        
         try {
             const res = await get("dashboard");
             if(res.status !== "success") throw new Error(res.message);
             allData = res.data || [];
             render();
         } catch(err) {
-            tbody.innerHTML = `<tr><td colspan="6" class="p-20 text-center text-red-500 font-bold"><i class="fas fa-exclamation-triangle mb-2"></i><br>${err.message}</td></tr>`;
+            tbody.innerHTML = `<tr><td colspan="6" class="p-20 text-center text-red-600 font-bold"><i class="fas fa-exclamation-triangle mb-2"></i><br>${err.message}</td></tr>`;
         }
     }
 
     function getStatusColor(status) {
-        if (!status) return 'bg-slate-100 text-slate-600';
+        if (!status) return 'badge-slate';
         status = String(status).toLowerCase();
-        if(status === 'disetujui' || status === 'lunas') return 'bg-emerald-100 text-emerald-700';
-        if(status === 'pending' || status === 'menunggu_verifikasi') return 'bg-amber-100 text-amber-700';
-        if(status === 'ditolak') return 'bg-rose-100 text-rose-700';
-        return 'bg-slate-100 text-slate-600';
+        if(status === 'disetujui' || status === 'lunas') return 'badge-emerald';
+        if(status === 'pending' || status === 'menunggu_verifikasi') return 'badge-amber';
+        if(status === 'ditolak') return 'badge-rose';
+        return 'badge-slate';
     }
 
     function render() {
         const tbody = document.getElementById("tbody");
-        const emptyState = document.getElementById("emptyState");
-        const searchInput = document.getElementById("search");
-        const search = searchInput ? searchInput.value.toLowerCase() : "";
+        const search = document.getElementById("search").value.toLowerCase();
         const filterStatus = document.getElementById("filterStatus").value;
         rowsPerPage = parseInt(document.getElementById("entriesPerPage").value);
 
-        // 1. FILTERING
         let filtered = allData.filter(r => {
-            const id = r.id;
-            const nama = r.nama_madrasah || "-";
-            const hp = r.no_hp || "-";
+            const id = String(r.id);
+            const nama = (r.nama_madrasah || "").toLowerCase();
+            const hp = (r.no_hp || "").toLowerCase();
             const status = (r.status_order || "pending").toLowerCase();
             const bayar = (r.status_pembayaran || "belum_bayar").toLowerCase();
 
-            // Search filter
-            if(search && !(`${id} ${nama} ${hp}`.toLowerCase().includes(search))) return false;
-        
-            // Status filter
+            if(search && !(`${id} ${nama} ${hp}`.includes(search))) return false;
             if (filterStatus) {
-                if (filterStatus === "lunas") {
-                    if (bayar !== "lunas") return false;
-                } else {
-                    if (status !== filterStatus) return false;
-                }
+                if (filterStatus === "lunas") { if (bayar !== "lunas") return false; } 
+                else { if (status !== filterStatus) return false; }
             }
             return true;
         });
 
-        // 2. STATS UPDATE (Based on TOTAL data)
+        // Stats Update
         let stats = { pending: 0, approved: 0, paid: 0 };
         allData.forEach(r => {
             if((r.status_order||"").toLowerCase() === "pending") stats.pending++;
@@ -375,16 +367,14 @@
         document.getElementById("approved").innerText = stats.approved;
         document.getElementById("paid").innerText = stats.paid;
 
-        // 3. PAGINATION CALCULATION
+        // Pagination
         const totalFiltered = filtered.length;
         const totalPages = Math.ceil(totalFiltered / rowsPerPage);
         if (currentPage > totalPages) currentPage = Math.max(1, totalPages);
-
         const startIndex = (currentPage - 1) * rowsPerPage;
         const endIndex = startIndex + rowsPerPage;
         const paginatedData = filtered.slice(startIndex, endIndex);
 
-        // 4. RENDER TABLE ROWS
         let html = "";
         paginatedData.forEach(r => {
             const status = (r.status_order || "pending").toLowerCase();
@@ -392,63 +382,52 @@
             const bukti = fixDriveUrl(r.bukti_url);
 
             html += `
-            <tr class="hover:bg-slate-50/80 transition-colors group">
-                <td class="p-5 font-mono text-xs font-bold text-slate-400">#${r.id}</td>
-                <td class="p-5">
-                    <div class="font-bold text-slate-800">${r.nama_madrasah || "-"}</div>
-                    <div class="text-xs text-slate-400 mt-0.5"><i class="fas fa-phone-alt mr-1"></i> ${r.no_hp || "-"}</div>
+            <tr class="transition-all">
+                <td class="font-mono text-xs font-black">#${r.id}</td>
+                <td>
+                    <div class="text-sm font-black">${r.nama_madrasah || "-"}</div>
+                    <div class="text-xs text-slate-500 font-bold mt-1">
+                        <i class="fas fa-phone-alt mr-2 text-blue-600"></i> ${r.no_hp || "-"}
+                    </div>
                 </td>
-                <td class="p-5">
-                    <span class="badge ${getStatusColor(status)}">${status}</span>
+                <td><span class="badge ${getStatusColor(status)}">${status}</span></td>
+                <td><span class="badge ${getStatusColor(bayar)}">${bayar.replaceAll('_',' ')}</span></td>
+                <td class="text-center">
+                    ${bukti ? `<img src="${bukti}" class="w-12 h-12 object-cover rounded-xl border-2 border-slate-900 mx-auto shadow-md cursor-pointer hover:scale-110 transition-transform" onclick="openVerifikasi('${r.id}')">` : `<span class="text-slate-400 font-bold italic">No File</span>`}
                 </td>
-                <td class="p-5">
-                    <span class="badge ${getStatusColor(bayar)}">${bayar.replaceAll('_',' ')}</span>
-                </td>
-                <td class="p-5 text-center">
-                    ${bukti ? `<img src="${bukti}" class="w-10 h-10 object-cover rounded-lg border border-slate-200 mx-auto shadow-sm group-hover:scale-110 transition-transform cursor-pointer" onclick="openVerifikasi('${r.id}')">` : `<span class="text-slate-300">-</span>`}
-                </td>
-                <td class="p-5 text-right space-x-1">
-                    <button onclick="openDetailView('${r.id}')" class="p-2.5 rounded-xl bg-slate-100 text-slate-600 hover:bg-slate-900 hover:text-white transition-all">
+                <td class="text-right space-x-1">
+                    <button onclick="openDetailView('${r.id}')" class="p-3 rounded-xl bg-slate-900 text-white hover:bg-slate-700 transition-all shadow-sm">
                         <i class="fas fa-eye text-sm"></i>
                     </button>
-                    <button onclick="openVerifikasi('${r.id}')" class="p-2.5 rounded-xl bg-blue-50 text-blue-600 hover:bg-blue-600 hover:text-white transition-all shadow-sm">
+                    <button onclick="openVerifikasi('${r.id}')" class="p-3 rounded-xl bg-blue-600 text-white hover:bg-blue-800 transition-all shadow-md">
                         <i class="fas fa-user-check text-sm"></i>
                     </button>
                 </td>
             </tr>`;
         });
 
-        tbody.innerHTML = html;
-        emptyState.classList.toggle("hidden", totalFiltered > 0);
+        tbody.innerHTML = html || `<tr><td colspan="6" class="p-20 text-center font-bold text-slate-400">Tidak ada data ditemukan</td></tr>`;
 
-        // 5. UPDATE SUMMARY & CONTROLS
+        // Update Summary and Buttons
         const currentShowStart = totalFiltered === 0 ? 0 : startIndex + 1;
         const currentShowEnd = Math.min(endIndex, totalFiltered);
-        document.getElementById("dataSummary").innerText = `Menampilkan ${currentShowStart} sampai ${currentShowEnd} dari ${totalFiltered} data`;
+        document.getElementById("dataSummary").innerHTML = `Menampilkan <span class="text-emerald-400">${currentShowStart} - ${currentShowEnd}</span> dari <span class="text-emerald-400">${totalFiltered}</span> data`;
 
-        // Update Buttons
         document.getElementById("prevPage").disabled = currentPage === 1;
         document.getElementById("nextPage").disabled = currentPage === totalPages || totalPages === 0;
 
-        // Render Page Numbers
         let pageHtml = "";
         for(let i=1; i<=totalPages; i++) {
             if(i === currentPage) {
-                pageHtml += `<button class="w-10 h-10 rounded-xl bg-blue-600 text-white font-bold">${i}</button>`;
+                pageHtml += `<button class="w-10 h-10 rounded-xl bg-white text-slate-900 font-black border-2 border-slate-900 shadow-md">${i}</button>`;
             } else if (i === 1 || i === totalPages || (i >= currentPage - 1 && i <= currentPage + 1)) {
-                pageHtml += `<button onclick="changePage(${i})" class="w-10 h-10 rounded-xl bg-white border border-slate-200 text-slate-600 hover:bg-slate-100 font-bold transition-colors">${i}</button>`;
-            } else if (i === currentPage - 2 || i === currentPage + 2) {
-                pageHtml += `<span class="px-2 text-slate-400">...</span>`;
+                pageHtml += `<button onclick="changePage(${i})" class="w-10 h-10 rounded-xl bg-slate-800 text-white hover:bg-white hover:text-slate-900 font-bold transition-all">${i}</button>`;
             }
         }
         document.getElementById("pageNumbers").innerHTML = pageHtml;
     }
 
-    function changePage(p) {
-        currentPage = p;
-        render();
-    }
-
+    function changePage(p) { currentPage = p; render(); }
     document.getElementById("prevPage").onclick = () => { if(currentPage > 1) changePage(currentPage - 1); };
     document.getElementById("nextPage").onclick = () => { currentPage++; render(); };
 
@@ -456,27 +435,19 @@
         const r = allData.find(x => x.id == id);
         if(!r) return;
         const fields = [
-            { l: "ID Pendaftaran", v: r.id || "-" },
-            { l: "Nama Madrasah", v: r.nama_madrasah || "-" },
-            { l: "NPSN", v: r.npsn || "-" },
-            { l: "Alamat", v: r.alamat || "-" },
-            { l: "Kabupaten", v: r.kabupaten || "-" },
-            { l: "Provinsi", v: r.provinsi || "-" },
-            { l: "Penanggung Jawab", v: r.nama_penanggung_jawab || "-" },
-            { l: "No. HP / WhatsApp", v: r.no_hp || "-" },
-            { l: "Email", v: r.email || "-" },
-            { l: "Jumlah Peserta", v: r.jumlah_peserta || "-" },
-            { l: "Paket Layanan", v: r.paket_id || "-" },
+            { l: "ID Pendaftaran", v: r.id },
+            { l: "Nama Madrasah", v: r.nama_madrasah },
+            { l: "NPSN", v: r.npsn },
+            { l: "Penanggung Jawab", v: r.nama_penanggung_jawab },
             { l: "Total Biaya", v: `Rp ${Number(r.harga||0).toLocaleString()}`, highlight: true },
             { l: "Status Order", v: r.status_order, badge: true },
-            { l: "Status Bayar", v: r.status_pembayaran, badge: true },
-            { l: "Link CBT", v: r.link_cbt || "-" }
+            { l: "Status Bayar", v: r.status_pembayaran, badge: true }
         ];
         let html = `<div class="grid grid-cols-1 md:grid-cols-2 gap-4">`;
         fields.forEach(f => {
-            html += `<div class="p-4 rounded-2xl bg-slate-50 border border-slate-100">
-                <p class="text-[10px] uppercase font-bold text-slate-400 mb-1 tracking-widest">${f.l}</p>
-                <p class="font-bold ${f.highlight ? 'text-emerald-600' : 'text-slate-700'}">
+            html += `<div class="p-4 rounded-2xl bg-slate-50 border-2 border-slate-200">
+                <p class="text-[10px] uppercase font-black text-slate-400 mb-1 tracking-widest">${f.l}</p>
+                <p class="font-black ${f.highlight ? 'text-emerald-600' : 'text-slate-900'}">
                     ${f.badge ? `<span class="badge ${getStatusColor(f.v)}">${f.v}</span>` : (f.v || '-')}
                 </p>
             </div>`;
@@ -497,12 +468,8 @@
         document.getElementById("dLink").value = r.link_cbt || "";
         const bukti = fixDriveUrl(r.bukti_url);
         const container = document.getElementById("buktiWrap");
-        if(bukti) {
-            document.getElementById("dBukti").src = bukti;
-            container.classList.remove("hidden");
-        } else {
-            container.classList.add("hidden");
-        }
+        if(bukti) { document.getElementById("dBukti").src = bukti; container.classList.remove("hidden"); } 
+        else { container.classList.add("hidden"); }
         document.getElementById("modal").classList.remove("hidden");
     }
 
@@ -510,7 +477,6 @@
 
     async function saveDetail() {
         const btn = document.getElementById("btnSave");
-        const originalText = btn.innerText;
         btn.disabled = true;
         btn.innerText = "Menyimpan...";
         try {
@@ -520,35 +486,23 @@
                 status_bayar: document.getElementById("dBayar").value,
                 link_cbt: document.getElementById("dLink").value
             }, token);
-            if(res.status === "success") {
-                closeModal();
-                loadData();
-            } else throw new Error(res.message);
-        } catch(err) {
-            alert("Gagal update: " + err.message);
-        } finally {
-            btn.disabled = false;
-            btn.innerText = originalText;
-        }
+            if(res.status === "success") { closeModal(); loadData(); } 
+            else throw new Error(res.message);
+        } catch(err) { alert("Gagal update: " + err.message); } 
+        finally { btn.disabled = false; btn.innerText = "Simpan Perubahan"; }
     }
 
     function exportExcel() {
         let csv = "\uFEFFID,Nama Madrasah,NPSN,HP,Email,Status Order,Status Bayar,Harga\n";
-        allData.forEach(r => {
-            csv += `"${r.id}","${r.nama_madrasah}","${r.npsn}","${r.no_hp}","${r.email}","${r.status_order}","${r.status_pembayaran}","${r.harga}"\n`;
-        });
+        allData.forEach(r => { csv += `"${r.id}","${r.nama_madrasah}","${r.npsn}","${r.no_hp}","${r.email}","${r.status_order}","${r.status_pembayaran}","${r.harga}"\n`; });
         const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
         const a = document.createElement("a");
         a.href = URL.createObjectURL(blob);
-        a.download = `Data_Pendaftaran_CBT_${new Date().toLocaleDateString()}.csv`;
+        a.download = `Data_CBT_${new Date().toLocaleDateString()}.csv`;
         a.click();
     }
 
-    function logout() {
-        localStorage.removeItem("token");
-        localStorage.removeItem("user");
-        location = "login.html";
-    }
+    function logout() { localStorage.removeItem("token"); location = "login.html"; }
 
     window.onload = () => {
         loadData();
@@ -556,8 +510,6 @@
         document.getElementById("filterStatus").onchange = () => { currentPage = 1; render(); };
         document.getElementById("entriesPerPage").onchange = () => { currentPage = 1; render(); };
     };
-    
-    // Auto refresh every 30 seconds
     setInterval(loadData, 30000);
 </script>
 </body>
