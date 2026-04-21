@@ -288,229 +288,219 @@
 
 <script src="../assets/app.js"></script>
 <script>
-    const token = localStorage.getItem("token");
-    if(!token) location="login.html";
+const token = localStorage.getItem("token");
+if(!token) location="login.html";
 
-    let allData = [];
-    let selectedId = null;
-    let currentPage = 1;
-    let rowsPerPage = 10;
+let allData = [];
+let selectedId = null;
+let currentPage = 1;
+let rowsPerPage = 10;
 
-    if (!window.get) window.get = async () => ({ status: "error", message: "API get() tidak ditemukan" });
-    if (!window.post) window.post = async () => ({ status: "error", message: "API post() tidak ditemukan" });
-    
-    function fixDriveUrl(url) {
-        if(!url) return "";
-        let id = "";
-        if (url.includes("/file/d/")) {
-            const parts = url.split("/file/d/");
-            if (parts[1]) id = parts[1].split("/")[0];
-        }
-        else if(url.includes("id=")) id = url.split("id=")[1].split("&")[0];
-        return id ? `https://drive.google.com/thumbnail?id=${id}&sz=w400` : "";
+// fallback API
+if (!window.get) window.get = async () => ({ status:"error", message:"API get() tidak ditemukan" });
+if (!window.post) window.post = async () => ({ status:"error", message:"API post() tidak ditemukan" });
+
+// ================= FIX GOOGLE DRIVE =================
+function fixDriveUrl(url){
+    if(!url) return "";
+    let id="";
+    if(url.includes("/file/d/")){
+        id = url.split("/file/d/")[1]?.split("/")[0];
+    } else if(url.includes("id=")){
+        id = url.split("id=")[1]?.split("&")[0];
     }
+    return id ? `https://drive.google.com/thumbnail?id=${id}&sz=w400` : "";
+}
 
-    async function loadData() {
-        const tbody = document.getElementById("tbody");
-        if(allData.length === 0) {
-            tbody.innerHTML = `<tr><td colspan="6" class="p-20 text-center"><i class="fas fa-spinner fa-spin text-3xl text-blue-500"></i><p class="mt-2 text-slate-500 font-black">Memuat data...</p></td></tr>`;
-        }
-        try {
-            const res = await get("dashboard");
-            if(res.status !== "success") throw new Error(res.message);
-            allData = res.data || [];
-            render();
-        } catch(err) {
-            tbody.innerHTML = `<tr><td colspan="6" class="p-20 text-center text-red-600 font-bold"><i class="fas fa-exclamation-triangle mb-2"></i><br>${err.message}</td></tr>`;
-        }
+// ================= LOAD DATA =================
+async function loadData(){
+    try{
+        const res = await get("dashboard");
+        if(res.status !== "success") throw new Error(res.message);
+
+        allData = res.data || [];
+        render();
+    }catch(err){
+        document.getElementById("tbody").innerHTML =
+        `<tr><td colspan="6" class="p-10 text-center text-red-500 font-bold">${err.message}</td></tr>`;
     }
+}
 
-    function getStatusColor(status) {
-        if (!status) return 'badge-slate';
-        status = String(status).toLowerCase();
-        if(status === 'disetujui' || status === 'lunas') return 'badge-emerald';
-        if(status === 'pending' || status === 'menunggu_verifikasi') return 'badge-amber';
-        if(status === 'ditolak') return 'badge-rose';
-        return 'badge-slate';
-    }
+// ================= STATUS COLOR =================
+function getStatusColor(status){
+    if(!status) return 'badge-slate';
+    status = status.toLowerCase();
 
-    function render() {
-        const tbody = document.getElementById("tbody");
-        const search = document.getElementById("search").value.toLowerCase();
-        const filterStatus = document.getElementById("filterStatus").value;
-        rowsPerPage = parseInt(document.getElementById("entriesPerPage").value);
+    if(status === 'disetujui' || status === 'lunas') return 'badge-emerald';
+    if(status === 'pending' || status === 'menunggu_verifikasi') return 'badge-amber';
+    if(status === 'ditolak') return 'badge-rose';
 
-        let filtered = allData.filter(r => {
-            const id = String(r.id);
-            const nama = (r.nama_madrasah || "").toLowerCase();
-            const hp = (r.no_hp || "").toLowerCase();
-            const status = (r.status_order || "pending").toLowerCase();
-            const bayar = (r.status_pembayaran || "belum_bayar").toLowerCase();
+    return 'badge-slate';
+}
 
-            if(search && !(`${id} ${nama} ${hp}`.includes(search))) return false;
-            if (filterStatus) {
-                if (filterStatus === "lunas") { if (bayar !== "lunas") return false; } 
-                else { if (status !== filterStatus) return false; }
-            }
-            return true;
-        });
+// ================= RENDER =================
+function render(){
+    const tbody = document.getElementById("tbody");
 
-        // Stats Update
-        let stats = { pending: 0, approved: 0, paid: 0 };
-        allData.forEach(r => {
-            if((r.status_order||"").toLowerCase() === "pending") stats.pending++;
-            if((r.status_order||"").toLowerCase() === "disetujui") stats.approved++;
-            if((r.status_pembayaran||"").toLowerCase() === "lunas") stats.paid++;
-        });
-        document.getElementById("total").innerText = allData.length;
-        document.getElementById("pending").innerText = stats.pending;
-        document.getElementById("approved").innerText = stats.approved;
-        document.getElementById("paid").innerText = stats.paid;
+    const search = document.getElementById("search").value.toLowerCase();
+    const filterStatus = document.getElementById("filterStatus").value;
+    rowsPerPage = parseInt(document.getElementById("entriesPerPage").value);
 
-        // Pagination
-        const totalFiltered = filtered.length;
-        const totalPages = Math.ceil(totalFiltered / rowsPerPage);
-        if (currentPage > totalPages) currentPage = Math.max(1, totalPages);
-        const startIndex = (currentPage - 1) * rowsPerPage;
-        const endIndex = startIndex + rowsPerPage;
-        const paginatedData = filtered.slice(startIndex, endIndex);
+    // ===== FILTER DATA =====
+    let filtered = allData.filter(r=>{
+        const id = String(r.id);
+        const nama = (r.nama_madrasah||"").toLowerCase();
+        const hp = (r.no_hp||"").toLowerCase();
+        const status = (r.status_order||"pending").toLowerCase();
+        const bayar = (r.status_pembayaran||"belum_bayar").toLowerCase();
 
-        let html = "";
-        paginatedData.forEach(r => {
-            const status = (r.status_order || "pending").toLowerCase();
-            const bayar = (r.status_pembayaran || "belum_bayar").toLowerCase();
-            const bukti = fixDriveUrl(r.bukti_url);
+        // search
+        if(search && !(`${id} ${nama} ${hp}`.includes(search))) return false;
 
-            html += `
-            <tr class="transition-all">
-                <td class="font-mono text-xs font-black">#${r.id}</td>
-                <td>
-                    <div class="text-sm font-black">${r.nama_madrasah || "-"}</div>
-                    <div class="text-xs text-slate-500 font-bold mt-1">
-                        <i class="fas fa-phone-alt mr-2 text-blue-600"></i> ${r.no_hp || "-"}
-                    </div>
-                </td>
-                <td><span class="badge ${getStatusColor(status)}">${status}</span></td>
-                <td><span class="badge ${getStatusColor(bayar)}">${bayar.replaceAll('_',' ')}</span></td>
-                <td class="text-center">
-                    ${bukti ? `<img src="${bukti}" class="w-12 h-12 object-cover rounded-xl border-2 border-slate-900 mx-auto shadow-md cursor-pointer hover:scale-110 transition-transform" onclick="openVerifikasi('${r.id}')">` : `<span class="text-slate-400 font-bold italic">No File</span>`}
-                </td>
-                <td class="text-right space-x-1">
-                    <button onclick="openDetailView('${r.id}')" class="p-3 rounded-xl bg-slate-900 text-white hover:bg-slate-700 transition-all shadow-sm">
-                        <i class="fas fa-eye text-sm"></i>
-                    </button>
-                    <button onclick="openVerifikasi('${r.id}')" class="p-3 rounded-xl bg-blue-600 text-white hover:bg-blue-800 transition-all shadow-md">
-                        <i class="fas fa-user-check text-sm"></i>
-                    </button>
-                </td>
-            </tr>`;
-        });
-
-        tbody.innerHTML = html || `<tr><td colspan="6" class="p-20 text-center font-bold text-slate-400">Tidak ada data ditemukan</td></tr>`;
-
-        // Update Summary and Buttons
-        const currentShowStart = totalFiltered === 0 ? 0 : startIndex + 1;
-        const currentShowEnd = Math.min(endIndex, totalFiltered);
-        document.getElementById("dataSummary").innerHTML = `Menampilkan <span class="text-emerald-400">${currentShowStart} - ${currentShowEnd}</span> dari <span class="text-emerald-400">${totalFiltered}</span> data`;
-
-        document.getElementById("prevPage").disabled = currentPage === 1;
-        document.getElementById("nextPage").disabled = currentPage === totalPages || totalPages === 0;
-
-        let pageHtml = "";
-        for(let i=1; i<=totalPages; i++) {
-            if(i === currentPage) {
-                pageHtml += `<button class="w-10 h-10 rounded-xl bg-white text-slate-900 font-black border-2 border-slate-900 shadow-md">${i}</button>`;
-            } else if (i === 1 || i === totalPages || (i >= currentPage - 1 && i <= currentPage + 1)) {
-                pageHtml += `<button onclick="changePage(${i})" class="w-10 h-10 rounded-xl bg-slate-800 text-white hover:bg-white hover:text-slate-900 font-bold transition-all">${i}</button>`;
+        // filter status
+        if(filterStatus){
+            if(filterStatus === "lunas"){
+                if(bayar !== "lunas") return false;
+            } else {
+                if(status !== filterStatus) return false;
             }
         }
-        document.getElementById("pageNumbers").innerHTML = pageHtml;
-    }
 
-    function changePage(p) { currentPage = p; render(); }
-    document.getElementById("prevPage").onclick = () => { if(currentPage > 1) changePage(currentPage - 1); };
-    document.getElementById("nextPage").onclick = () => { currentPage++; render(); };
+        return true;
+    });
 
-    function openDetailView(id) {
-        const r = allData.find(x => x.id == id);
-        if(!r) return;
-        const fields = [
-            { l: "ID Pendaftaran", v: r.id },
-            { l: "Nama Madrasah", v: r.nama_madrasah },
-            { l: "NPSN", v: r.npsn },
-            { l: "Penanggung Jawab", v: r.nama_penanggung_jawab },
-            { l: "Total Biaya", v: `Rp ${Number(r.harga||0).toLocaleString()}`, highlight: true },
-            { l: "Status Order", v: r.status_order, badge: true },
-            { l: "Status Bayar", v: r.status_pembayaran, badge: true }
-        ];
-        let html = `<div class="grid grid-cols-1 md:grid-cols-2 gap-4">`;
-        fields.forEach(f => {
-            html += `<div class="p-4 rounded-2xl bg-slate-50 border-2 border-slate-200">
-                <p class="text-[10px] uppercase font-black text-slate-400 mb-1 tracking-widest">${f.l}</p>
-                <p class="font-black ${f.highlight ? 'text-emerald-600' : 'text-slate-900'}">
-                    ${f.badge ? `<span class="badge ${getStatusColor(f.v)}">${f.v}</span>` : (f.v || '-')}
-                </p>
-            </div>`;
-        });
-        document.getElementById("detailContent").innerHTML = html + `</div>`;
-        document.getElementById("modalDetail").classList.remove("hidden");
-    }
+    // ===== STATS (HARUS DARI allData, BUKAN filtered) =====
+    let stats = {pending:0, approved:0, paid:0};
 
-    function closeDetail() { document.getElementById("modalDetail").classList.add("hidden"); }
+    allData.forEach(r=>{
+        if((r.status_order||"") === "pending") stats.pending++;
+        if((r.status_order||"") === "disetujui") stats.approved++;
+        if((r.status_pembayaran||"") === "lunas") stats.paid++;
+    });
 
-    function openVerifikasi(id) {
-        const r = allData.find(x => x.id == id);
-        if(!r) return;
-        selectedId = id;
-        document.getElementById("dId").innerText = id;
-        document.getElementById("dStatus").value = r.status_order || "pending";
-        document.getElementById("dBayar").value = r.status_pembayaran || "belum_bayar";
-        document.getElementById("dLink").value = r.link_cbt || "";
+    document.getElementById("total").innerText = allData.length;
+    document.getElementById("pending").innerText = stats.pending;
+    document.getElementById("approved").innerText = stats.approved;
+    document.getElementById("paid").innerText = stats.paid;
+
+    // ===== PAGINATION =====
+    const totalPages = Math.ceil(filtered.length / rowsPerPage) || 1;
+
+    if(currentPage > totalPages) currentPage = totalPages;
+
+    const start = (currentPage-1)*rowsPerPage;
+    const end = start + rowsPerPage;
+    const pageData = filtered.slice(start,end);
+
+    // ===== TABLE =====
+    let html="";
+
+    pageData.forEach(r=>{
+        const status = (r.status_order||"pending").toLowerCase();
+        const bayar = (r.status_pembayaran||"belum_bayar").toLowerCase();
         const bukti = fixDriveUrl(r.bukti_url);
-        const container = document.getElementById("buktiWrap");
-        if(bukti) { document.getElementById("dBukti").src = bukti; container.classList.remove("hidden"); } 
-        else { container.classList.add("hidden"); }
-        document.getElementById("modal").classList.remove("hidden");
+
+        html += `
+        <tr>
+            <td class="font-mono text-xs font-bold">#${r.id}</td>
+            <td>
+                <div class="font-bold">${r.nama_madrasah||"-"}</div>
+                <div class="text-xs text-slate-500">${r.no_hp||"-"}</div>
+            </td>
+            <td><span class="badge ${getStatusColor(status)}">${status}</span></td>
+            <td><span class="badge ${getStatusColor(bayar)}">${bayar.replaceAll('_',' ')}</span></td>
+            <td class="text-center">
+                ${bukti 
+                ? `<img src="${bukti}" class="w-12 h-12 rounded-xl cursor-pointer" onclick="openVerifikasi('${r.id}')">`
+                : `<span class="text-slate-400">-</span>`}
+            </td>
+            <td class="text-right">
+                <button onclick="openDetailView('${r.id}')" class="px-3 py-2 bg-slate-900 text-white rounded">Detail</button>
+            </td>
+        </tr>`;
+    });
+
+    tbody.innerHTML = html || `<tr><td colspan="6" class="p-10 text-center">Tidak ada data</td></tr>`;
+
+    // ===== PAGINATION BUTTON =====
+    document.getElementById("prevPage").disabled = currentPage === 1;
+    document.getElementById("nextPage").disabled = currentPage === totalPages;
+}
+
+// ================= PAGINATION CONTROL =================
+function changePage(p){
+    currentPage = p;
+    render();
+}
+
+document.getElementById("prevPage").onclick = ()=>{ currentPage--; render(); };
+document.getElementById("nextPage").onclick = ()=>{ currentPage++; render(); };
+
+// ================= DETAIL =================
+function openDetailView(id){
+    const r = allData.find(x=>x.id==id);
+    if(!r) return;
+
+    document.getElementById("detailContent").innerHTML = `
+    <p><b>Nama:</b> ${r.nama_madrasah}</p>
+    <p><b>NPSN:</b> ${r.npsn}</p>
+    <p><b>Status:</b> ${r.status_order}</p>
+    `;
+
+    document.getElementById("modalDetail").classList.remove("hidden");
+}
+
+function closeDetail(){
+    document.getElementById("modalDetail").classList.add("hidden");
+}
+
+// ================= VERIFIKASI =================
+function openVerifikasi(id){
+    const r = allData.find(x=>x.id==id);
+    if(!r) return;
+
+    selectedId = id;
+    document.getElementById("dId").innerText = id;
+    document.getElementById("dStatus").value = r.status_order||"pending";
+    document.getElementById("dBayar").value = r.status_pembayaran||"belum_bayar";
+    document.getElementById("dLink").value = r.link_cbt||"";
+
+    document.getElementById("modal").classList.remove("hidden");
+}
+
+function closeModal(){
+    document.getElementById("modal").classList.add("hidden");
+}
+
+// ================= SAVE =================
+async function saveDetail(){
+    try{
+        const res = await post("updateStatus",{
+            id:selectedId,
+            status_order:document.getElementById("dStatus").value,
+            status_bayar:document.getElementById("dBayar").value,
+            link_cbt:document.getElementById("dLink").value
+        },token);
+
+        if(res.status==="success"){
+            closeModal();
+            loadData();
+        }else{
+            alert(res.message);
+        }
+    }catch(err){
+        alert(err.message);
     }
+}
 
-    function closeModal() { document.getElementById("modal").classList.add("hidden"); }
+// ================= INIT =================
+window.onload = ()=>{
+    loadData();
 
-    async function saveDetail() {
-        const btn = document.getElementById("btnSave");
-        btn.disabled = true;
-        btn.innerText = "Menyimpan...";
-        try {
-            const res = await post("updateStatus", {
-                id: selectedId,
-                status_order: document.getElementById("dStatus").value,
-                status_bayar: document.getElementById("dBayar").value,
-                link_cbt: document.getElementById("dLink").value
-            }, token);
-            if(res.status === "success") { closeModal(); loadData(); } 
-            else throw new Error(res.message);
-        } catch(err) { alert("Gagal update: " + err.message); } 
-        finally { btn.disabled = false; btn.innerText = "Simpan Perubahan"; }
-    }
-
-    function exportExcel() {
-        let csv = "\uFEFFID,Nama Madrasah,NPSN,HP,Email,Status Order,Status Bayar,Harga\n";
-        allData.forEach(r => { csv += `"${r.id}","${r.nama_madrasah}","${r.npsn}","${r.no_hp}","${r.email}","${r.status_order}","${r.status_pembayaran}","${r.harga}"\n`; });
-        const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
-        const a = document.createElement("a");
-        a.href = URL.createObjectURL(blob);
-        a.download = `Data_CBT_${new Date().toLocaleDateString()}.csv`;
-        a.click();
-    }
-
-    function logout() { localStorage.removeItem("token"); location = "login.html"; }
-
-    window.onload = () => {
-        loadData();
-        document.getElementById("search").oninput = () => { currentPage = 1; render(); };
-        document.getElementById("filterStatus").onchange = () => { currentPage = 1; render(); };
-        document.getElementById("entriesPerPage").onchange = () => { currentPage = 1; render(); };
-    };
-    setInterval(loadData, 30000);
+    document.getElementById("search").oninput = ()=>{ currentPage=1; render(); };
+    document.getElementById("filterStatus").onchange = ()=>{ currentPage=1; render(); };
+    document.getElementById("entriesPerPage").onchange = ()=>{ currentPage=1; render(); };
+};
 </script>
 </body>
 </html>
