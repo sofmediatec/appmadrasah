@@ -187,12 +187,27 @@
                         <h2 class="text-3xl font-black text-slate-900 mb-2">Daftar Pengguna CBT</h2>
                         <p class="text-slate-700 font-semibold italic text-sm">Terpercaya oleh berbagai lembaga pendidikan di seluruh Indonesia.</p>
                     </div>
-                    <div class="w-full md:w-80 relative group" data-aos="fade-left">
-                        <span class="absolute inset-y-0 left-0 pl-4 flex items-center text-slate-400 group-focus-within:text-blue-600 transition-colors">
-                            <i class="fa-solid fa-magnifying-glass"></i>
-                        </span>
-                        <input type="text" id="searchInput" placeholder="Cari nama madrasah..." 
-                            class="w-full pl-11 pr-4 py-3.5 bg-white border border-slate-300 rounded-2xl shadow-sm focus:ring-4 focus:ring-blue-100 focus:border-blue-500 outline-none transition-all font-semibold text-sm">
+                    
+                    <div class="flex flex-col sm:flex-row items-center gap-4 w-full md:w-auto" data-aos="fade-left">
+                        <!-- Rows Per Page Selector -->
+                        <div class="flex items-center gap-3 bg-white px-4 py-2 rounded-2xl border border-slate-300 shadow-sm w-full sm:w-auto">
+                            <span class="text-[10px] font-black text-slate-400 uppercase whitespace-nowrap">Tampilkan:</span>
+                            <select id="rowsPerPageSelect" class="bg-transparent font-bold text-sm outline-none text-blue-700 cursor-pointer">
+                                <option value="5">5</option>
+                                <option value="10">10</option>
+                                <option value="25">25</option>
+                                <option value="50">50</option>
+                            </select>
+                        </div>
+
+                        <!-- Search Input -->
+                        <div class="relative group w-full md:w-80">
+                            <span class="absolute inset-y-0 left-0 pl-4 flex items-center text-slate-400 group-focus-within:text-blue-600 transition-colors">
+                                <i class="fa-solid fa-magnifying-glass"></i>
+                            </span>
+                            <input type="text" id="searchInput" placeholder="Cari nama madrasah..." 
+                                class="w-full pl-11 pr-4 py-3.5 bg-white border border-slate-300 rounded-2xl shadow-sm focus:ring-4 focus:ring-blue-100 focus:border-blue-500 outline-none transition-all font-semibold text-sm">
+                        </div>
                     </div>
                 </div>
                 
@@ -280,7 +295,7 @@
         let allUsers = [];
         let filteredUsers = [];
         let currentPage = 1;
-        const rowsPerPage = 5;
+        let rowsPerPage = 5; // Ubah menjadi let agar bisa dinamis
 
         async function loadPaket() {
             try {
@@ -369,8 +384,10 @@
         function showSkeleton() {
             const tbody = document.getElementById("userList");
             let skeletonHtml = "";
-            for (let i = 0; i < rowsPerPage; i++) {
-                skeletonHtml += `<tr><td class="px-6 py-6"><div class="skeleton h-4 w-6"></div></td><td class="px-6 py-6"><div class="skeleton h-4 w-40"></div></td><td class="px-6 py-6"><div class="skeleton h-4 w-24"></div></td><td class="px-6 py-6"><div class="skeleton h-4 w-16"></div></td><td class="px-6 py-6"><div class="skeleton h-8 w-24 mx-auto"></div></td><td class="px-6 py-6"><div class="skeleton h-8 w-24 mx-auto"></div></td><td class="px-6 py-6 text-center"><div class="skeleton h-8 w-16 mx-auto"></div></td><td class="px-6 py-6 text-center"><div class="skeleton h-8 w-16 mx-auto"></div></td></tr>`;
+            // Gunakan rowsPerPage untuk jumlah baris skeleton
+            const limit = Math.min(rowsPerPage, 10); 
+            for (let i = 0; i < limit; i++) {
+                skeletonHtml += `<tr><td class="px-6 py-6"><div class="skeleton h-4 w-6"></div></td><td class="px-6 py-6"><div class="skeleton h-4 w-40"></div></td><td class="px-6 py-6"><div class="skeleton h-4 w-24"></div></td><td class="px-6 py-6"><div class="skeleton h-4 w-16"></div></td><td class="px-6 py-6 text-center"><div class="skeleton h-8 w-24 mx-auto"></div></td><td class="px-6 py-6 text-center"><div class="skeleton h-8 w-24 mx-auto"></div></td><td class="px-6 py-6 text-center"><div class="skeleton h-8 w-16 mx-auto"></div></td><td class="px-6 py-6 text-center"><div class="skeleton h-8 w-16 mx-auto"></div></td></tr>`;
             }
             tbody.innerHTML = skeletonHtml;
         }
@@ -417,6 +434,13 @@
             const query = e.target.value.toLowerCase();
             filteredUsers = allUsers.filter(u => u.madrasah.toLowerCase().includes(query) || u.kabupaten.toLowerCase().includes(query));
             currentPage = 1;
+            renderTable();
+        };
+
+        // Event listener untuk perubahan jumlah baris
+        document.getElementById('rowsPerPageSelect').onchange = (e) => {
+            rowsPerPage = parseInt(e.target.value);
+            currentPage = 1; // Reset ke halaman pertama saat jumlah baris berubah
             renderTable();
         };
 
