@@ -78,7 +78,7 @@
         <div class="max-w-7xl mx-auto px-6 w-full flex items-center justify-between">
             <a href="#" class="flex items-center space-x-3 group">
                 <div class="w-10 h-10 bg-blue-700 rounded-xl flex items-center justify-center shadow-lg shadow-blue-200 group-hover:scale-110 transition-transform">
-                    <i class="fa-solid fa-graduation-cap text-white"></i>
+                    <i class="fa-solid fa-desktop text-white"></i>
                 </div>
                 <span class="text-2xl font-black tracking-tighter italic">CBT<span class="text-blue-700">Madrasah</span></span>
             </a>
@@ -343,6 +343,8 @@
                         bankStyle = { icon: 'fa-building', color: 'orange-500', accent: 'bg-teal-600' };
                     } else if(bankName.includes('bsi') || bankName.includes('syariah')) {
                         bankStyle = { icon: 'fa-mosque', color: 'emerald-500', accent: 'bg-emerald-600' };
+                    } else if(bankName.includes('tunai') || bankName.includes('cash') || bankName.includes('kantor')) {
+                        bankStyle = { icon: 'fa-money-bill-transfer', color: 'amber-500', accent: 'bg-amber-600' };
                     }
 
                     html += `
