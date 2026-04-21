@@ -246,7 +246,17 @@ function render(){
     allData.forEach(r=>{
         const id=r.id;
         const nama=r.nama_madrasah||"-";
+        const npsn=r.npsn||"-";
+        const alamat=r.alamat||"-";
+        const kab=r.kabupaten||"-";
+        const prov=r.provinsi||"-";
+        const pj=r.nama_penanggung_jawab||"-";
         const hp=r.no_hp||"-";
+        const email=r.email||"-";
+        const jumlah=r.jumlah_peserta||0;
+        const paket=r.paket_id||"-";
+        const harga=r.harga||0;
+
         const status=(r.status_order||"pending").toLowerCase();
         const bayar=(r.status_pembayaran||"belum_bayar").toLowerCase();
         const bukti=fixDriveUrl(r.bukti_url);
@@ -261,7 +271,16 @@ function render(){
         <tr class="border hover:bg-slate-50">
             <td class="p-2">${id}</td>
             <td class="p-2 font-semibold">${nama}</td>
+            <td class="p-2">${npsn}</td>
+            <td class="p-2">${alamat}</td>
+            <td class="p-2">${kab}</td>
+            <td class="p-2">${prov}</td>
+            <td class="p-2">${pj}</td>
             <td class="p-2">${hp}</td>
+            <td class="p-2">${email}</td>
+            <td class="p-2">${jumlah}</td>
+            <td class="p-2">${paket}</td>
+            <td class="p-2">Rp ${harga}</td>
 
             <td class="p-2">
                 <span class="badge bg-yellow-100">${status}</span>
