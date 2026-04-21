@@ -317,26 +317,90 @@ function render(){
     if(!r) return;
 
     const html = `
-    <div><b>ID:</b> ${r.id}</div>
-    <div><b>Madrasah:</b> ${r.nama_madrasah}</div>
-    <div><b>NPSN:</b> ${r.npsn}</div>
-    <div><b>Alamat:</b> ${r.alamat}</div>
-    <div><b>Kabupaten:</b> ${r.kabupaten}</div>
-    <div><b>Provinsi:</b> ${r.provinsi}</div>
-    <div><b>Penanggung Jawab:</b> ${r.nama_penanggung_jawab}</div>
-    <div><b>HP:</b> ${r.no_hp}</div>
-    <div><b>Email:</b> ${r.email}</div>
-    <div><b>Jumlah Peserta:</b> ${r.jumlah_peserta}</div>
-    <div><b>Paket:</b> ${r.paket_id}</div>
-    <div><b>Harga:</b> Rp ${r.harga}</div>
-    <div><b>Status Order:</b> ${r.status_order}</div>
-    <div><b>Status Bayar:</b> ${r.status_pembayaran}</div>
+    <table class="w-full text-sm border border-slate-200 rounded-lg overflow-hidden">
+        <tbody>
+
+        <tr class="border-b">
+            <td class="p-2 font-semibold bg-slate-50 w-40">ID</td>
+            <td class="p-2">${r.id}</td>
+        </tr>
+
+        <tr class="border-b">
+            <td class="p-2 font-semibold bg-slate-50">Madrasah</td>
+            <td class="p-2">${r.nama_madrasah || "-"}</td>
+        </tr>
+
+        <tr class="border-b">
+            <td class="p-2 font-semibold bg-slate-50">NPSN</td>
+            <td class="p-2">${r.npsn || "-"}</td>
+        </tr>
+
+        <tr class="border-b">
+            <td class="p-2 font-semibold bg-slate-50">Alamat</td>
+            <td class="p-2">${r.alamat || "-"}</td>
+        </tr>
+
+        <tr class="border-b">
+            <td class="p-2 font-semibold bg-slate-50">Kabupaten</td>
+            <td class="p-2">${r.kabupaten || "-"}</td>
+        </tr>
+
+        <tr class="border-b">
+            <td class="p-2 font-semibold bg-slate-50">Provinsi</td>
+            <td class="p-2">${r.provinsi || "-"}</td>
+        </tr>
+
+        <tr class="border-b">
+            <td class="p-2 font-semibold bg-slate-50">Penanggung Jawab</td>
+            <td class="p-2">${r.nama_penanggung_jawab || "-"}</td>
+        </tr>
+
+        <tr class="border-b">
+            <td class="p-2 font-semibold bg-slate-50">No HP</td>
+            <td class="p-2">${r.no_hp || "-"}</td>
+        </tr>
+
+        <tr class="border-b">
+            <td class="p-2 font-semibold bg-slate-50">Email</td>
+            <td class="p-2">${r.email || "-"}</td>
+        </tr>
+
+        <tr class="border-b">
+            <td class="p-2 font-semibold bg-slate-50">Jumlah Peserta</td>
+            <td class="p-2">${r.jumlah_peserta || 0}</td>
+        </tr>
+
+        <tr class="border-b">
+            <td class="p-2 font-semibold bg-slate-50">Paket</td>
+            <td class="p-2">${r.paket_id || "-"}</td>
+        </tr>
+
+        <tr class="border-b">
+            <td class="p-2 font-semibold bg-slate-50">Harga</td>
+            <td class="p-2 text-emerald-600 font-semibold">Rp ${Number(r.harga||0).toLocaleString()}</td>
+        </tr>
+
+        <tr class="border-b">
+            <td class="p-2 font-semibold bg-slate-50">Status Order</td>
+            <td class="p-2">
+                <span class="badge bg-yellow-100">${r.status_order || "-"}</span>
+            </td>
+        </tr>
+
+        <tr>
+            <td class="p-2 font-semibold bg-slate-50">Status Bayar</td>
+            <td class="p-2">
+                <span class="badge bg-green-100">${r.status_pembayaran || "-"}</span>
+            </td>
+        </tr>
+
+        </tbody>
+    </table>
     `;
 
     document.getElementById("detailContent").innerHTML = html;
     document.getElementById("modalDetail").classList.remove("hidden");
 }
-
 function closeDetail(){
     document.getElementById("modalDetail").classList.add("hidden");
 }
