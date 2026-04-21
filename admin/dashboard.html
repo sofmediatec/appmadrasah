@@ -143,16 +143,7 @@ body { font-family: 'Plus Jakarta Sans', sans-serif; }
 <tr>
     <th class="p-3">ID</th>
     <th class="p-3">Madrasah</th>
-    <th class="p-3">NPSN</th>
-    <th class="p-3">Alamat</th>
-    <th class="p-3">Kabupaten</th>
-    <th class="p-3">Provinsi</th>
-    <th class="p-3">Penanggung Jawab</th>
     <th class="p-3">HP</th>
-    <th class="p-3">Email</th>
-    <th class="p-3">Jumlah Peserta</th>
-    <th class="p-3">Paket</th>
-    <th class="p-3">Harga</th>
     <th class="p-3">Status</th>
     <th class="p-3">Bayar</th>
     <th class="p-3">Bukti</th>
@@ -161,6 +152,7 @@ body { font-family: 'Plus Jakarta Sans', sans-serif; }
 </thead>
 <tbody id="tbody"></tbody>
 </table>
+</div>
 </div>
 
 <!-- MODAL -->
@@ -195,6 +187,19 @@ class="w-full h-40 object-cover rounded mb-3 border hidden cursor-pointer">
 <button onclick="saveDetail()" class="bg-blue-600 text-white px-3 rounded">Simpan</button>
 </div>
 
+<div id="modalDetail" class="fixed inset-0 bg-black/50 hidden flex items-center justify-center z-50">
+<div class="bg-white p-6 rounded-2xl w-[500px] fade-in max-h-[90vh] overflow-auto">
+
+<h2 class="font-bold mb-4">Detail Lengkap</h2>
+
+<div id="detailContent" class="text-sm space-y-2"></div>
+
+<div class="text-right mt-4">
+<button onclick="closeDetail()" class="bg-gray-600 text-white px-3 py-1 rounded">Tutup</button>
+</div>
+
+</div>
+</div>
 </div>
 </div>
 
@@ -246,16 +251,7 @@ function render(){
     allData.forEach(r=>{
         const id=r.id;
         const nama=r.nama_madrasah||"-";
-        const npsn=r.npsn||"-";
-        const alamat=r.alamat||"-";
-        const kab=r.kabupaten||"-";
-        const prov=r.provinsi||"-";
-        const pj=r.nama_penanggung_jawab||"-";
         const hp=r.no_hp||"-";
-        const email=r.email||"-";
-        const jumlah=r.jumlah_peserta||0;
-        const paket=r.paket_id||"-";
-        const harga=r.harga||0;
 
         const status=(r.status_order||"pending").toLowerCase();
         const bayar=(r.status_pembayaran||"belum_bayar").toLowerCase();
@@ -271,16 +267,7 @@ function render(){
         <tr class="border hover:bg-slate-50">
             <td class="p-2">${id}</td>
             <td class="p-2 font-semibold">${nama}</td>
-            <td class="p-2">${npsn}</td>
-            <td class="p-2">${alamat}</td>
-            <td class="p-2">${kab}</td>
-            <td class="p-2">${prov}</td>
-            <td class="p-2">${pj}</td>
             <td class="p-2">${hp}</td>
-            <td class="p-2">${email}</td>
-            <td class="p-2">${jumlah}</td>
-            <td class="p-2">${paket}</td>
-            <td class="p-2">Rp ${harga}</td>
 
             <td class="p-2">
                 <span class="badge bg-yellow-100">${status}</span>
@@ -295,13 +282,20 @@ function render(){
                     !bukti 
                     ? "-" 
                     : `<img src="${bukti}"
-                         class="w-12 h-12 object-cover rounded cursor-pointer border"
-                         onclick="openDetail('${id}')">`
+                         class="w-12 h-12 object-cover rounded border">`
                 }
             </td>
 
-            <td class="p-2">
-                <button onclick="openDetail('${id}')" class="bg-blue-600 text-white px-2 py-1 rounded text-xs">Detail</button>
+            <td class="p-2 flex gap-1">
+                <button onclick="openDetailView('${id}')" 
+                    class="bg-gray-600 text-white px-2 py-1 rounded text-xs">
+                    Detail
+                </button>
+
+                <button onclick="openVerifikasi('${id}')" 
+                    class="bg-blue-600 text-white px-2 py-1 rounded text-xs">
+                    Verifikasi
+                </button>
             </td>
         </tr>`;
     });
@@ -314,11 +308,41 @@ function render(){
     paid.innerText=stats.paid;
 }
 
-function openDetail(id){
+    function openDetailView(id){
+    const r = allData.find(x=>x.id==id);
+    if(!r) return;
+
+    const html = `
+    <div><b>ID:</b> ${r.id}</div>
+    <div><b>Madrasah:</b> ${r.nama_madrasah}</div>
+    <div><b>NPSN:</b> ${r.npsn}</div>
+    <div><b>Alamat:</b> ${r.alamat}</div>
+    <div><b>Kabupaten:</b> ${r.kabupaten}</div>
+    <div><b>Provinsi:</b> ${r.provinsi}</div>
+    <div><b>Penanggung Jawab:</b> ${r.nama_penanggung_jawab}</div>
+    <div><b>HP:</b> ${r.no_hp}</div>
+    <div><b>Email:</b> ${r.email}</div>
+    <div><b>Jumlah Peserta:</b> ${r.jumlah_peserta}</div>
+    <div><b>Paket:</b> ${r.paket_id}</div>
+    <div><b>Harga:</b> Rp ${r.harga}</div>
+    <div><b>Status Order:</b> ${r.status_order}</div>
+    <div><b>Status Bayar:</b> ${r.status_pembayaran}</div>
+    `;
+
+    document.getElementById("detailContent").innerHTML = html;
+    document.getElementById("modalDetail").classList.remove("hidden");
+}
+
+function closeDetail(){
+    document.getElementById("modalDetail").classList.add("hidden");
+}
+    
+function openVerifikasi(id){
     const r = allData.find(x=>x.id==id);
     if(!r) return;
 
     selectedId = id;
+
     dId.innerText = id;
     dStatus.value = r.status_order || "pending";
     dBayar.value = r.status_pembayaran || "belum_bayar";
@@ -335,6 +359,8 @@ function openDetail(id){
 
     modal.classList.remove("hidden");
 }
+
+
 
 function closeModal(){ modal.classList.add("hidden"); }
 
