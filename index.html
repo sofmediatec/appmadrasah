@@ -1,239 +1,460 @@
 <!DOCTYPE html>
 <html lang="id">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>CBT Online Madrasah | Solusi Ujian Digital</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CBT Online Madrasah | Solusi Ujian Digital</title>
+    
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 
-<script src="https://cdn.tailwindcss.com"></script>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
-<link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
+    <style>
+        html { scroll-behavior: smooth; }
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f1f5f9;
+            overflow-x: hidden;
+            -webkit-font-smoothing: antialiased;
+        }
 
-<style>
-html { scroll-behavior: smooth; }
+        .hero-gradient {
+            background: linear-gradient(135deg, #1e40af 0%, #1e3a8a 100%);
+        }
 
-body {
-    font-family: 'Inter', sans-serif;
-    background-color: #f1f5f9;
-}
+        .glass-nav {
+            background: rgba(255, 255, 255, 0.8);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            transition: all 0.4s ease;
+        }
 
-.hero-gradient {
-    background: linear-gradient(135deg, #1e40af 0%, #1e3a8a 100%);
-}
+        .nav-scrolled {
+            background: rgba(255, 255, 255, 0.98);
+            box-shadow: 0 10px 30px -10px rgba(0, 0, 0, 0.1);
+        }
 
-.glass-nav {
-    background: rgba(255,255,255,0.95);
-    backdrop-filter: blur(12px);
-    transition: all .3s;
-}
+        .feature-card {
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+        .feature-card:hover {
+            transform: translateY(-15px);
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.15);
+            background-color: #ffffff;
+        }
+        .feature-card:hover .icon-box {
+            transform: scale(1.1) rotate(8deg);
+        }
 
-.nav-scrolled {
-    backdrop-filter: blur(16px);
-    background: rgba(255,255,255,0.98);
-    box-shadow: 0 10px 30px rgba(0,0,0,.1);
-}
+        .skeleton {
+            animation: pulse 1.5s infinite ease-in-out;
+            background: #e2e8f0;
+            border-radius: 8px;
+        }
+        @keyframes pulse {
+            0% { background-color: #e2e8f0; }
+            50% { background-color: #cbd5e1; }
+            100% { background-color: #e2e8f0; }
+        }
 
-/* Skeleton */
-.skeleton {
-    animation: pulse 1.5s infinite;
-    background: #e2e8f0;
-    border-radius: 6px;
-}
-@keyframes pulse {
-    0% {opacity:.6}
-    50% {opacity:1}
-    100% {opacity:.6}
-}
-</style>
+        /* Mobile Menu Overlay */
+        #mobileMenu {
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            transform: translateY(-20px);
+            opacity: 0;
+            pointer-events: none;
+        }
+        #mobileMenu.active {
+            transform: translateY(0);
+            opacity: 1;
+            pointer-events: auto;
+        }
+    </style>
 </head>
-
 <body class="text-slate-900">
 
-<!-- NAVBAR -->
-<header id="navbar" class="glass-nav border-b sticky top-0 z-50">
-<div class="max-w-6xl mx-auto px-6 h-20 flex justify-between items-center">
+    <header id="mainNav" class="glass-nav border-b border-slate-200 sticky top-0 z-[60] h-20 flex items-center">
+        <div class="max-w-7xl mx-auto px-6 w-full flex items-center justify-between">
+            <a href="#" class="flex items-center space-x-3 group">
+                <div class="w-10 h-10 bg-blue-700 rounded-xl flex items-center justify-center shadow-lg shadow-blue-200 group-hover:scale-110 transition-transform">
+                    <i class="fa-solid fa-graduation-cap text-white"></i>
+                </div>
+                <span class="text-2xl font-black tracking-tighter italic">CBT<span class="text-blue-700">Madrasah</span></span>
+            </a>
+            
+            <nav class="hidden lg:flex items-center space-x-8 font-bold text-sm text-slate-600">
+                <a href="#" class="hover:text-blue-700 transition-colors">Beranda</a>
+                <a href="#keunggulan" class="hover:text-blue-700 transition-colors">Keunggulan</a>
+                <a href="#paketSection" class="hover:text-blue-700 transition-colors">Paket</a>
+                <a href="#userListSection" class="hover:text-blue-700 transition-colors">Pengguna</a>
+            </nav>
 
-<div class="flex items-center space-x-3">
-<div class="w-10 h-10 bg-blue-700 rounded-xl flex items-center justify-center"></div>
-<span class="text-2xl font-black">CBT<span class="text-blue-700">Madrasah</span></span>
-</div>
+            <div class="flex items-center space-x-4">
+                <a href="form.html" class="hidden sm:block bg-blue-700 text-white text-xs font-black px-6 py-3 rounded-full hover:bg-blue-800 transition-all shadow-md">
+                    DAFTAR SEKARANG
+                </a>
+                <button id="hamburgerBtn" class="lg:hidden text-slate-800 p-2 rounded-lg hover:bg-slate-100 transition-colors">
+                    <i class="fa-solid fa-bars-staggered text-2xl"></i>
+                </button>
+            </div>
+        </div>
+    </header>
 
-<nav class="hidden md:flex gap-8 font-bold text-sm">
-<a href="#">Beranda</a>
-<a href="#keunggulan">Keunggulan</a>
-<a href="#paketSection">Paket</a>
-<a href="#userListSection">Pengguna</a>
-<a href="#footer">Kontak</a>
-</nav>
+    <div id="mobileMenu" class="fixed top-20 left-0 w-full bg-white border-b border-slate-200 z-[55] lg:hidden">
+        <div class="flex flex-col p-6 space-y-4 font-bold text-slate-700">
+            <a href="#" class="hover:text-blue-700">Beranda</a>
+            <a href="#keunggulan" class="hover:text-blue-700">Keunggulan</a>
+            <a href="#paketSection" class="hover:text-blue-700">Paket</a>
+            <a href="#userListSection" class="hover:text-blue-700">Pengguna</a>
+            <hr>
+            <a href="form.html" class="w-full bg-blue-700 text-white text-center py-4 rounded-xl shadow-lg">Mulai Sekarang</a>
+        </div>
+    </div>
 
-<div class="flex items-center gap-3">
-<a href="form.html" class="hidden md:block bg-blue-700 text-white px-6 py-3 rounded-full text-sm font-bold">Mulai</a>
-<button id="menuBtn" class="md:hidden text-xl">☰</button>
-</div>
+    <main>
+        <section class="hero-gradient text-white pt-24 pb-44 px-6 relative overflow-hidden">
+            <div class="absolute top-0 left-0 w-64 h-64 bg-white opacity-5 rounded-full -translate-x-1/2 -translate-y-1/2"></div>
+            <div class="absolute bottom-0 right-0 w-96 h-96 bg-blue-300 opacity-10 rounded-full translate-x-1/3 translate-y-1/3"></div>
 
-</div>
+            <div class="max-w-4xl mx-auto text-center relative z-10">
+                <span class="inline-block px-4 py-1.5 bg-blue-900 bg-opacity-40 border border-blue-400 rounded-full text-xs font-black uppercase tracking-widest mb-6" data-aos="fade-down">
+                    Digitalisasi Madrasah Indonesia
+                </span>
+                <h1 class="text-5xl md:text-7xl font-black mb-8 tracking-tight leading-tight text-white" data-aos="fade-up" data-aos-delay="100">
+                    Sistem Ujian Online <br> <span class="text-blue-300">Tanpa Batas.</span>
+                </h1>
+                <p class="text-xl md:text-2xl text-blue-50 mb-12 leading-relaxed font-medium" data-aos="fade-up" data-aos-delay="200">
+                    Hadirkan pengalaman evaluasi digital yang modern, aman, dan transparan. Dirancang khusus untuk menunjang standar akademik Madrasah masa depan.
+                </p>
+                <div class="flex flex-wrap items-center justify-center gap-6" data-aos="zoom-in" data-aos-delay="400">
+                    <a href="form.html" class="bg-white text-blue-800 font-extrabold px-10 py-5 rounded-full shadow-2xl hover:bg-slate-50 transition transform hover:-translate-y-1">
+                        Daftarkan Madrasah
+                    </a>
+                </div>
+            </div>
+        </section>
 
-<div id="mobileMenu" class="hidden bg-white border-t">
-<div class="flex flex-col p-6 gap-4 font-bold">
-<a href="#">Beranda</a>
-<a href="#keunggulan">Keunggulan</a>
-<a href="#paketSection">Paket</a>
-<a href="#userListSection">Pengguna</a>
-<a href="#footer">Kontak</a>
-</div>
-</div>
-</header>
+        <div id="keunggulan" class="max-w-6xl mx-auto px-6 -mt-20 relative z-20">
+            <div class="bg-white rounded-[2.5rem] shadow-2xl p-6 md:p-8 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4 md:gap-8 border border-slate-100" data-aos="fade-up">
+                <!-- Item 1: Aman -->
+                <div class="feature-card group flex flex-col items-center text-center p-6 rounded-3xl cursor-default">
+                    <div class="icon-box w-14 h-14 bg-blue-100 text-blue-700 rounded-2xl flex items-center justify-center mb-4 shadow-sm transition-all duration-300">
+                        <i class="fa-solid fa-shield-halved text-2xl"></i>
+                    </div>
+                    <h4 class="font-extrabold text-sm text-slate-900 uppercase tracking-widest">Sistem Aman</h4>
+                    <p class="text-[11px] leading-relaxed text-slate-500 mt-3 font-semibold">Proteksi ujian dari kecurangan & kebocoran soal real-time.</p>
+                </div>
 
-<main>
+                <!-- Item 2: Cepat -->
+                <div class="feature-card group flex flex-col items-center text-center p-6 rounded-3xl cursor-default">
+                    <div class="icon-box w-14 h-14 bg-emerald-100 text-emerald-700 rounded-2xl flex items-center justify-center mb-4 shadow-sm transition-all duration-300">
+                        <i class="fa-solid fa-bolt-lightning text-2xl"></i>
+                    </div>
+                    <h4 class="font-extrabold text-sm text-slate-900 uppercase tracking-widest">Akses Cepat</h4>
+                    <p class="text-[11px] leading-relaxed text-slate-500 mt-3 font-semibold">Infrastruktur cloud stabil yang ringan diakses dari HP siswa.</p>
+                </div>
 
-<section class="hero-gradient text-white py-32 text-center">
-<h1 class="text-5xl font-black">Sistem Ujian Online</h1>
-</section>
+                <!-- Item 3: Instan -->
+                <div class="feature-card group flex flex-col items-center text-center p-6 rounded-3xl cursor-default">
+                    <div class="icon-box w-14 h-14 bg-violet-100 text-violet-700 rounded-2xl flex items-center justify-center mb-4 shadow-sm transition-all duration-300">
+                        <i class="fa-solid fa-chart-line text-2xl"></i>
+                    </div>
+                    <h4 class="font-extrabold text-sm text-slate-900 uppercase tracking-widest">Hasil Instan</h4>
+                    <p class="text-[11px] leading-relaxed text-slate-500 mt-3 font-semibold">Analisis nilai otomatis & ekspor laporan dalam satu klik saja.</p>
+                </div>
 
-<div id="keunggulan" class="py-20 text-center">
-<h2 class="text-3xl font-black">Keunggulan</h2>
-</div>
+                <!-- Item 4: Support -->
+                <div class="feature-card group flex flex-col items-center text-center p-6 rounded-3xl cursor-default">
+                    <div class="icon-box w-14 h-14 bg-orange-100 text-orange-700 rounded-2xl flex items-center justify-center mb-4 shadow-sm transition-all duration-300">
+                        <i class="fa-solid fa-headset text-2xl"></i>
+                    </div>
+                    <h4 class="font-extrabold text-sm text-slate-900 uppercase tracking-widest">Support 24/7</h4>
+                    <p class="text-[11px] leading-relaxed text-slate-500 mt-3 font-semibold">Tim bantuan teknis siap mendampingi selama masa ujian.</p>
+                </div>
+            </div>
+        </div>
 
-<section id="paketSection" class="max-w-6xl mx-auto py-20 px-6">
-<div id="paketList"></div>
-</section>
+        <section id="paketSection" class="max-w-6xl mx-auto px-6 py-24">
+            <div class="text-center mb-16">
+                <h2 class="text-3xl md:text-4xl font-black text-slate-900 mb-4" data-aos="fade-up">Pilihan Paket CBT</h2>
+                <p class="text-slate-600 font-medium max-w-xl mx-auto" data-aos="fade-up" data-aos-delay="100">
+                    Investasi cerdas untuk efisiensi pendidikan. Pilih paket sesuai kebutuhan madrasah Anda.
+                </p>
+            </div>
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-8" id="paketList">
+                <!-- Data diinjeksi via script -->
+            </div>
+        </section>
 
-<!-- USER LIST -->
-<section id="userListSection" class="bg-slate-200 py-24 px-6">
-<div class="max-w-7xl mx-auto">
+        <section id="userListSection" class="bg-slate-200 py-24 px-6">
+            <div class="max-w-7xl mx-auto">
+                <div class="flex flex-col md:flex-row items-end justify-between mb-12 gap-6">
+                    <div data-aos="fade-right">
+                        <h2 class="text-3xl font-black text-slate-900 mb-2">Daftar Pengguna CBT</h2>
+                        <p class="text-slate-700 font-semibold italic text-sm">Terpercaya oleh berbagai lembaga pendidikan di seluruh Indonesia.</p>
+                    </div>
+                    <!-- Real-time Search -->
+                    <div class="w-full md:w-80 relative group" data-aos="fade-left">
+                        <span class="absolute inset-y-0 left-0 pl-4 flex items-center text-slate-400 group-focus-within:text-blue-600 transition-colors">
+                            <i class="fa-solid fa-magnifying-glass"></i>
+                        </span>
+                        <input type="text" id="searchInput" placeholder="Cari nama madrasah..." 
+                            class="w-full pl-11 pr-4 py-3.5 bg-white border border-slate-300 rounded-2xl shadow-sm focus:ring-4 focus:ring-blue-100 focus:border-blue-500 outline-none transition-all font-semibold text-sm">
+                    </div>
+                </div>
+                
+                <div class="bg-white rounded-[2.5rem] shadow-xl overflow-hidden border border-slate-300" data-aos="fade-up">
+                    <div class="overflow-x-auto">
+                        <table class="w-full text-left text-sm">
+                            <thead>
+                                <tr class="bg-slate-800 text-slate-200 text-[11px] uppercase font-black tracking-[0.2em]">
+                                    <th class="px-6 py-5 whitespace-nowrap">No</th>
+                                    <th class="px-6 py-5">Madrasah</th>
+                                    <th class="px-6 py-5">Kabupaten</th>
+                                    <th class="px-6 py-5">Paket</th>
+                                    <th class="px-6 py-5 text-center">Status</th>
+                                    <th class="px-6 py-5 text-center">Pembayaran</th>
+                                    <th class="px-6 py-5 text-center">Aksi</th>
+                                    <th class="px-6 py-5 text-center">Akses CBT</th>
+                                </tr>
+                            </thead>
+                            <tbody id="userList" class="divide-y divide-slate-100">
+                                <!-- Initial Skeleton injected here -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
 
-<!-- SEARCH -->
-<div class="mb-6">
-<input id="searchInput" type="text" placeholder="Cari madrasah..."
-class="w-full md:w-1/3 px-4 py-3 rounded-xl border font-semibold">
-</div>
+                <!-- Pagination Component -->
+                <div id="pagination" class="mt-8 flex items-center justify-center gap-2">
+                    <!-- Pagination buttons injected here -->
+                </div>
+            </div>
+        </section>
+    </main>
 
-<div class="bg-white rounded-3xl shadow-xl overflow-hidden">
+    <footer id="footer" class="bg-slate-900 text-slate-400 py-20 px-6">
+        <div class="max-w-6xl mx-auto text-center">
+            
+            <div class="mb-12">
+                <div class="font-black text-3xl italic text-white mb-2">CBT<span class="text-blue-500">Madrasah</span></div>
+                <p class="text-sm font-medium opacity-60">Solusi Digital Terpadu untuk Masa Depan Madrasah.</p>
+            </div>
 
-<table class="w-full text-sm">
-<thead>
-<tr class="bg-slate-800 text-white text-xs uppercase">
-<th class="px-6 py-4">No</th>
-<th class="px-6 py-4">Madrasah</th>
-<th class="px-6 py-4">Kabupaten</th>
-<th class="px-6 py-4">Paket</th>
-<th class="px-6 py-4 text-center">Status</th>
-<th class="px-6 py-4 text-center">Pembayaran</th>
-<th class="px-6 py-4 text-center">Aksi</th>
-<th class="px-6 py-4 text-center">Akses CBT</th>
-</tr>
-</thead>
+            <!-- Rekening Section -->
+            <div class="mb-16">
+                <h3 class="text-xl font-black text-white mb-4 uppercase tracking-widest">Rekening Pembayaran</h3>
+                <p class="text-slate-500 mb-10 text-sm font-semibold italic">Lakukan transfer hanya ke rekening resmi berikut:</p>
+                
+                <div id="rekeningList" class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                    <!-- Data rekening injected here -->
+                    <div class="col-span-full py-4 text-slate-600 font-bold italic">Menghubungkan ke server...</div>
+                </div>
+            </div>
 
-<tbody id="userList">
-<tr>
-<td colspan="8" class="p-6">
-<div class="space-y-3">
-<div class="skeleton h-4 w-full"></div>
-<div class="skeleton h-4 w-full"></div>
-<div class="skeleton h-4 w-full"></div>
-</div>
-</td>
-</tr>
-</tbody>
-</table>
+            <div class="pt-10 border-t border-slate-800 flex flex-col md:flex-row justify-between items-center gap-6">
+                <p class="text-sm font-medium">&copy; 2026 SoftMediaTec. Seluruh hak cipta dilindungi.</p>
+                <div class="flex space-x-6 text-xl">
+                    <a href="#" class="hover:text-blue-500 transition-colors"><i class="fa-brands fa-whatsapp"></i></a>
+                    <a href="#" class="hover:text-blue-400 transition-colors"><i class="fa-brands fa-facebook"></i></a>
+                    <a href="#" class="hover:text-pink-500 transition-colors"><i class="fa-brands fa-instagram"></i></a>
+                </div>
+            </div>
+        </div>
+    </footer>
 
-</div>
+    <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
+    <script src="assets/app.js"></script>
 
-<!-- PAGINATION -->
-<div class="flex justify-center mt-6 gap-2" id="pagination"></div>
+    <script>
+        AOS.init({ duration: 800, once: true });
 
-</div>
-</section>
+        const mainNav = document.getElementById("mainNav");
+        window.onscroll = () => {
+            window.scrollY > 50 ? mainNav.classList.add("nav-scrolled") : mainNav.classList.remove("nav-scrolled");
+        };
 
-</main>
+        const menuBtn = document.getElementById("hamburgerBtn");
+        const mobileMenu = document.getElementById("mobileMenu");
+        menuBtn.onclick = () => {
+            mobileMenu.classList.toggle("active");
+            menuBtn.innerHTML = mobileMenu.classList.contains("active") 
+                ? '<i class="fa-solid fa-xmark text-2xl"></i>' 
+                : '<i class="fa-solid fa-bars-staggered text-2xl"></i>';
+        };
 
-<footer id="footer" class="bg-slate-900 text-white p-10 text-center">
-Footer
-</footer>
+        let allUsers = [];
+        let filteredUsers = [];
+        let currentPage = 1;
+        const rowsPerPage = 5;
 
-<script src="assets/app.js"></script>
+        async function loadPaket() {
+            try {
+                const res = await get("paket_v2");
+                if(!res || res.status !== "success" || !res.data) throw new Error("Gagal muat paket");
+                
+                let html = "";
+                res.data.forEach((p, index) => {
+                    html += `
+                    <div class="bg-white rounded-3xl p-10 shadow-xl border border-slate-100 text-center relative group transition-all hover:border-blue-500 hover:shadow-2xl hover:shadow-blue-100" data-aos="fade-up" data-aos-delay="${index * 100}">
+                        <h3 class="text-xl font-black text-slate-900 mb-2">${p.nama || "-"}</h3>
+                        <p class="text-blue-600 text-xs mb-6 uppercase tracking-widest font-black">${p.deskripsi || "0"} Peserta Aktif</p>
+                        <div class="text-3xl font-black text-slate-900 mb-8">
+                            <span class="text-sm font-bold text-slate-400 mr-1">Rp</span>${Number(p.harga || 0).toLocaleString()}
+                        </div>
+                        <a href="form.html" class="block w-full py-4 rounded-2xl font-black bg-slate-900 text-white hover:bg-blue-700 transition-all shadow-lg shadow-slate-200">
+                            Ambil Paket
+                        </a>
+                    </div>`;
+                });
+                document.getElementById("paketList").innerHTML = html;
+            } catch(err) {
+                document.getElementById("paketList").innerHTML = `<div class="col-span-3 text-red-500 font-bold text-center">${err.message}</div>`;
+            }
+        }
 
-<script>
-/* NAVBAR SCROLL */
-window.addEventListener("scroll",()=>{
-document.getElementById("navbar").classList.toggle("nav-scrolled",window.scrollY>50);
-});
+        async function loadRekening() {
+            const el = document.getElementById("rekeningList");
+            try {
+                const res = await get("rekening");
+                if(!res || res.status !== "success" || !res.data) throw new Error("Gagal muat rekening");
+                
+                let html = "";
+                res.data.forEach((r, i) => {
+                    // Logic to show simple Bank icon based on bank name
+                    let bankIcon = '<i class="fa-solid fa-building-columns"></i>';
+                    if(r.bank.toLowerCase().includes('bca')) bankIcon = '<i class="fa-solid fa-b text-blue-400"></i>';
+                    if(r.bank.toLowerCase().includes('mandiri')) bankIcon = '<i class="fa-solid fa-m text-amber-400"></i>';
+                    if(r.bank.toLowerCase().includes('bri')) bankIcon = '<i class="fa-solid fa-r text-blue-600"></i>';
 
-/* MOBILE MENU */
-menuBtn.onclick=()=>mobileMenu.classList.toggle("hidden");
+                    html += `
+                    <div class="bg-slate-800/50 p-6 rounded-2xl border border-slate-700 text-center hover:border-blue-500 hover:bg-slate-800 transition-all group" data-aos="fade-up" data-aos-delay="${i * 100}">
+                        <div class="w-10 h-10 bg-slate-700 rounded-full flex items-center justify-center mx-auto mb-3 text-lg transition-transform group-hover:scale-110">
+                            ${bankIcon}
+                        </div>
+                        <h3 class="text-sm font-black text-blue-400 mb-1 uppercase tracking-wider">${r.bank}</h3>
+                        <div class="text-lg font-mono font-bold text-white tracking-widest">${r.no_rekening}</div>
+                        <div class="text-[10px] text-slate-500 mt-2 font-bold uppercase tracking-widest">a.n ${r.nama}</div>
+                    </div>`;
+                });
+                el.innerHTML = html || `<div class="col-span-3 text-slate-500 italic">Tidak ada rekening aktif</div>`;
+            } catch(err) {
+                el.innerHTML = `<div class="col-span-3 text-red-400 font-bold italic">${err.message}</div>`;
+            }
+        }
 
-/* DATA GLOBAL */
-let allData=[];
-let currentPage=1;
-const perPage=10;
+        async function loadUser() {
+            const tbody = document.getElementById("userList");
+            showSkeleton();
+            
+            try {
+                const res = await get("pendaftaran");
+                if(!res || res.status !== "success" || !res.data) throw new Error("Gagal sinkronisasi data");
+                
+                // Processing Data (Skipping header row)
+                allUsers = res.data.slice(1).reverse().map(r => ({
+                    id: r[0], kode: r[1] || "", madrasah: r[3] || "-", kabupaten: r[6] || "-", paket: r[12] || "-", 
+                    status: (r[14] || "pending").toLowerCase(), bayar: (r[15] || "belum_bayar").toLowerCase(), link_cbt: r[16] || ""
+                }));
+                
+                filteredUsers = [...allUsers];
+                setTimeout(() => renderTable(), 800); // Small delay for premium feel
+            } catch(err) {
+                tbody.innerHTML = `<tr><td colspan="8" class="text-center text-red-600 py-20 font-bold uppercase tracking-widest">${err.message}</td></tr>`;
+            }
+        }
 
-/* LOAD USER */
-async function loadUser(){
-const res=await get("pendaftaran");
-allData=res.data.slice(1).reverse().map(r=>({
-id:r[0],kode:r[1]||"",madrasah:r[3]||"-",
-kabupaten:r[6]||"-",paket:r[12]||"-",
-status:(r[14]||"pending").toLowerCase(),
-bayar:(r[15]||"belum_bayar").toLowerCase(),
-link_cbt:r[16]||""
-}));
-renderTable();
-}
+        function showSkeleton() {
+            const tbody = document.getElementById("userList");
+            let skeletonHtml = "";
+            for (let i = 0; i < rowsPerPage; i++) {
+                skeletonHtml += `
+                <tr>
+                    <td class="px-6 py-6"><div class="skeleton h-4 w-6"></div></td>
+                    <td class="px-6 py-6"><div class="skeleton h-4 w-40"></div></td>
+                    <td class="px-6 py-6"><div class="skeleton h-4 w-24"></div></td>
+                    <td class="px-6 py-6"><div class="skeleton h-4 w-16"></div></td>
+                    <td class="px-6 py-6"><div class="skeleton h-8 w-24 mx-auto"></div></td>
+                    <td class="px-6 py-6"><div class="skeleton h-8 w-24 mx-auto"></div></td>
+                    <td class="px-6 py-6 text-center"><div class="skeleton h-8 w-16 mx-auto"></div></td>
+                    <td class="px-6 py-6 text-center"><div class="skeleton h-8 w-16 mx-auto"></div></td>
+                </tr>`;
+            }
+            tbody.innerHTML = skeletonHtml;
+        }
 
-/* RENDER TABLE */
-function renderTable(){
-let data=filterData();
-let start=(currentPage-1)*perPage;
-let pageData=data.slice(start,start+perPage);
+        function renderTable() {
+            const tbody = document.getElementById("userList");
+            const start = (currentPage - 1) * rowsPerPage;
+            const end = start + rowsPerPage;
+            const dataToShow = filteredUsers.slice(start, end);
 
-let html="";
-let no=start+1;
+            if (dataToShow.length === 0) {
+                tbody.innerHTML = `<tr><td colspan="8" class="px-6 py-20 text-center text-slate-400 font-bold italic uppercase tracking-widest">Data tidak ditemukan</td></tr>`;
+                renderPagination(0);
+                return;
+            }
 
-pageData.forEach(r=>{
-let tombol=(r.bayar==="belum_bayar")
-? `<a href="bayar.html?id=${r.id}&kode=${r.kode}" class="bg-amber-600 text-white px-3 py-1 rounded">Bayar</a>`
-: `<span class="text-green-600 font-bold">Lunas</span>`;
+            let html = "";
+            dataToShow.forEach((r, index) => {
+                const statusColor = r.status === 'disetujui' ? 'bg-emerald-100 text-emerald-800' : (r.status === 'pending' ? 'bg-amber-100 text-amber-800' : 'bg-red-100 text-red-800');
+                const bayarColor = r.bayar === 'lunas' ? 'bg-emerald-100 text-emerald-800' : (r.bayar === 'menunggu_verifikasi' ? 'bg-amber-100 text-amber-800' : 'bg-slate-100 text-slate-600');
 
-html+=`
-<tr>
-<td class="px-4 py-3">${no++}</td>
-<td>${r.madrasah}</td>
-<td>${r.kabupaten}</td>
-<td>${r.paket}</td>
-<td>${r.status}</td>
-<td>${r.bayar}</td>
-<td>${tombol}</td>
-<td>${r.link_cbt?`<a href="${r.link_cbt}" target="_blank">Buka</a>`:"-"}</td>
-</tr>`;
-});
+                const tombolBayar = (r.bayar === 'belum_bayar' || r.bayar === 'ditolak') ? 
+                    `<a href="bayar.html?id=${r.id}&kode=${r.kode}" class="bg-amber-600 hover:bg-amber-700 text-white text-[10px] px-4 py-2 rounded-lg font-black transition-all shadow-md uppercase tracking-wider">Bayar</a>` : 
+                    `<span class="text-${r.bayar === 'lunas' ? 'emerald' : 'amber'}-700 font-black text-[10px] uppercase tracking-tighter">${r.bayar === 'lunas' ? 'Lengkap' : 'Sedang Verifikasi'}</span>`;
 
-userList.innerHTML=html||`<tr><td colspan="8" class="text-center p-6">Kosong</td></tr>`;
-renderPagination(data.length);
-}
+                html += `
+                <tr class="hover:bg-blue-50/50 transition-colors">
+                    <td class="px-6 py-6 text-slate-400 font-black">${start + index + 1}</td>
+                    <td class="px-6 py-6 font-black text-slate-900 uppercase tracking-tight text-xs">${r.madrasah}</td>
+                    <td class="px-6 py-6 text-xs text-slate-600 font-bold">${r.kabupaten}</td>
+                    <td class="px-6 py-6 text-xs font-black text-blue-700 italic uppercase">${r.paket}</td>
+                    <td class="px-6 py-6 text-center"><span class="px-3 py-1.5 ${statusColor} text-[10px] border border-black/5 font-black rounded-md uppercase shadow-sm">${r.status}</span></td>
+                    <td class="px-6 py-6 text-center"><span class="px-3 py-1.5 ${bayarBadgeClass = bayarColor} text-[10px] border border-black/5 font-black rounded-md uppercase shadow-sm">${r.bayar.replace('_',' ')}</span></td>
+                    <td class="px-6 py-6 text-center">${tombolBayar}</td>
+                    <td class="px-6 py-6 text-center">${r.link_cbt ? `<a href="${r.link_cbt}" target="_blank" class="bg-blue-700 hover:bg-blue-800 text-white text-[10px] px-4 py-2 rounded-lg font-black transition-all uppercase tracking-wider inline-flex items-center gap-2"><i class="fa-solid fa-link"></i> Buka</a>` : "-"}</td>
+                </tr>`;
+            });
+            tbody.innerHTML = html;
+            renderPagination(filteredUsers.length);
+        }
 
-/* SEARCH */
-function filterData(){
-let q=searchInput.value.toLowerCase();
-return allData.filter(d=>d.madrasah.toLowerCase().includes(q));
-}
-searchInput.oninput=()=>{currentPage=1;renderTable();};
+        function renderPagination(total) {
+            const totalPages = Math.ceil(total / rowsPerPage);
+            const container = document.getElementById("pagination");
+            if (totalPages <= 1) { container.innerHTML = ""; return; }
 
-/* PAGINATION */
-function renderPagination(total){
-let pages=Math.ceil(total/perPage);
-let html="";
-for(let i=1;i<=pages;i++){
-html+=`<button onclick="gotoPage(${i})" class="px-3 py-1 border ${i===currentPage?'bg-blue-700 text-white':''}">${i}</button>`;
-}
-pagination.innerHTML=html;
-}
-function gotoPage(p){currentPage=p;renderTable();}
+            let html = "";
+            for (let i = 1; i <= totalPages; i++) {
+                const isActive = i === currentPage;
+                html += `<button onclick="goToPage(${i})" class="w-10 h-10 rounded-xl font-bold transition-all border ${isActive ? 'bg-blue-700 text-white border-blue-700 shadow-lg' : 'bg-white text-slate-600 border-slate-200 hover:border-blue-400'}">${i}</button>`;
+            }
+            container.innerHTML = html;
+        }
 
-/* INIT */
-window.onload=()=>{
-loadUser();
-};
-</script>
+        function goToPage(page) {
+            currentPage = page;
+            renderTable();
+            document.getElementById("userListSection").scrollIntoView({ behavior: 'smooth' });
+        }
 
+        document.getElementById('searchInput').oninput = (e) => {
+            const query = e.target.value.toLowerCase();
+            filteredUsers = allUsers.filter(u => 
+                u.madrasah.toLowerCase().includes(query) || 
+                u.kabupaten.toLowerCase().includes(query)
+            );
+            currentPage = 1;
+            renderTable();
+        };
+
+        window.onload = () => {
+            loadPaket();
+            loadUser();
+            loadRekening();
+        };
+    </script>
 </body>
 </html>
