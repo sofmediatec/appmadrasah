@@ -275,6 +275,7 @@
         
             const data = res.data.slice(1).reverse().map(r => ({
               id: r[0],
+                kode: r[1] || "",
               madrasah: r[3] || "-",
               kabupaten: r[6] || "-",
               paket: r[12] || "-",
