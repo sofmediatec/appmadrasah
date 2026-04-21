@@ -9,67 +9,77 @@
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 
-    <style>
-        body { 
-            font-family: 'Plus Jakarta Sans', sans-serif; 
-            background-color: #f8fafc;
-        }
+    <!-- GANTI HANYA BAGIAN <style> SAJA -->
+<style>
+    body { 
+        font-family: 'Plus Jakarta Sans', sans-serif; 
+        background: linear-gradient(135deg, #e2e8f0 0%, #cbd5e1 100%);
+        background-attachment: fixed;
+        min-height: 100vh;
+    }
 
-        .glass {
-            background: rgba(255, 255, 255, 0.9);
-            backdrop-filter: blur(12px);
-            border: 1px solid rgba(226, 232, 240, 0.8);
-        }
+    .glass {
+        background: rgba(255, 255, 255, 0.95);
+        backdrop-filter: blur(10px);
+        border: 1px solid rgba(255, 255, 255, 1);
+        box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1);
+    }
 
-        .card {
-            border-radius: 24px;
-            padding: 24px;
-            color: white;
-            position: relative;
-            overflow: hidden;
-            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-        }
-        
-        .card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
-        }
+    .card {
+        border-radius: 24px;
+        padding: 24px;
+        color: white;
+        position: relative;
+        overflow: hidden;
+        transition: 0.3s;
+        box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.2);
+    }
+    
+    .card:hover {
+        transform: translateY(-8px);
+    }
 
-        .card::before {
-            content: "";
-            position: absolute;
-            top: -20%;
-            right: -10%;
-            width: 120px;
-            height: 120px;
-            background: rgba(255, 255, 255, 0.15);
-            border-radius: 50%;
-        }
+    .card::after {
+        content: "";
+        position: absolute;
+        top: -10%;
+        right: -10%;
+        width: 120px;
+        height: 120px;
+        background: rgba(255,255,255,0.2);
+        border-radius: 50%;
+    }
 
-        .card-blue { background: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%); }
-        .card-yellow { background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%); }
-        .card-green { background: linear-gradient(135deg, #10b981 0%, #059669 100%); }
-        .card-purple { background: linear-gradient(135deg, #8b5cf6 0%, #6d28d9 100%); }
+    .card-blue { background: linear-gradient(135deg,#2563eb,#1d4ed8); }
+    .card-yellow { background: linear-gradient(135deg,#d97706,#b45309); }
+    .card-green { background: linear-gradient(135deg,#059669,#064e3b); }
+    .card-purple { background: linear-gradient(135deg,#7c3aed,#5b21b6); }
 
-        .custom-scroll::-webkit-scrollbar { height: 6px; width: 6px; }
-        .custom-scroll::-webkit-scrollbar-track { background: #f1f5f9; }
-        .custom-scroll::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 10px; }
+    /* 🔥 PENTING: SAMAKAN DENGAN JS */
+    .badge {
+        padding: 6px 14px;
+        border-radius: 12px;
+        font-size: 11px;
+        font-weight: 800;
+        text-transform: uppercase;
+        display: inline-block;
+    }
 
-        .fade-in { animation: fadeIn 0.4s ease-out; }
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(10px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
+    .custom-scroll::-webkit-scrollbar { height:6px;width:6px }
+    .custom-scroll::-webkit-scrollbar-thumb { background:#94a3b8;border-radius:10px }
 
-        .status-badge {
-            padding: 4px 12px;
-            border-radius: 10px;
-            font-size: 11px;
-            font-weight: 700;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-        }
-    </style>
+    .fade-in { animation: fadeIn .4s ease-out; }
+    @keyframes fadeIn{
+        from{opacity:0;transform:translateY(15px)}
+        to{opacity:1;transform:translateY(0)}
+    }
+
+    thead th {
+        background:#0f172a;
+        color:#fff;
+        font-weight:700;
+    }
+</style>
 </head>
 
 <body class="min-h-screen text-slate-800">
@@ -191,7 +201,7 @@
             <p class="text-slate-500 text-sm mb-6">Update status pendaftaran ID: <span id="dId" class="font-bold text-blue-600"></span></p>
 
             <div class="space-y-5">
-                <div id="buktiContainer" class="hidden">
+                <div id="buktiWrap">
                     <label class="block text-xs font-bold text-slate-500 uppercase mb-2">Bukti Transfer</label>
                     <img id="dBukti" onclick="window.open(this.src)" class="w-full h-48 object-cover rounded-2xl border-2 border-slate-100 cursor-pointer hover:opacity-90 transition-opacity">
                 </div>
@@ -358,7 +368,7 @@
                 <div class="p-4 rounded-2xl bg-slate-50 border border-slate-100">
                     <p class="text-[10px] uppercase font-bold text-slate-400 mb-1 tracking-widest">${f.l}</p>
                     <p class="font-bold ${f.highlight ? 'text-emerald-600' : 'text-slate-700'}">
-                        ${f.badge ? `<span class="status-badge ${getStatusColor(f.v)}">${f.v}</span>` : (f.v || '-')}
+                        ${f.badge ? `<span class="badge ${getStatusColor(f.v)}">${f.v}</span>` : (f.v || '-')}
                     </p>
                 </div>`;
             });
@@ -381,7 +391,7 @@
             document.getElementById("dLink").value = r.link_cbt || "";
 
             const bukti = fixDriveUrl(r.bukti_url);
-            const container = document.getElementById("buktiContainer");
+            const container = document.getElementById("buktiWrap");
             if(bukti) {
                 document.getElementById("dBukti").src = bukti;
                 container.classList.remove("hidden");
