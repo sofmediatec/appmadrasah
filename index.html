@@ -315,7 +315,7 @@
         
             let tombolBayar = "-";
             if(r.bayar === "belum_bayar" || r.bayar === "ditolak"){
-                tombolBayar = `<a href="bayar.html?id=${r.id}" class="bg-amber-600 hover:bg-amber-700 text-white text-[10px] px-4 py-2 rounded-lg font-black transition-all shadow-md uppercase tracking-wider">Bayar</a>`;
+                tombolBayar = `<a href="bayar.html?id=${r.id}&kode=${r.kode}" class="bg-amber-600 hover:bg-amber-700 text-white text-[10px] px-4 py-2 rounded-lg font-black transition-all shadow-md uppercase tracking-wider">Bayar</a>`;
             } else if(r.bayar === "menunggu_verifikasi"){
                 tombolBayar = `<span class="text-amber-700 font-black text-[10px] uppercase">Verifikasi...</span>`;
             } else if(r.bayar === "lunas"){
