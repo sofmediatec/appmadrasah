@@ -277,8 +277,10 @@
     <script src="../assets/app.js"></script>
     <script>
         const token = localStorage.getItem("token");
-        if(!token) location="login.html";
-
+        if (!localStorage.getItem("token")) {
+            window.location.href = "/login.html";
+        }
+        
         let allData = [];
         let selectedId = null;
 
@@ -510,7 +512,7 @@
         function logout() {
             localStorage.removeItem("token");
             localStorage.removeItem("user");
-            location = "index.html";
+            window.location.href = "/index.html";
         }
 
         window.onload = () => {
