@@ -28,6 +28,57 @@ body { font-family: 'Inter', sans-serif; }
     transform: none;
     box-shadow: none;
 }
+
+/* Animasi fade-in & slide-up */
+@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+
+.animate-fadeInUp {
+    animation: fadeInUp 0.6s ease-out forwards;
+}
+
+.animate-fadeIn {
+    animation: fadeIn 0.8s ease-out forwards;
+}
+
+.card-wrapper {
+    opacity: 0; /* Awalnya tersembunyi */
+    animation: fadeInUp 0.5s ease-out forwards;
+}
+
+/* Delay untuk anak-anak card */
+.card-header {
+    opacity: 0;
+    animation: fadeInUp 0.5s ease-out 0.1s forwards;
+}
+
+.card-form {
+    opacity: 0;
+    animation: fadeInUp 0.5s ease-out 0.2s forwards;
+}
+
+.back-link {
+    opacity: 0;
+    animation: fadeIn 0.5s ease-out 0.4s forwards;
+}
+
+/* Efek error box muncul */
+.error-box-show {
+    animation: fadeInUp 0.3s ease-out;
+}
 </style>
 </head>
 
@@ -35,17 +86,17 @@ body { font-family: 'Inter', sans-serif; }
 
     <div class="w-full max-w-md">
 
-        <!-- CARD WRAPPER -->
-        <div class="rounded-3xl overflow-hidden shadow-xl">
+        <!-- CARD WRAPPER dengan animasi utama -->
+        <div class="rounded-3xl overflow-hidden shadow-xl card-wrapper">
 
-            <!-- HEADER -->
-            <div class="bg-main text-white text-center py-10 px-6">
+            <!-- HEADER dengan animasi -->
+            <div class="bg-main text-white text-center py-10 px-6 card-header">
                 <h1 class="text-2xl font-bold">Admin CBT</h1>
                 <p class="text-sm opacity-90 mt-1">Silakan login untuk melanjutkan</p>
             </div>
 
             <!-- FORM AREA -->
-            <div class="bg-white p-8">
+            <div class="bg-white p-8 card-form">
 
                 <div id="errorBox" 
                      class="hidden mb-4 text-red-600 text-sm font-semibold bg-red-50 p-3 rounded-xl">
@@ -55,7 +106,7 @@ body { font-family: 'Inter', sans-serif; }
                     <div>
                         <label class="text-sm font-bold text-slate-600">Email</label>
                         <input id="email" type="email"
-                               class="w-full mt-1 px-4 py-3 border rounded-xl focus:ring-2 focus:ring-emerald-400 outline-none"
+                               class="w-full mt-1 px-4 py-3 border rounded-xl focus:ring-2 focus:ring-emerald-400 outline-none transition-all duration-200 focus:border-emerald-500"
                                placeholder="admin@email.com"
                                required>
                     </div>
@@ -63,13 +114,13 @@ body { font-family: 'Inter', sans-serif; }
                     <div>
                         <label class="text-sm font-bold text-slate-600">Password</label>
                         <input id="password" type="password"
-                               class="w-full mt-1 px-4 py-3 border rounded-xl focus:ring-2 focus:ring-emerald-400 outline-none"
+                               class="w-full mt-1 px-4 py-3 border rounded-xl focus:ring-2 focus:ring-emerald-400 outline-none transition-all duration-200 focus:border-emerald-500"
                                placeholder="••••••••"
                                required>
                     </div>
 
                     <button id="btnLogin"
-                            class="btn-login w-full text-white py-3 rounded-xl font-bold flex justify-center items-center gap-2">
+                            class="btn-login w-full text-white py-3 rounded-xl font-bold flex justify-center items-center gap-2 transition-all duration-300">
                         <span id="btnText">Login</span>
                         <svg id="loader" class="w-5 h-5 animate-spin hidden" viewBox="0 0 24 24">
                             <circle cx="12" cy="12" r="10" stroke="white" stroke-width="4" fill="none"/>
@@ -77,11 +128,11 @@ body { font-family: 'Inter', sans-serif; }
                     </button>
                 </form>
 
-                <!-- KEMBALI KE BERANDA - SEKARANG DI BAWAH TOMBOL LOGIN -->
-                <div class="mt-6 text-center">
+                <!-- KEMBALI KE BERANDA dengan animasi -->
+                <div class="mt-6 text-center back-link">
                     <a href="../index.html" 
-                       class="inline-flex items-center gap-2 text-emerald-700 hover:text-emerald-900 font-semibold text-sm transition-colors">
-                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                       class="inline-flex items-center gap-2 text-emerald-700 hover:text-emerald-900 font-semibold text-sm transition-all duration-200 hover:translate-x-[-2px]">
+                        <svg class="w-5 h-5 transition-transform duration-200 group-hover:-translate-x-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" 
                                   d="M10 19l-7-7m0 0l7-7m-7 7h18"/>
                         </svg>
@@ -116,6 +167,11 @@ body { font-family: 'Inter', sans-serif; }
         function showError(msg){
             errorBox.innerText = msg;
             errorBox.classList.remove("hidden");
+            // Tambahkan class animasi
+            errorBox.classList.add("error-box-show");
+            setTimeout(() => {
+                errorBox.classList.remove("error-box-show");
+            }, 300);
         }
 
         function hideError(){
