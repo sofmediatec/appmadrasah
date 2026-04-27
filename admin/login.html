@@ -31,75 +31,79 @@ body { font-family: 'Inter', sans-serif; }
 </style>
 </head>
 
+<body class="min-h-screen flex items-center justify-center bg-slate-100">
+
 <body class="min-h-screen bg-slate-100 flex items-center justify-center px-4">
 
-<div class="w-full max-w-md">
+    <div class="w-full max-w-md">
 
-    <!-- CARD -->
-    <div class="rounded-3xl overflow-hidden shadow-xl">
+        <!-- KEMBALI KE BERANDA -->
+        <div class="mb-6">
+            <a href="/index.html" 
+               class="inline-flex items-center gap-2 text-emerald-700 hover:text-emerald-900 font-semibold text-sm transition-colors">
+                
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" 
+                          d="M10 19l-7-7m0 0l7-7m-7 7h18"/>
+                </svg>
 
-        <!-- HEADER -->
-        <div class="bg-main text-white text-center py-10 px-6">
-            <h1 class="text-2xl font-bold">Admin CBT</h1>
-            <p class="text-sm opacity-90 mt-1">Silakan login untuk melanjutkan</p>
+                <span>Kembali ke Beranda</span>
+            </a>
         </div>
 
-        <!-- FORM -->
-        <div class="bg-white p-8">
+        <!-- CARD WRAPPER -->
+        <div class="rounded-3xl overflow-hidden shadow-xl">
 
-            <!-- ERROR -->
-            <div id="errorBox" 
-                 class="hidden mb-4 text-red-600 text-sm font-semibold bg-red-50 p-3 rounded-xl">
+            <!-- HEADER -->
+            <div class="bg-main text-white text-center py-10 px-6">
+                <h1 class="text-2xl font-bold">Admin CBT</h1>
+                <p class="text-sm opacity-90 mt-1">Silakan login untuk melanjutkan</p>
             </div>
 
-            <form id="formLogin" class="space-y-5">
+            <!-- FORM -->
+            <div class="bg-white p-8">
 
-                <div>
-                    <label class="text-sm font-bold text-slate-600">Email</label>
-                    <input id="email" type="email"
-                    class="w-full mt-1 px-4 py-3 border rounded-xl focus:ring-2 focus:ring-emerald-400 outline-none"
-                    placeholder="admin@email.com"
-                    required>
+                <div id="errorBox" 
+                     class="hidden mb-4 text-red-600 text-sm font-semibold bg-red-50 p-3 rounded-xl">
                 </div>
 
-                <div>
-                    <label class="text-sm font-bold text-slate-600">Password</label>
-                    <input id="password" type="password"
-                    class="w-full mt-1 px-4 py-3 border rounded-xl focus:ring-2 focus:ring-emerald-400 outline-none"
-                    placeholder="••••••••"
-                    required>
-                </div>
+<!-- CARD -->
+<div class="bg-white p-8 rounded-b-3xl shadow-lg">
 
-                <!-- BUTTON LOGIN -->
-                <button id="btnLogin"
-                class="btn-login w-full text-white py-3 rounded-xl font-bold flex justify-center items-center gap-2">
+<div id="errorBox" class="hidden mb-4 text-red-600 text-sm font-semibold bg-red-50 p-3 rounded-xl"></div>
 
-                    <span id="btnText">Login</span>
+<form id="formLogin" class="space-y-5">
 
-                    <svg id="loader" class="w-5 h-5 animate-spin hidden" viewBox="0 0 24 24">
-                        <circle cx="12" cy="12" r="10" stroke="white" stroke-width="4" fill="none"/>
-                    </svg>
+<div>
+<label class="text-sm font-bold text-slate-600">Email</label>
+<input id="email" type="email"
+class="w-full mt-1 px-4 py-3 border rounded-xl focus:ring-2 focus:ring-emerald-400 outline-none"
+placeholder="admin@email.com"
+required>
+</div>
 
-                </button>
+<div>
+<label class="text-sm font-bold text-slate-600">Password</label>
+<input id="password" type="password"
+class="w-full mt-1 px-4 py-3 border rounded-xl focus:ring-2 focus:ring-emerald-400 outline-none"
+placeholder="••••••••"
+required>
+</div>
 
-            </form>
+<button id="btnLogin"
+class="btn-login w-full text-white py-3 rounded-xl font-bold flex justify-center items-center gap-2">
 
-            <!-- KEMBALI KE BERANDA (SUDAH DIPINDAH KE BAWAH) -->
-            <div class="mt-6 text-center">
-                <a href="/index.html" 
-                   class="inline-flex items-center gap-2 text-emerald-700 hover:text-emerald-900 font-semibold text-sm transition-all hover:translate-x-1">
-                    
-                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" 
-                              d="M10 19l-7-7m0 0l7-7m-7 7h18"/>
-                    </svg>
+<span id="btnText">Login</span>
 
-                    <span>Kembali ke Beranda</span>
-                </a>
-            </div>
+<svg id="loader" class="w-5 h-5 animate-spin hidden" viewBox="0 0 24 24">
+<circle cx="12" cy="12" r="10" stroke="white" stroke-width="4" fill="none"/>
+</svg>
 
-        </div>
-    </div>
+</button>
+
+</form>
+
+</div>
 
 </div>
 
@@ -107,7 +111,7 @@ body { font-family: 'Inter', sans-serif; }
 
 <script>
 
-// AUTO REDIRECT (jika sudah login)
+// AUTO REDIRECT
 if(localStorage.getItem("token")){
     window.location.href = "dashboard.html";
 }
@@ -148,6 +152,7 @@ form.addEventListener("submit", async (e) => {
             throw new Error("Email & password wajib diisi");
         }
 
+        // PAKAI app.js POST (WAJIB SESUAI kode.gs)
         const res = await post("login", {
             email,
             password
