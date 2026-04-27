@@ -31,25 +31,9 @@ body { font-family: 'Inter', sans-serif; }
 </style>
 </head>
 
-<body class="min-h-screen flex items-center justify-center bg-slate-100">
-
-<body class="min-h-screen bg-slate-100 flex items-center justify-center px-4">
+<body class="min-h-screen flex items-center justify-center bg-slate-100 px-4">
 
     <div class="w-full max-w-md">
-
-        <!-- KEMBALI KE BERANDA -->
-        <div class="mb-6">
-            <a href="../index.html" 
-               class="inline-flex items-center gap-2 text-emerald-700 hover:text-emerald-900 font-semibold text-sm transition-colors">
-                
-                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" 
-                          d="M10 19l-7-7m0 0l7-7m-7 7h18"/>
-                </svg>
-
-                <span>Kembali ke Beranda</span>
-            </a>
-        </div>
 
         <!-- CARD WRAPPER -->
         <div class="rounded-3xl overflow-hidden shadow-xl">
@@ -60,126 +44,126 @@ body { font-family: 'Inter', sans-serif; }
                 <p class="text-sm opacity-90 mt-1">Silakan login untuk melanjutkan</p>
             </div>
 
-            <!-- FORM -->
+            <!-- FORM AREA -->
             <div class="bg-white p-8">
 
                 <div id="errorBox" 
                      class="hidden mb-4 text-red-600 text-sm font-semibold bg-red-50 p-3 rounded-xl">
                 </div>
 
-<!-- CARD -->
-<div class="bg-white p-8 rounded-b-3xl shadow-lg">
+                <form id="formLogin" class="space-y-5">
+                    <div>
+                        <label class="text-sm font-bold text-slate-600">Email</label>
+                        <input id="email" type="email"
+                               class="w-full mt-1 px-4 py-3 border rounded-xl focus:ring-2 focus:ring-emerald-400 outline-none"
+                               placeholder="admin@email.com"
+                               required>
+                    </div>
 
-<div id="errorBox" class="hidden mb-4 text-red-600 text-sm font-semibold bg-red-50 p-3 rounded-xl"></div>
+                    <div>
+                        <label class="text-sm font-bold text-slate-600">Password</label>
+                        <input id="password" type="password"
+                               class="w-full mt-1 px-4 py-3 border rounded-xl focus:ring-2 focus:ring-emerald-400 outline-none"
+                               placeholder="••••••••"
+                               required>
+                    </div>
 
-<form id="formLogin" class="space-y-5">
+                    <button id="btnLogin"
+                            class="btn-login w-full text-white py-3 rounded-xl font-bold flex justify-center items-center gap-2">
+                        <span id="btnText">Login</span>
+                        <svg id="loader" class="w-5 h-5 animate-spin hidden" viewBox="0 0 24 24">
+                            <circle cx="12" cy="12" r="10" stroke="white" stroke-width="4" fill="none"/>
+                        </svg>
+                    </button>
+                </form>
 
-<div>
-<label class="text-sm font-bold text-slate-600">Email</label>
-<input id="email" type="email"
-class="w-full mt-1 px-4 py-3 border rounded-xl focus:ring-2 focus:ring-emerald-400 outline-none"
-placeholder="admin@email.com"
-required>
-</div>
+                <!-- KEMBALI KE BERANDA - SEKARANG DI BAWAH TOMBOL LOGIN -->
+                <div class="mt-6 text-center">
+                    <a href="../index.html" 
+                       class="inline-flex items-center gap-2 text-emerald-700 hover:text-emerald-900 font-semibold text-sm transition-colors">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" 
+                                  d="M10 19l-7-7m0 0l7-7m-7 7h18"/>
+                        </svg>
+                        <span>Kembali ke Beranda</span>
+                    </a>
+                </div>
 
-<div>
-<label class="text-sm font-bold text-slate-600">Password</label>
-<input id="password" type="password"
-class="w-full mt-1 px-4 py-3 border rounded-xl focus:ring-2 focus:ring-emerald-400 outline-none"
-placeholder="••••••••"
-required>
-</div>
+            </div> <!-- penutup bg-white p-8 -->
+        </div> <!-- penutup card wrapper -->
+    </div> <!-- penutup container -->
 
-<button id="btnLogin"
-class="btn-login w-full text-white py-3 rounded-xl font-bold flex justify-center items-center gap-2">
+    <script src="../assets/app.js"></script>
 
-<span id="btnText">Login</span>
-
-<svg id="loader" class="w-5 h-5 animate-spin hidden" viewBox="0 0 24 24">
-<circle cx="12" cy="12" r="10" stroke="white" stroke-width="4" fill="none"/>
-</svg>
-
-</button>
-
-</form>
-
-</div>
-
-</div>
-
-<script src="../assets/app.js"></script>
-
-<script>
-
-// AUTO REDIRECT
-if(localStorage.getItem("token")){
-    window.location.href = "dashboard.html";
-}
-
-const form = document.getElementById("formLogin");
-const btn = document.getElementById("btnLogin");
-const btnText = document.getElementById("btnText");
-const loader = document.getElementById("loader");
-const errorBox = document.getElementById("errorBox");
-
-function setLoading(state){
-    btn.disabled = state;
-    btnText.innerText = state ? "Loading..." : "Login";
-    loader.classList.toggle("hidden", !state);
-}
-
-function showError(msg){
-    errorBox.innerText = msg;
-    errorBox.classList.remove("hidden");
-}
-
-function hideError(){
-    errorBox.classList.add("hidden");
-}
-
-// LOGIN
-form.addEventListener("submit", async (e) => {
-    e.preventDefault();
-
-    hideError();
-    setLoading(true);
-
-    try {
-        const email = document.getElementById("email").value.trim().toLowerCase();
-        const password = document.getElementById("password").value.trim();
-
-        if(!email || !password){
-            throw new Error("Email & password wajib diisi");
-        }
-
-        // PAKAI app.js POST (WAJIB SESUAI kode.gs)
-        const res = await post("login", {
-            email,
-            password
-        });
-
-        console.log("LOGIN RESPONSE:", res);
-
-        if(!res || res.status !== "success"){
-            throw new Error(res?.message || "Email atau password salah");
-        }
-
-        localStorage.setItem("token", res.token);
-        localStorage.setItem("user", JSON.stringify(res.user));
-
-        btnText.innerText = "Berhasil...";
-
-        setTimeout(() => {
+    <script>
+        // AUTO REDIRECT jika sudah login
+        if(localStorage.getItem("token")){
             window.location.href = "dashboard.html";
-        }, 500);
+        }
 
-    } catch (err) {
-        showError(err.message);
-        setLoading(false);
-    }
-});
+        const form = document.getElementById("formLogin");
+        const btn = document.getElementById("btnLogin");
+        const btnText = document.getElementById("btnText");
+        const loader = document.getElementById("loader");
+        const errorBox = document.getElementById("errorBox");
 
-</script>
+        function setLoading(state){
+            btn.disabled = state;
+            btnText.innerText = state ? "Loading..." : "Login";
+            loader.classList.toggle("hidden", !state);
+        }
+
+        function showError(msg){
+            errorBox.innerText = msg;
+            errorBox.classList.remove("hidden");
+        }
+
+        function hideError(){
+            errorBox.classList.add("hidden");
+        }
+
+        // LOGIN HANDLER
+        form.addEventListener("submit", async (e) => {
+            e.preventDefault();
+
+            hideError();
+            setLoading(true);
+
+            try {
+                const email = document.getElementById("email").value.trim().toLowerCase();
+                const password = document.getElementById("password").value.trim();
+
+                if(!email || !password){
+                    throw new Error("Email & password wajib diisi");
+                }
+
+                // PAKAI app.js POST (WAJIB SESUAI kode.gs)
+                const res = await post("login", {
+                    email,
+                    password
+                });
+
+                console.log("LOGIN RESPONSE:", res);
+
+                if(!res || res.status !== "success"){
+                    throw new Error(res?.message || "Email atau password salah");
+                }
+
+                localStorage.setItem("token", res.token);
+                localStorage.setItem("user", JSON.stringify(res.user));
+
+                btnText.innerText = "Berhasil...";
+
+                setTimeout(() => {
+                    window.location.href = "dashboard.html";
+                }, 500);
+
+            } catch (err) {
+                showError(err.message);
+                setLoading(false);
+            }
+        });
+    </script>
 
 </body>
 </html>
