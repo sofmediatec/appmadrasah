@@ -141,7 +141,7 @@ function getUser() {
 
 function logout() {
   localStorage.clear();
-  window.location = "login.html";
+  window.location = "index.html";
 }
 
 /* =========================
