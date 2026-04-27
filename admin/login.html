@@ -1,205 +1,180 @@
-<!DOCTYPE html> 
+<!DOCTYPE html>
 <html lang="id">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Login Admin CBT</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Login Admin CBT</title>
 
-    <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
+<script src="https://cdn.tailwindcss.com"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
 
-    <style>
-        body { font-family: 'Inter', sans-serif; }
+<style>
+body { font-family: 'Inter', sans-serif; }
 
-        .bg-main {
-            background: linear-gradient(135deg, #059669, #065f46);
-        }
+.bg-main {
+    background: linear-gradient(135deg,#059669,#065f46);
+}
 
-        .btn-login {
-            background: linear-gradient(135deg, #059669, #10b981);
-            transition: all 0.3s;
-        }
-        .btn-login:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 10px 25px rgba(16, 185, 129, 0.3);
-        }
-        .btn-login:disabled {
-            opacity: 0.7;
-            transform: none;
-            box-shadow: none;
-            cursor: not-allowed;
-        }
-
-        /* Custom Spinner */
-        .spinner {
-            border: 3px solid rgba(255, 255, 255, 0.3);
-            border-radius: 50%;
-            border-top: 3px solid #fff;
-            width: 20px;
-            height: 20px;
-            animation: spin 1s linear infinite;
-        }
-        @keyframes spin {
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(360deg); }
-        }
-    </style>
+.btn-login {
+    background: linear-gradient(135deg,#059669,#10b981);
+    transition: all .3s;
+}
+.btn-login:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 10px 25px rgba(16,185,129,0.3);
+}
+.btn-login:disabled{
+    opacity: .7;
+    transform: none;
+    box-shadow: none;
+}
+</style>
 </head>
 
 <body class="min-h-screen bg-slate-100 flex items-center justify-center px-4">
 
-    <div class="w-full max-w-md">
+<div class="w-full max-w-md">
 
-        <!-- CARD WRAPPER -->
-        <div class="bg-white rounded-3xl overflow-hidden shadow-xl">
+    <!-- CARD -->
+    <div class="rounded-3xl overflow-hidden shadow-xl">
 
-            <!-- HEADER -->
-            <div class="bg-main text-white text-center py-10 px-6">
-                <h1 class="text-2xl font-bold">Admin CBT</h1>
-                <p class="text-sm opacity-90 mt-1">Silakan login untuk mengakses Dashboard</p>
+        <!-- HEADER -->
+        <div class="bg-main text-white text-center py-10 px-6">
+            <h1 class="text-2xl font-bold">Admin CBT</h1>
+            <p class="text-sm opacity-90 mt-1">Silakan login untuk melanjutkan</p>
+        </div>
+
+        <!-- FORM -->
+        <div class="bg-white p-8">
+
+            <!-- ERROR -->
+            <div id="errorBox" 
+                 class="hidden mb-4 text-red-600 text-sm font-semibold bg-red-50 p-3 rounded-xl">
             </div>
 
-            <!-- FORM CONTENT -->
-            <div class="p-8">
+            <form id="formLogin" class="space-y-5">
 
-                <div id="errorBox" class="hidden mb-4 text-red-600 text-sm font-semibold bg-red-50 p-4 rounded-xl border border-red-100">
+                <div>
+                    <label class="text-sm font-bold text-slate-600">Email</label>
+                    <input id="email" type="email"
+                    class="w-full mt-1 px-4 py-3 border rounded-xl focus:ring-2 focus:ring-emerald-400 outline-none"
+                    placeholder="admin@email.com"
+                    required>
                 </div>
 
-                <form id="formLogin" class="space-y-5">
-                    <div>
-                        <label class="text-sm font-bold text-slate-600 ml-1">Email</label>
-                        <input id="email" type="email"
-                            class="w-full mt-1 px-4 py-3 border border-slate-200 rounded-xl focus:ring-2 focus:ring-emerald-400 focus:border-transparent outline-none transition-all"
-                            placeholder="admin@email.com"
-                            required>
-                    </div>
-
-                    <div>
-                        <label class="text-sm font-bold text-slate-600 ml-1">Password</label>
-                        <input id="password" type="password"
-                            class="w-full mt-1 px-4 py-3 border border-slate-200 rounded-xl focus:ring-2 focus:ring-emerald-400 focus:border-transparent outline-none transition-all"
-                            placeholder="••••••••"
-                            required>
-                    </div>
-
-                    <button id="btnLogin" type="submit"
-                        class="btn-login w-full text-white py-4 rounded-xl font-bold flex justify-center items-center gap-3 mt-4">
-                        <span id="btnText">Masuk Ke Sistem</span>
-                        <div id="loader" class="spinner hidden"></div>
-                    </button>
-                </form>
-
-                <!-- TOMBOL KEMBALI KE BERANDA (PINDAH KE SINI) -->
-                <div class="mt-8 pt-6 border-t border-slate-100 text-center">
-                    <a href="index.html" 
-                       class="inline-flex items-center gap-2 text-slate-500 hover:text-emerald-600 font-semibold text-sm transition-colors group">
-                        <svg class="w-4 h-4 transition-transform group-hover:-translate-x-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"/>
-                        </svg>
-                        <span>Kembali ke Beranda</span>
-                    </a>
+                <div>
+                    <label class="text-sm font-bold text-slate-600">Password</label>
+                    <input id="password" type="password"
+                    class="w-full mt-1 px-4 py-3 border rounded-xl focus:ring-2 focus:ring-emerald-400 outline-none"
+                    placeholder="••••••••"
+                    required>
                 </div>
+
+                <!-- BUTTON LOGIN -->
+                <button id="btnLogin"
+                class="btn-login w-full text-white py-3 rounded-xl font-bold flex justify-center items-center gap-2">
+
+                    <span id="btnText">Login</span>
+
+                    <svg id="loader" class="w-5 h-5 animate-spin hidden" viewBox="0 0 24 24">
+                        <circle cx="12" cy="12" r="10" stroke="white" stroke-width="4" fill="none"/>
+                    </svg>
+
+                </button>
+
+            </form>
+
+            <!-- KEMBALI KE BERANDA (SUDAH DIPINDAH KE BAWAH) -->
+            <div class="mt-6 text-center">
+                <a href="/index.html" 
+                   class="inline-flex items-center gap-2 text-emerald-700 hover:text-emerald-900 font-semibold text-sm transition-all hover:translate-x-1">
+                    
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" 
+                              d="M10 19l-7-7m0 0l7-7m-7 7h18"/>
+                    </svg>
+
+                    <span>Kembali ke Beranda</span>
+                </a>
             </div>
 
-            <div class="bg-slate-50 py-4 px-8 text-center border-t border-slate-100">
-                <p class="text-xs text-slate-400">Computer Based Test System &copy; 2024</p>
-            </div>
         </div>
     </div>
 
-    <!-- Firebase SDKs -->
-    <script type="module">
-        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
-        import { getAuth, signInWithEmailAndPassword, onAuthStateChanged, signInWithCustomToken, signInAnonymously } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
-        import { getFirestore, doc, getDoc } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+</div>
 
-        // Firebase Configuration
-        const firebaseConfig = JSON.parse(__firebase_config);
-        const app = initializeApp(firebaseConfig);
-        const auth = getAuth(app);
-        const db = getFirestore(app);
-        const appId = typeof __app_id !== 'undefined' ? __app_id : 'default-app-id';
+<script src="../assets/app.js"></script>
 
-        const form = document.getElementById("formLogin");
-        const btn = document.getElementById("btnLogin");
-        const btnText = document.getElementById("btnText");
-        const loader = document.getElementById("loader");
-        const errorBox = document.getElementById("errorBox");
+<script>
 
-        // Auth Logic with Rule 3: Auth Before Queries
-        const initAuth = async () => {
-            try {
-                if (typeof __initial_auth_token !== 'undefined' && __initial_auth_token) {
-                    await signInWithCustomToken(auth, __initial_auth_token);
-                } else {
-                    // We stay on login page to allow user to sign in with email
-                }
-            } catch (err) {
-                console.error("Auth Init Error:", err);
-            }
-        };
-        initAuth();
+// AUTO REDIRECT (jika sudah login)
+if(localStorage.getItem("token")){
+    window.location.href = "dashboard.html";
+}
 
-        onAuthStateChanged(auth, (user) => {
-            if (user) {
-                // If already logged in, redirect to dashboard
-                window.location.href = "dashboard.html";
-            }
+const form = document.getElementById("formLogin");
+const btn = document.getElementById("btnLogin");
+const btnText = document.getElementById("btnText");
+const loader = document.getElementById("loader");
+const errorBox = document.getElementById("errorBox");
+
+function setLoading(state){
+    btn.disabled = state;
+    btnText.innerText = state ? "Loading..." : "Login";
+    loader.classList.toggle("hidden", !state);
+}
+
+function showError(msg){
+    errorBox.innerText = msg;
+    errorBox.classList.remove("hidden");
+}
+
+function hideError(){
+    errorBox.classList.add("hidden");
+}
+
+// LOGIN
+form.addEventListener("submit", async (e) => {
+    e.preventDefault();
+
+    hideError();
+    setLoading(true);
+
+    try {
+        const email = document.getElementById("email").value.trim().toLowerCase();
+        const password = document.getElementById("password").value.trim();
+
+        if(!email || !password){
+            throw new Error("Email & password wajib diisi");
+        }
+
+        const res = await post("login", {
+            email,
+            password
         });
 
-        function setLoading(state) {
-            btn.disabled = state;
-            btnText.innerText = state ? "Memproses..." : "Masuk Ke Sistem";
-            loader.classList.toggle("hidden", !state);
+        console.log("LOGIN RESPONSE:", res);
+
+        if(!res || res.status !== "success"){
+            throw new Error(res?.message || "Email atau password salah");
         }
 
-        function showError(msg) {
-            errorBox.innerText = msg;
-            errorBox.classList.remove("hidden");
-        }
+        localStorage.setItem("token", res.token);
+        localStorage.setItem("user", JSON.stringify(res.user));
 
-        function hideError() {
-            errorBox.classList.add("hidden");
-        }
+        btnText.innerText = "Berhasil...";
 
-        // LOGIN HANDLER
-        form.addEventListener("submit", async (e) => {
-            e.preventDefault();
-            hideError();
-            setLoading(true);
+        setTimeout(() => {
+            window.location.href = "dashboard.html";
+        }, 500);
 
-            const email = document.getElementById("email").value.trim();
-            const password = document.getElementById("password").value;
+    } catch (err) {
+        showError(err.message);
+        setLoading(false);
+    }
+});
 
-            try {
-                // 1. Firebase Authentication
-                const userCredential = await signInWithEmailAndPassword(auth, email, password);
-                const user = userCredential.user;
-
-                // 2. Check if user has access (Optional verification)
-                btnText.innerText = "Login Berhasil!";
-                
-                setTimeout(() => {
-                    window.location.href = "dashboard.html";
-                }, 800);
-
-            } catch (error) {
-                console.error("Login Error:", error);
-                let message = "Terjadi kesalahan saat login.";
-                
-                if (error.code === 'auth/user-not-found' || error.code === 'auth/wrong-password' || error.code === 'auth/invalid-credential') {
-                    message = "Email atau password salah. Silakan coba lagi.";
-                } else if (error.code === 'auth/too-many-requests') {
-                    message = "Terlalu banyak percobaan. Akun ditangguhkan sementara.";
-                } else {
-                    message = error.message;
-                }
-                
-                showError(message);
-                setLoading(false);
-            }
-        });
-    </script>
+</script>
 
 </body>
 </html>
