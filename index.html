@@ -104,7 +104,6 @@
         .modal-popup.active .modal-content {
             transform: scale(1);
         }
-        /* Countdown timer */
         .countdown-number {
             background: #f1f5f9;
             padding: 0.5rem;
@@ -116,7 +115,7 @@
 </head>
 <body class="text-slate-900">
 
-    <!-- Header & Navbar (sama seperti sebelumnya) -->
+    <!-- Header & Navbar -->
     <header id="mainNav" class="glass-nav border-b border-slate-200 sticky top-0 z-[60] h-20 flex items-center">
         <div class="max-w-7xl mx-auto px-6 w-full flex items-center justify-between">
             <a href="#" class="flex items-center space-x-3 group">
@@ -186,6 +185,7 @@
 
         <div id="keunggulan" class="max-w-6xl mx-auto px-6 -mt-20 relative z-20">
             <div class="bg-white rounded-[2.5rem] shadow-2xl p-6 md:p-8 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4 md:gap-8 border border-slate-100" data-aos="fade-up">
+                <!-- cards keunggulan -->
                 <div class="feature-card group flex flex-col items-center text-center p-6 rounded-3xl cursor-default">
                     <div class="icon-box w-14 h-14 bg-blue-100 text-blue-700 rounded-2xl flex items-center justify-center mb-4 shadow-sm transition-all duration-300">
                         <i class="fa-solid fa-shield-halved text-2xl"></i>
@@ -193,7 +193,6 @@
                     <h4 class="font-extrabold text-sm text-slate-900 uppercase tracking-widest">Sistem Aman</h4>
                     <p class="text-[11px] leading-relaxed text-slate-500 mt-3 font-semibold">Proteksi ujian dari kecurangan & kebocoran soal real-time.</p>
                 </div>
-
                 <div class="feature-card group flex flex-col items-center text-center p-6 rounded-3xl cursor-default">
                     <div class="icon-box w-14 h-14 bg-emerald-100 text-emerald-700 rounded-2xl flex items-center justify-center mb-4 shadow-sm transition-all duration-300">
                         <i class="fa-solid fa-bolt-lightning text-2xl"></i>
@@ -201,7 +200,6 @@
                     <h4 class="font-extrabold text-sm text-slate-900 uppercase tracking-widest">Akses Cepat</h4>
                     <p class="text-[11px] leading-relaxed text-slate-500 mt-3 font-semibold">Infrastruktur cloud stabil yang ringan diakses dari HP siswa.</p>
                 </div>
-
                 <div class="feature-card group flex flex-col items-center text-center p-6 rounded-3xl cursor-default">
                     <div class="icon-box w-14 h-14 bg-violet-100 text-violet-700 rounded-2xl flex items-center justify-center mb-4 shadow-sm transition-all duration-300">
                         <i class="fa-solid fa-chart-line text-2xl"></i>
@@ -209,7 +207,6 @@
                     <h4 class="font-extrabold text-sm text-slate-900 uppercase tracking-widest">Hasil Instan</h4>
                     <p class="text-[11px] leading-relaxed text-slate-500 mt-3 font-semibold">Analisis nilai otomatis & ekspor laporan dalam satu klik saja.</p>
                 </div>
-
                 <div class="feature-card group flex flex-col items-center text-center p-6 rounded-3xl cursor-default">
                     <div class="icon-box w-14 h-14 bg-orange-100 text-orange-700 rounded-2xl flex items-center justify-center mb-4 shadow-sm transition-all duration-300">
                         <i class="fa-solid fa-headset text-2xl"></i>
@@ -223,8 +220,7 @@
         <section id="paketSection" class="max-w-6xl mx-auto px-6 py-24">
             <div class="text-center mb-16">
                 <h2 class="text-3xl md:text-4xl font-black text-slate-900 mb-4" data-aos="fade-up">Pilihan Paket CBT</h2>
-                <div id="paketList" class="grid grid-cols-1 md:grid-cols-3 gap-8 mt-12">
-                </div>
+                <div id="paketList" class="grid grid-cols-1 md:grid-cols-3 gap-8 mt-12"></div>
             </div>
         </section>
 
@@ -235,7 +231,6 @@
                         <h2 class="text-3xl font-black text-slate-900 mb-2">Daftar Pengguna CBT</h2>
                         <p class="text-slate-700 font-semibold italic text-sm">Terpercaya oleh berbagai lembaga pendidikan di seluruh Indonesia.</p>
                     </div>
-                    
                     <div class="flex flex-col sm:flex-row items-center gap-4 w-full md:w-auto" data-aos="fade-left">
                         <div class="flex items-center gap-3 bg-white px-4 py-2 rounded-2xl border border-slate-300 shadow-sm w-full sm:w-auto">
                             <span class="text-[10px] font-black text-slate-400 uppercase whitespace-nowrap">Tampilkan:</span>
@@ -246,7 +241,6 @@
                                 <option value="50">50</option>
                             </select>
                         </div>
-
                         <div class="relative group w-full md:w-80">
                             <span class="absolute inset-y-0 left-0 pl-4 flex items-center text-slate-400 group-focus-within:text-blue-600 transition-colors">
                                 <i class="fa-solid fa-magnifying-glass"></i>
@@ -256,7 +250,6 @@
                         </div>
                     </div>
                 </div>
-                
                 <div class="bg-white rounded-[2.5rem] shadow-xl overflow-hidden border border-slate-300" data-aos="fade-up">
                     <div class="overflow-x-auto">
                         <table class="w-full text-left text-sm">
@@ -272,14 +265,11 @@
                                     <th class="px-6 py-5 text-center">Akses CBT</th>
                                 </tr>
                             </thead>
-                            <tbody id="userList" class="divide-y divide-slate-100">
-                            </tbody>
+                            <tbody id="userList" class="divide-y divide-slate-100"></tbody>
                         </table>
                     </div>
                 </div>
-
-                <div id="pagination" class="mt-8 flex items-center justify-center gap-2">
-                </div>
+                <div id="pagination" class="mt-8 flex items-center justify-center gap-2"></div>
             </div>
         </section>
     </main>
@@ -290,23 +280,20 @@
                 <div class="font-black text-3xl italic text-white mb-2">CBT<span class="text-blue-500">Madrasah</span></div>
                 <p class="text-sm font-medium opacity-60">Solusi Digital Terpadu untuk Masa Depan Madrasah.</p>
             </div>
-
             <div class="mb-16">
                 <h3 class="text-xl font-black text-white mb-4 uppercase tracking-widest">Rekening Pembayaran</h3>
                 <p class="text-slate-500 mb-10 text-sm font-semibold italic">Lakukan transfer hanya ke rekening resmi berikut:</p>
-                
                 <div id="rekeningList" class="grid grid-cols-1 md:grid-cols-3 gap-6">
                     <div class="col-span-full py-4 text-slate-600 font-bold italic">Menghubungkan ke server...</div>
                 </div>
             </div>
-
             <div class="pt-10 border-t border-slate-800 text-center">
                 <p class="text-sm font-medium">&copy; 2026 SoftMediaTec. Seluruh hak cipta dilindungi.</p>
             </div>
         </div>
     </footer>
 
-    <!-- FLOATING WHATSAPP BUTTON -->
+    <!-- Floating WhatsApp -->
     <a href="https://wa.me/6285341807899" target="_blank" 
        class="fixed bottom-8 right-8 z-[100] bg-emerald-500 text-white w-16 h-16 rounded-full flex items-center justify-center shadow-2xl hover:bg-emerald-600 transition-all hover:scale-110 active:scale-95 group animate-bounce"
        style="animation-duration: 3s;">
@@ -316,7 +303,7 @@
         </span>
     </a>
 
-    <!-- MODAL POPUP PERINGATAN ADMINISTRASI + COUNTDOWN 3x24 JAM -->
+    <!-- Modal Popup Peringatan Administrasi -->
     <div id="warningModal" class="modal-popup">
         <div class="modal-content p-8 relative">
             <button id="closeModalBtn" class="absolute top-5 right-5 text-slate-400 hover:text-slate-700 transition-colors text-xl">
@@ -331,32 +318,16 @@
                     Silahkan segera selesaikan administrasi sebelum <br> 
                     <span class="text-red-600 font-extrabold">batas waktu berakhir</span>
                 </p>
-                
-                <!-- Countdown Timer -->
                 <div class="bg-slate-100 rounded-2xl p-5 mb-6">
                     <div class="text-xs text-slate-500 uppercase font-bold tracking-widest mb-2">Sisa waktu untuk melengkapi</div>
                     <div class="grid grid-cols-4 gap-2 text-center">
-                        <div>
-                            <div class="countdown-number text-2xl font-mono font-black" id="days">00</div>
-                            <div class="text-[10px] font-bold text-slate-500">HARI</div>
-                        </div>
-                        <div>
-                            <div class="countdown-number text-2xl font-mono font-black" id="hours">00</div>
-                            <div class="text-[10px] font-bold text-slate-500">JAM</div>
-                        </div>
-                        <div>
-                            <div class="countdown-number text-2xl font-mono font-black" id="minutes">00</div>
-                            <div class="text-[10px] font-bold text-slate-500">MENIT</div>
-                        </div>
-                        <div>
-                            <div class="countdown-number text-2xl font-mono font-black" id="seconds">00</div>
-                            <div class="text-[10px] font-bold text-slate-500">DETIK</div>
-                        </div>
+                        <div><div class="countdown-number text-2xl font-mono font-black" id="days">00</div><div class="text-[10px] font-bold text-slate-500">HARI</div></div>
+                        <div><div class="countdown-number text-2xl font-mono font-black" id="hours">00</div><div class="text-[10px] font-bold text-slate-500">JAM</div></div>
+                        <div><div class="countdown-number text-2xl font-mono font-black" id="minutes">00</div><div class="text-[10px] font-bold text-slate-500">MENIT</div></div>
+                        <div><div class="countdown-number text-2xl font-mono font-black" id="seconds">00</div><div class="text-[10px] font-bold text-slate-500">DETIK</div></div>
                     </div>
                 </div>
-                <div class="text-xs text-slate-400 mb-4 italic font-semibold">
-                    * Notifikasi ini akan muncul otomatis selama batas waktu belum habis.
-                </div>
+                <div class="text-xs text-slate-400 mb-4 italic font-semibold">* Notifikasi ini akan muncul otomatis selama batas waktu belum habis.</div>
                 <button id="okCloseModal" class="bg-blue-700 hover:bg-blue-800 text-white w-full py-3 rounded-xl font-bold transition shadow-md">
                     Mengerti, Saya akan segera membayar
                 </button>
@@ -368,13 +339,16 @@
     <script src="assets/app.js"></script>
 
     <script>
+        // Inisialisasi AOS
         AOS.init({ duration: 800, once: true });
 
+        // Navbar scroll effect
         const mainNav = document.getElementById("mainNav");
         window.onscroll = () => {
             window.scrollY > 50 ? mainNav.classList.add("nav-scrolled") : mainNav.classList.remove("nav-scrolled");
         };
 
+        // Mobile menu toggle
         const menuBtn = document.getElementById("hamburgerBtn");
         const mobileMenu = document.getElementById("mobileMenu");
         menuBtn.onclick = () => {
@@ -384,8 +358,7 @@
                 : '<i class="fa-solid fa-bars-staggered text-2xl"></i>';
         };
 
-        // -------------- COUNTDOWN POPUP LOGIC --------------
-        // KEY: deadline_administrasi (milliseconds)
+        // ---------- COUNTDOWN LOGIC (3x24 jam) ----------
         const STORAGE_KEY = "deadline_administrasi";
         let deadlineTimestamp = null;
 
@@ -394,13 +367,11 @@
             const stored = localStorage.getItem(STORAGE_KEY);
             if (stored && !isNaN(parseInt(stored))) {
                 deadlineTimestamp = parseInt(stored);
-                // Jika deadline sudah terlewat, hapus dari localStorage supaya tidak ganggu next load (opsional)
                 if (deadlineTimestamp <= now) {
                     localStorage.removeItem(STORAGE_KEY);
                     deadlineTimestamp = null;
                 }
             }
-            // Jika tidak ada deadline sama sekali (pertama kali atau sudah pernah habis), buat deadline baru 3 hari dari sekarang
             if (!deadlineTimestamp) {
                 deadlineTimestamp = now + (3 * 24 * 60 * 60 * 1000);
                 localStorage.setItem(STORAGE_KEY, deadlineTimestamp);
@@ -419,24 +390,17 @@
             const now = Date.now();
             const diff = deadlineTimestamp - now;
             if (diff <= 0) {
-                // Waktu habis: tutup modal & hapus deadline agar tidak muncul lagi
-                if (modal.classList.contains("active")) {
-                    modal.classList.remove("active");
-                }
-                if (countdownInterval) {
-                    clearInterval(countdownInterval);
-                    countdownInterval = null;
-                }
+                if (modal.classList.contains("active")) modal.classList.remove("active");
+                if (countdownInterval) clearInterval(countdownInterval);
+                countdownInterval = null;
                 localStorage.removeItem(STORAGE_KEY);
                 deadlineTimestamp = null;
                 return;
             }
-
             const days = Math.floor(diff / (1000 * 60 * 60 * 24));
-            const hours = Math.floor((diff % (86400000)) / (3600000));
+            const hours = Math.floor((diff % 86400000) / 3600000);
             const minutes = Math.floor((diff % 3600000) / 60000);
             const seconds = Math.floor((diff % 60000) / 1000);
-            
             daysSpan.innerText = days.toString().padStart(2, '0');
             hoursSpan.innerText = hours.toString().padStart(2, '0');
             minutesSpan.innerText = minutes.toString().padStart(2, '0');
@@ -445,14 +409,11 @@
 
         function showModalIfActive() {
             if (!deadlineTimestamp) return;
-            const now = Date.now();
-            if (deadlineTimestamp > now) {
+            if (deadlineTimestamp > Date.now()) {
                 modal.classList.add("active");
-                // Mulai interval countdown jika belum berjalan
                 if (!countdownInterval) {
                     countdownInterval = setInterval(() => {
                         updateCountdownDisplay();
-                        // cek lagi deadline setiap detik, jika habis, tutup modal dan bersihkan
                         if (deadlineTimestamp && Date.now() >= deadlineTimestamp) {
                             modal.classList.remove("active");
                             if (countdownInterval) clearInterval(countdownInterval);
@@ -470,19 +431,12 @@
             modal.classList.remove("active");
         }
 
-        // Inisialisasi deadline & popup
         initDeadline();
-        // Tampilkan modal hanya jika deadline masih aktif
         showModalIfActive();
-
-        // Event close modal melalui tombol silang dan tombol "Mengerti..."
         document.getElementById("closeModalBtn").addEventListener("click", closeModal);
         document.getElementById("okCloseModal").addEventListener("click", closeModal);
 
-        // (Opsional) Jika user menutup modal, tidak menghapus deadline, tetap akan muncul lagi saat refresh jika waktu belum habis.
-        // (Memenuhi syarat: notif otomatis tidak tampil setelah waktu habis)
-
-        // --- Sisanya kode dari fungsi asli (loadPaket, loadUser, loadRekening, dll) ---
+        // ---------- LOAD DATA & PERBAIKAN ANIMASI REKENING ----------
         let allUsers = [];
         let filteredUsers = [];
         let currentPage = 1;
@@ -507,6 +461,7 @@
                     </div>`;
                 });
                 document.getElementById("paketList").innerHTML = html;
+                AOS.refresh(); // refresh animasi untuk konten baru
             } catch(err) {
                 document.getElementById("paketList").innerHTML = `<div class="col-span-3 text-red-500 font-bold text-center">${err.message}</div>`;
             }
@@ -535,7 +490,7 @@
                         bankStyle = { icon: 'fa-money-bill-transfer', color: 'amber-500', accent: 'bg-amber-600' };
                     }
                     html += `
-                    <div class="bg-slate-800/40 p-6 rounded-2xl border border-slate-700 text-center hover:border-blue-500 hover:bg-slate-800 transition-all group relative overflow-hidden">
+                    <div class="bg-slate-800/40 p-6 rounded-2xl border border-slate-700 text-center hover:border-blue-500 hover:bg-slate-800 transition-all group relative overflow-hidden" data-aos="fade-up" data-aos-delay="${i * 100}">
                         <div class="absolute top-0 right-0 p-2 opacity-5">
                             <i class="fa-solid ${bankStyle.icon} text-6xl"></i>
                         </div>
@@ -548,6 +503,8 @@
                     </div>`;
                 });
                 el.innerHTML = html || `<div class="col-span-3 text-slate-500 italic">Tidak ada rekening aktif</div>`;
+                // 🔥 KUNCI: refresh AOS agar elemen rekening yang baru ditambahkan mendapatkan animasi
+                AOS.refresh();
             } catch(err) {
                 el.innerHTML = `<div class="col-span-3 text-red-400 font-bold italic">${err.message}</div>`;
             }
@@ -564,7 +521,10 @@
                     status: (r[14] || "pending").toLowerCase(), bayar: (r[15] || "belum_bayar").toLowerCase(), link_cbt: r[16] || ""
                 }));
                 filteredUsers = [...allUsers];
-                setTimeout(() => renderTable(), 800);
+                setTimeout(() => {
+                    renderTable();
+                    AOS.refresh(); // refresh juga untuk tabel jika ada animasi
+                }, 800);
             } catch(err) {
                 tbody.innerHTML = `<tr><td colspan="8" class="text-center text-red-600 py-20 font-bold uppercase tracking-widest">${err.message}</td></tr>`;
             }
@@ -624,7 +584,6 @@
             currentPage = 1;
             renderTable();
         };
-
         document.getElementById('rowsPerPageSelect').onchange = (e) => {
             rowsPerPage = parseInt(e.target.value);
             currentPage = 1;
