@@ -387,8 +387,10 @@
 
         function updateCountdownDisplay() {
             if (!deadlineTimestamp) return;
+        
             const now = Date.now();
             const diff = deadlineTimestamp - now;
+        
             if (diff <= 0) {
                 if (modal.classList.contains("active")) modal.classList.remove("active");
                 if (countdownInterval) clearInterval(countdownInterval);
@@ -397,10 +399,19 @@
                 deadlineTimestamp = null;
                 return;
             }
-            const days = Math.ceil(diff / (1000 * 60 * 60 * 24));
+        
+            // 🔥 PERBAIKAN UTAMA DI SINI
+            let days;
+            if (diff <= 86400000) {
+                days = 1; // kalau sisa < 24 jam → tampil 1 hari
+            } else {
+                days = Math.floor(diff / 86400000);
+            }
+        
             const hours = Math.floor((diff % 86400000) / 3600000);
             const minutes = Math.floor((diff % 3600000) / 60000);
             const seconds = Math.floor((diff % 60000) / 1000);
+        
             daysSpan.innerText = days.toString().padStart(2, '0');
             hoursSpan.innerText = hours.toString().padStart(2, '0');
             minutesSpan.innerText = minutes.toString().padStart(2, '0');
