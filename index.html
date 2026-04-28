@@ -460,6 +460,7 @@
                 return;
             }
         
+            // HITUNG WAKTU
             const days = Math.floor(diff / 86400000);
             const hours = Math.floor((diff % 86400000) / 3600000);
             const minutes = Math.floor((diff % 3600000) / 60000);
@@ -470,19 +471,15 @@
             minutesSpan.innerText = String(minutes).padStart(2, '0');
             secondsSpan.innerText = String(seconds).padStart(2, '0');
         
-            // 🔥 ANIMASI DETIK
-            secondsSpan.classList.add("count-flash");
-            setTimeout(() => secondsSpan.classList.remove("count-flash"), 200);
-        
-            // 🔥 STATE WARNA (SaaS feel)
-            const wrapper = document.getElementById("countdownWrapper");
-        
-            wrapper.classList.remove("countdown-warning", "countdown-danger");
+            // 🔥 TARUH DI SINI
+            const label = document.querySelector("#warningModal h3");
         
             if (diff <= 86400000) {
-                wrapper.classList.add("countdown-danger"); // < 24 jam
+                label.innerText = "⚠️ Waktu Hampir Habis!";
             } else if (diff <= 2 * 86400000) {
-                wrapper.classList.add("countdown-warning"); // < 2 hari
+                label.innerText = "Segera Selesaikan Administrasi";
+            } else {
+                label.innerText = "Perhatian! Segera Selesaikan Administrasi";
             }
         }
 
