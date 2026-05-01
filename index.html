@@ -419,101 +419,79 @@
                 : '<i class="fa-solid fa-bars-staggered text-2xl"></i>';
         };
 
-        // ---------- COUNTDOWN LOGIC (3x24 jam) ----------
-        const STORAGE_KEY = "deadline_administrasi";
-        let deadlineTimestamp = null;
+        // ================= MANUAL COUNTDOWN =================
+let deadlineTimestamp = null;
+let countdownInterval = null;
 
-        function initDeadline() {
-            const now = Date.now();
-            const stored = localStorage.getItem(STORAGE_KEY);
-            if (stored && !isNaN(parseInt(stored))) {
-                deadlineTimestamp = parseInt(stored);
-                if (deadlineTimestamp <= now) {
-                    localStorage.removeItem(STORAGE_KEY);
-                    deadlineTimestamp = null;
-                }
-            }
-            if (!deadlineTimestamp) {
-                deadlineTimestamp = now + (3 * 24 * 60 * 60 * 1000);
-                localStorage.setItem(STORAGE_KEY, deadlineTimestamp);
-            }
-        }
+const modal = document.getElementById("warningModal");
+const daysSpan = document.getElementById("days");
+const hoursSpan = document.getElementById("hours");
+const minutesSpan = document.getElementById("minutes");
+const secondsSpan = document.getElementById("seconds");
 
-        let countdownInterval = null;
-        const modal = document.getElementById("warningModal");
-        const daysSpan = document.getElementById("days");
-        const hoursSpan = document.getElementById("hours");
-        const minutesSpan = document.getElementById("minutes");
-        const secondsSpan = document.getElementById("seconds");
+function updateCountdownDisplay() {
+    if (!deadlineTimestamp) return;
 
-        function updateCountdownDisplay() {
-            if (!deadlineTimestamp) return;
-        
-            const now = Date.now();
-            const diff = deadlineTimestamp - now;
-        
-            if (diff <= 0) {
-                modal.classList.remove("active");
-                clearInterval(countdownInterval);
-                localStorage.removeItem(STORAGE_KEY);
-                deadlineTimestamp = null;
-                return;
-            }
-        
-            // HITUNG WAKTU
-            let days = Math.floor(diff / 86400000);
-            if (days > 0) {
-                days = days - 1;
-            }
-            const hours = Math.floor((diff % 86400000) / 3600000);
-            const minutes = Math.floor((diff % 3600000) / 60000);
-            const seconds = Math.floor((diff % 60000) / 1000);
-        
-            daysSpan.innerText = String(days).padStart(2, '0');
-            hoursSpan.innerText = String(hours).padStart(2, '0');
-            minutesSpan.innerText = String(minutes).padStart(2, '0');
-            secondsSpan.innerText = String(seconds).padStart(2, '0');
-        
-            // 🔥 TARUH DI SINI
-            const label = document.querySelector("#warningModal h3");
-        
-            if (diff <= 86400000) {
-                label.innerText = "⚠️ Waktu Hampir Habis!";
-            } else if (diff <= 2 * 86400000) {
-                label.innerText = "Segera Selesaikan Administrasi";
-            } else {
-                label.innerText = "Perhatian! Segera Selesaikan Administrasi";
-            }
-        }
+    const now = Date.now();
+    const diff = deadlineTimestamp - now;
 
-        function showModalIfActive() {
-            if (!deadlineTimestamp) return;
-            if (deadlineTimestamp > Date.now()) {
-                modal.classList.add("active");
-                if (!countdownInterval) {
-                    countdownInterval = setInterval(() => {
-                        updateCountdownDisplay();
-                        if (deadlineTimestamp && Date.now() >= deadlineTimestamp) {
-                            modal.classList.remove("active");
-                            if (countdownInterval) clearInterval(countdownInterval);
-                            countdownInterval = null;
-                            localStorage.removeItem(STORAGE_KEY);
-                            deadlineTimestamp = null;
-                        }
-                    }, 1000);
-                }
-                updateCountdownDisplay();
-            }
-        }
+    if (diff <= 0) {
+        stopCountdown();
+        return;
+    }
 
-        function closeModal() {
-            modal.classList.remove("active");
-        }
+    let days = Math.floor(diff / 86400000);
+    if (days > 0) days -= 1;
 
-        initDeadline();
-        showModalIfActive();
-        document.getElementById("closeModalBtn").addEventListener("click", closeModal);
-        document.getElementById("okCloseModal").addEventListener("click", closeModal);
+    const hours = Math.floor((diff % 86400000) / 3600000);
+    const minutes = Math.floor((diff % 3600000) / 60000);
+    const seconds = Math.floor((diff % 60000) / 1000);
+
+    daysSpan.innerText = String(days).padStart(2, '0');
+    hoursSpan.innerText = String(hours).padStart(2, '0');
+    minutesSpan.innerText = String(minutes).padStart(2, '0');
+    secondsSpan.innerText = String(seconds).padStart(2, '0');
+
+    const label = document.querySelector("#warningModal h3");
+
+    if (diff <= 86400000) {
+        label.innerText = "⚠️ Waktu Hampir Habis!";
+    } else if (diff <= 2 * 86400000) {
+        label.innerText = "Segera Selesaikan Administrasi";
+    } else {
+        label.innerText = "Perhatian! Segera Selesaikan Administrasi";
+    }
+}
+
+function startCountdownManual(hours = 72) {
+    const now = Date.now();
+    deadlineTimestamp = now + (hours * 60 * 60 * 1000);
+
+    modal.classList.add("active");
+
+    if (countdownInterval) clearInterval(countdownInterval);
+
+    countdownInterval = setInterval(updateCountdownDisplay, 1000);
+
+    updateCountdownDisplay();
+}
+
+function stopCountdown() {
+    if (countdownInterval) {
+        clearInterval(countdownInterval);
+        countdownInterval = null;
+    }
+    deadlineTimestamp = null;
+    modal.classList.remove("active");
+}
+
+function closeModal() {
+    modal.classList.remove("active");
+}
+
+document.getElementById("closeModalBtn").addEventListener("click", closeModal);
+document.getElementById("okCloseModal").addEventListener("click", closeModal);
+        
 
         // ---------- LOAD DATA & PERBAIKAN ANIMASI REKENING ----------
         let allUsers = [];
