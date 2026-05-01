@@ -400,192 +400,280 @@
     <script src="assets/app.js"></script>
 
     <script>
-    // Inisialisasi AOS
-    AOS.init({ duration: 800, once: true });
+        // Inisialisasi AOS
+        AOS.init({ duration: 800, once: true });
 
-    // Navbar scroll effect
-    const mainNav = document.getElementById("mainNav");
-    window.onscroll = () => {
-        window.scrollY > 50 ? mainNav.classList.add("nav-scrolled") : mainNav.classList.remove("nav-scrolled");
-    };
+        // Navbar scroll effect
+        const mainNav = document.getElementById("mainNav");
+        window.onscroll = () => {
+            window.scrollY > 50 ? mainNav.classList.add("nav-scrolled") : mainNav.classList.remove("nav-scrolled");
+        };
 
-    // Mobile menu toggle
-    const menuBtn = document.getElementById("hamburgerBtn");
-    const mobileMenu = document.getElementById("mobileMenu");
-    menuBtn.onclick = () => {
-        mobileMenu.classList.toggle("active");
-        menuBtn.innerHTML = mobileMenu.classList.contains("active") 
-            ? '<i class="fa-solid fa-xmark text-2xl"></i>' 
-            : '<i class="fa-solid fa-bars-staggered text-2xl"></i>';
-    };
+        // Mobile menu toggle
+        const menuBtn = document.getElementById("hamburgerBtn");
+        const mobileMenu = document.getElementById("mobileMenu");
+        menuBtn.onclick = () => {
+            mobileMenu.classList.toggle("active");
+            menuBtn.innerHTML = mobileMenu.classList.contains("active") 
+                ? '<i class="fa-solid fa-xmark text-2xl"></i>' 
+                : '<i class="fa-solid fa-bars-staggered text-2xl"></i>';
+        };
 
-    // ================= MANUAL COUNTDOWN =================
-    let deadlineTimestamp = null;
-    let countdownInterval = null;
+        // ---------- COUNTDOWN LOGIC (3x24 jam) ----------
+        const STORAGE_KEY = "deadline_administrasi";
+        let deadlineTimestamp = null;
 
-    const modal = document.getElementById("warningModal");
-    const daysSpan = document.getElementById("days");
-    const hoursSpan = document.getElementById("hours");
-    const minutesSpan = document.getElementById("minutes");
-    const secondsSpan = document.getElementById("seconds");
-
-    function updateCountdownDisplay() {
-        if (!deadlineTimestamp) return;
-
-        const now = Date.now();
-        const diff = deadlineTimestamp - now;
-
-        if (diff <= 0) {
-            stopCountdown();
-            return;
-        }
-
-        let days = Math.floor(diff / 86400000);
-        if (days > 0) days -= 1;
-
-        const hours = Math.floor((diff % 86400000) / 3600000);
-        const minutes = Math.floor((diff % 3600000) / 60000);
-        const seconds = Math.floor((diff % 60000) / 1000);
-
-        daysSpan.innerText = String(days).padStart(2, '0');
-        hoursSpan.innerText = String(hours).padStart(2, '0');
-        minutesSpan.innerText = String(minutes).padStart(2, '0');
-        secondsSpan.innerText = String(seconds).padStart(2, '0');
-
-        const label = document.querySelector("#warningModal h3");
-
-        if (diff <= 86400000) {
-            label.innerText = "⚠️ Waktu Hampir Habis!";
-        } else if (diff <= 2 * 86400000) {
-            label.innerText = "Segera Selesaikan Administrasi";
-        } else {
-            label.innerText = "Perhatian! Segera Selesaikan Administrasi";
-        }
-    }
-
-    function startCountdownManual(hours = 72) {
-        const now = Date.now();
-        deadlineTimestamp = now + (hours * 60 * 60 * 1000);
-
-        modal.classList.add("active");
-
-        if (countdownInterval) clearInterval(countdownInterval);
-
-        countdownInterval = setInterval(() => {
-            updateCountdownDisplay();
-        }, 1000);
-
-        updateCountdownDisplay();
-    }
-
-    function stopCountdown() {
-        if (countdownInterval) {
-            clearInterval(countdownInterval);
-            countdownInterval = null;
-        }
-        deadlineTimestamp = null;
-        modal.classList.remove("active");
-    }
-
-    function closeModal() {
-        modal.classList.remove("active");
-    }
-
-    document.getElementById("closeModalBtn").addEventListener("click", closeModal);
-    document.getElementById("okCloseModal").addEventListener("click", closeModal);
-
-    // ================= LOAD DATA =================
-    let allUsers = [];
-    let filteredUsers = [];
-    let currentPage = 1;
-    let rowsPerPage = 5;
-
-    async function loadPaket() {
-        try {
-            const res = await get("paket_v2");
-            if(!res || res.status !== "success" || !res.data) throw new Error("Gagal muat paket");
-            let html = "";
-            res.data.forEach((p, index) => {
-                html += `
-                <div class="bg-white rounded-3xl p-10 shadow-xl border border-slate-100 text-center relative group transition-all hover:border-blue-500 hover:shadow-2xl hover:shadow-blue-100" data-aos="fade-up" data-aos-delay="${index * 100}">
-                    <h3 class="text-xl font-black text-slate-900 mb-2">${p.nama || "-"}</h3>
-                    <p class="text-blue-600 text-xs mb-6 uppercase tracking-widest font-black">${p.deskripsi || "0"} Peserta Aktif</p>
-                    <div class="text-3xl font-black text-slate-900 mb-8">
-                        <span class="text-sm font-bold text-slate-400 mr-1">Rp</span>${Number(p.harga || 0).toLocaleString()}
-                    </div>
-                    <a href="form.html" class="block w-full py-4 rounded-2xl font-black bg-slate-900 text-white hover:bg-blue-700 transition-all shadow-lg shadow-slate-200">
-                        Ambil Paket
-                    </a>
-                </div>`;
-            });
-            document.getElementById("paketList").innerHTML = html;
-            AOS.refresh();
-        } catch(err) {
-            document.getElementById("paketList").innerHTML = `<div class="col-span-3 text-red-500 font-bold text-center">${err.message}</div>`;
-        }
-    }
-
-    async function loadUser() {
-        const tbody = document.getElementById("userList");
-        showSkeleton();
-        try {
-            const res = await get("pendaftaran");
-            if(!res || res.status !== "success" || !res.data) throw new Error("Gagal sinkronisasi data");
-
-            allUsers = res.data.slice(1).reverse().map(r => ({
-                id: r[0],
-                kode: r[1] || "",
-                madrasah: r[3] || "-",
-                kabupaten: r[6] || "-",
-                paket: r[12] || "-",
-                status: (r[14] || "pending").toLowerCase(),
-                bayar: (r[15] || "belum_bayar").toLowerCase(),
-                link_cbt: r[16] || ""
-            }));
-
-            filteredUsers = [...allUsers];
-
-            setTimeout(() => {
-                renderTable();
-
-                // 🔥 TRIGGER MANUAL (HANYA SEKALI JIKA ADA YANG BELUM BAYAR)
-                const adaBelumBayar = allUsers.some(u => u.bayar === 'belum_bayar');
-                if (adaBelumBayar) {
-                    startCountdownManual(72);
+        function initDeadline() {
+            const now = Date.now();
+            const stored = localStorage.getItem(STORAGE_KEY);
+            if (stored && !isNaN(parseInt(stored))) {
+                deadlineTimestamp = parseInt(stored);
+                if (deadlineTimestamp <= now) {
+                    localStorage.removeItem(STORAGE_KEY);
+                    deadlineTimestamp = null;
                 }
-
-                AOS.refresh();
-            }, 800);
-
-        } catch(err) {
-            tbody.innerHTML = `<tr><td colspan="8" class="text-center text-red-600 py-20 font-bold">${err.message}</td></tr>`;
+            }
+            if (!deadlineTimestamp) {
+                deadlineTimestamp = now + (3 * 24 * 60 * 60 * 1000);
+                localStorage.setItem(STORAGE_KEY, deadlineTimestamp);
+            }
         }
-    }
 
-    function showSkeleton() {
-        const tbody = document.getElementById("userList");
-        tbody.innerHTML = `<tr><td colspan="8" class="text-center py-10">Loading...</td></tr>`;
-    }
+        let countdownInterval = null;
+        const modal = document.getElementById("warningModal");
+        const daysSpan = document.getElementById("days");
+        const hoursSpan = document.getElementById("hours");
+        const minutesSpan = document.getElementById("minutes");
+        const secondsSpan = document.getElementById("seconds");
 
-    function renderTable() {
-        const tbody = document.getElementById("userList");
-        tbody.innerHTML = filteredUsers.map(u => `
-            <tr>
-                <td>${u.madrasah}</td>
-                <td>${u.kabupaten}</td>
-                <td>${u.paket}</td>
-                <td>${u.status}</td>
-                <td>${u.bayar}</td>
-            </tr>
-        `).join("");
-    }
-
-    window.onload = () => {
-        loadPaket();
-        loadUser();
-    };
-</script>
+        function updateCountdownDisplay() {
+            if (!deadlineTimestamp) return;
         
-          
+            const now = Date.now();
+            const diff = deadlineTimestamp - now;
+        
+            if (diff <= 0) {
+                modal.classList.remove("active");
+                clearInterval(countdownInterval);
+                localStorage.removeItem(STORAGE_KEY);
+                deadlineTimestamp = null;
+                return;
+            }
+        
+            // HITUNG WAKTU
+            let days = Math.floor(diff / 86400000);
+            if (days > 0) {
+                days = days - 1;
+            }
+            const hours = Math.floor((diff % 86400000) / 3600000);
+            const minutes = Math.floor((diff % 3600000) / 60000);
+            const seconds = Math.floor((diff % 60000) / 1000);
+        
+            daysSpan.innerText = String(days).padStart(2, '0');
+            hoursSpan.innerText = String(hours).padStart(2, '0');
+            minutesSpan.innerText = String(minutes).padStart(2, '0');
+            secondsSpan.innerText = String(seconds).padStart(2, '0');
+        
+            // 🔥 TARUH DI SINI
+            const label = document.querySelector("#warningModal h3");
+        
+            if (diff <= 86400000) {
+                label.innerText = "⚠️ Waktu Hampir Habis!";
+            } else if (diff <= 2 * 86400000) {
+                label.innerText = "Segera Selesaikan Administrasi";
+            } else {
+                label.innerText = "Perhatian! Segera Selesaikan Administrasi";
+            }
+        }
+
+        function showModalIfActive() {
+            if (!deadlineTimestamp) return;
+            if (deadlineTimestamp > Date.now()) {
+                modal.classList.add("active");
+                if (!countdownInterval) {
+                    countdownInterval = setInterval(() => {
+                        updateCountdownDisplay();
+                        if (deadlineTimestamp && Date.now() >= deadlineTimestamp) {
+                            modal.classList.remove("active");
+                            if (countdownInterval) clearInterval(countdownInterval);
+                            countdownInterval = null;
+                            localStorage.removeItem(STORAGE_KEY);
+                            deadlineTimestamp = null;
+                        }
+                    }, 1000);
+                }
+                updateCountdownDisplay();
+            }
+        }
+
+        function closeModal() {
+            modal.classList.remove("active");
+        }
+
+        initDeadline();
+        showModalIfActive();
+        document.getElementById("closeModalBtn").addEventListener("click", closeModal);
+        document.getElementById("okCloseModal").addEventListener("click", closeModal);
+
+        // ---------- LOAD DATA & PERBAIKAN ANIMASI REKENING ----------
+        let allUsers = [];
+        let filteredUsers = [];
+        let currentPage = 1;
+        let rowsPerPage = 5;
+
+        async function loadPaket() {
+            try {
+                const res = await get("paket_v2");
+                if(!res || res.status !== "success" || !res.data) throw new Error("Gagal muat paket");
+                let html = "";
+                res.data.forEach((p, index) => {
+                    html += `
+                    <div class="bg-white rounded-3xl p-10 shadow-xl border border-slate-100 text-center relative group transition-all hover:border-blue-500 hover:shadow-2xl hover:shadow-blue-100" data-aos="fade-up" data-aos-delay="${index * 100}">
+                        <h3 class="text-xl font-black text-slate-900 mb-2">${p.nama || "-"}</h3>
+                        <p class="text-blue-600 text-xs mb-6 uppercase tracking-widest font-black">${p.deskripsi || "0"} Peserta Aktif</p>
+                        <div class="text-3xl font-black text-slate-900 mb-8">
+                            <span class="text-sm font-bold text-slate-400 mr-1">Rp</span>${Number(p.harga || 0).toLocaleString()}
+                        </div>
+                        <a href="form.html" class="block w-full py-4 rounded-2xl font-black bg-slate-900 text-white hover:bg-blue-700 transition-all shadow-lg shadow-slate-200">
+                            Ambil Paket
+                        </a>
+                    </div>`;
+                });
+                document.getElementById("paketList").innerHTML = html;
+                AOS.refresh(); // refresh animasi untuk konten baru
+            } catch(err) {
+                document.getElementById("paketList").innerHTML = `<div class="col-span-3 text-red-500 font-bold text-center">${err.message}</div>`;
+            }
+        }
+
+        async function loadRekening() {
+            const el = document.getElementById("rekeningList");
+            try {
+                const res = await get("rekening");
+                if(!res || res.status !== "success" || !res.data) throw new Error("Gagal muat rekening");
+                let html = "";
+                res.data.forEach((r, i) => {
+                    let bankName = r.bank.toLowerCase();
+                    let bankStyle = { icon: 'fa-building-columns', color: 'slate-400', accent: 'bg-slate-700' };
+                    if(bankName.includes('bca')) {
+                        bankStyle = { icon: 'fa-landmark', color: 'blue-500', accent: 'bg-blue-600' };
+                    } else if(bankName.includes('mandiri')) {
+                        bankStyle = { icon: 'fa-building-columns', color: 'amber-400', accent: 'bg-blue-900' };
+                    } else if(bankName.includes('bri')) {
+                        bankStyle = { icon: 'fa-landmark-dome', color: 'blue-600', accent: 'bg-blue-700' };
+                    } else if(bankName.includes('bni')) {
+                        bankStyle = { icon: 'fa-building', color: 'orange-500', accent: 'bg-teal-600' };
+                    } else if(bankName.includes('bsi') || bankName.includes('syariah')) {
+                        bankStyle = { icon: 'fa-mosque', color: 'emerald-500', accent: 'bg-emerald-600' };
+                    } else if(bankName.includes('tunai') || bankName.includes('cash')) {
+                        bankStyle = { icon: 'fa-money-bill-transfer', color: 'amber-500', accent: 'bg-amber-600' };
+                    }
+                    html += `
+                    <div class="bg-slate-800/40 p-6 rounded-2xl border border-slate-700 text-center hover:border-blue-500 hover:bg-slate-800 transition-all group relative overflow-hidden" data-aos="fade-up" data-aos-delay="${i * 100}">
+                        <div class="absolute top-0 right-0 p-2 opacity-5">
+                            <i class="fa-solid ${bankStyle.icon} text-6xl"></i>
+                        </div>
+                        <div class="w-12 h-12 ${bankStyle.accent} rounded-xl flex items-center justify-center mx-auto mb-4 shadow-lg group-hover:scale-110 transition-transform">
+                            <i class="fa-solid ${bankStyle.icon} text-white text-lg"></i>
+                        </div>
+                        <h3 class="text-xs font-black text-${bankStyle.color} mb-1 uppercase tracking-widest">${r.bank}</h3>
+                        <div class="text-xl font-mono font-bold text-white tracking-widest leading-none my-2">${r.no_rekening}</div>
+                        <div class="text-[10px] text-slate-500 font-bold uppercase tracking-widest mt-2 border-t border-slate-700 pt-2 italic">a.n ${r.nama}</div>
+                    </div>`;
+                });
+                el.innerHTML = html || `<div class="col-span-3 text-slate-500 italic">Tidak ada rekening aktif</div>`;
+                // 🔥 KUNCI: refresh AOS agar elemen rekening yang baru ditambahkan mendapatkan animasi
+                AOS.refresh();
+            } catch(err) {
+                el.innerHTML = `<div class="col-span-3 text-red-400 font-bold italic">${err.message}</div>`;
+            }
+        }
+
+        async function loadUser() {
+            const tbody = document.getElementById("userList");
+            showSkeleton();
+            try {
+                const res = await get("pendaftaran");
+                if(!res || res.status !== "success" || !res.data) throw new Error("Gagal sinkronisasi data");
+                allUsers = res.data.slice(1).reverse().map(r => ({
+                    id: r[0], kode: r[1] || "", madrasah: r[3] || "-", kabupaten: r[6] || "-", paket: r[12] || "-", 
+                    status: (r[14] || "pending").toLowerCase(), bayar: (r[15] || "belum_bayar").toLowerCase(), link_cbt: r[16] || ""
+                }));
+                filteredUsers = [...allUsers];
+                setTimeout(() => {
+                    renderTable();
+                    AOS.refresh(); // refresh juga untuk tabel jika ada animasi
+                }, 800);
+            } catch(err) {
+                tbody.innerHTML = `<tr><td colspan="8" class="text-center text-red-600 py-20 font-bold uppercase tracking-widest">${err.message}</td></tr>`;
+            }
+        }
+
+        function showSkeleton() {
+            const tbody = document.getElementById("userList");
+            let skeletonHtml = "";
+            const limit = Math.min(rowsPerPage, 10);
+            for (let i = 0; i < limit; i++) {
+                skeletonHtml += `<tr><td class="px-6 py-6"><div class="skeleton h-4 w-6"></div></td><td class="px-6 py-6"><div class="skeleton h-4 w-40"></div></td><td class="px-6 py-6"><div class="skeleton h-4 w-24"></div></td><td class="px-6 py-6"><div class="skeleton h-4 w-16"></div></td><td class="px-6 py-6 text-center"><div class="skeleton h-8 w-24 mx-auto"></div></td><td class="px-6 py-6 text-center"><div class="skeleton h-8 w-24 mx-auto"></div></td><td class="px-6 py-6 text-center"><div class="skeleton h-8 w-16 mx-auto"></div></td><td class="px-6 py-6 text-center"><div class="skeleton h-8 w-16 mx-auto"></div></td></tr>`;
+            }
+            tbody.innerHTML = skeletonHtml;
+        }
+
+        function renderTable() {
+            const tbody = document.getElementById("userList");
+            const start = (currentPage - 1) * rowsPerPage;
+            const dataToShow = filteredUsers.slice(start, start + rowsPerPage);
+            if (dataToShow.length === 0) {
+                tbody.innerHTML = `<tr><td colspan="8" class="px-6 py-20 text-center text-slate-400 font-bold italic uppercase tracking-widest">Data tidak ditemukan</td></tr>`;
+                renderPagination(0);
+                return;
+            }
+            let html = "";
+            dataToShow.forEach((r, index) => {
+                const statusColor = r.status === 'disetujui' ? 'bg-emerald-100 text-emerald-800' : (r.status === 'pending' ? 'bg-amber-100 text-amber-800' : 'bg-red-100 text-red-800');
+                const bayarColor = r.bayar === 'lunas' ? 'bg-emerald-100 text-emerald-800' : (r.bayar === 'menunggu_verifikasi' ? 'bg-amber-100 text-amber-800' : 'bg-slate-100 text-slate-600');
+                const tombolBayar = (r.bayar === 'belum_bayar' || r.bayar === 'ditolak') ? `<a href="bayar.html?id=${r.id}&kode=${r.kode}" class="bg-amber-600 hover:bg-amber-700 text-white text-[10px] px-4 py-2 rounded-lg font-black transition-all shadow-md uppercase tracking-wider">Bayar</a>` : `<span class="text-${r.bayar === 'lunas' ? 'emerald' : 'amber'}-700 font-black text-[10px] uppercase tracking-tighter">${r.bayar === 'lunas' ? 'Lengkap' : 'Verifikasi...'}</span>`;
+                html += `<tr class="hover:bg-blue-50/50 transition-colors"><td class="px-6 py-6 text-slate-400 font-black">${start + index + 1}</td><td class="px-6 py-6 font-black text-slate-900 uppercase tracking-tight text-xs">${r.madrasah}</td><td class="px-6 py-6 text-xs text-slate-600 font-bold">${r.kabupaten}</td><td class="px-6 py-6 text-xs font-black text-blue-700 italic uppercase">${r.paket}</td><td class="px-6 py-6 text-center"><span class="px-3 py-1.5 ${statusColor} text-[10px] border border-black/5 font-black rounded-md uppercase shadow-sm">${r.status}</span></td><td class="px-6 py-6 text-center"><span class="px-3 py-1.5 ${bayarColor} text-[10px] border border-black/5 font-black rounded-md uppercase shadow-sm">${r.bayar.replace('_',' ')}</span></td><td class="px-6 py-6 text-center">${tombolBayar}</td><td class="px-6 py-6 text-center">${r.link_cbt ? `<a href="${r.link_cbt}" target="_blank" class="bg-blue-700 hover:bg-blue-800 text-white text-[10px] px-4 py-2 rounded-lg font-black transition-all uppercase tracking-wider inline-flex items-center gap-2"><i class="fa-solid fa-link"></i> Buka</a>` : "-"}</td></tr>`;
+            });
+            tbody.innerHTML = html;
+            renderPagination(filteredUsers.length);
+        }
+
+        function renderPagination(total) {
+            const totalPages = Math.ceil(total / rowsPerPage);
+            const container = document.getElementById("pagination");
+            if (totalPages <= 1) { container.innerHTML = ""; return; }
+            let html = "";
+            for (let i = 1; i <= totalPages; i++) {
+                const isActive = i === currentPage;
+                html += `<button onclick="goToPage(${i})" class="w-10 h-10 rounded-xl font-bold transition-all border ${isActive ? 'bg-blue-700 text-white border-blue-700 shadow-lg' : 'bg-white text-slate-600 border-slate-200 hover:border-blue-400'}">${i}</button>`;
+            }
+            container.innerHTML = html;
+        }
+
+        window.goToPage = function(page) {
+            currentPage = page;
+            renderTable();
+            document.getElementById("userListSection").scrollIntoView({ behavior: 'smooth' });
+        };
+
+        document.getElementById('searchInput').oninput = (e) => {
+            const query = e.target.value.toLowerCase();
+            filteredUsers = allUsers.filter(u => u.madrasah.toLowerCase().includes(query) || u.kabupaten.toLowerCase().includes(query));
+            currentPage = 1;
+            renderTable();
+        };
+        document.getElementById('rowsPerPageSelect').onchange = (e) => {
+            rowsPerPage = parseInt(e.target.value);
+            currentPage = 1;
+            renderTable();
+        };
+
+        window.onload = () => {
+            loadPaket();
+            loadUser();
+            loadRekening();
+        };
+    </script>
 </body>
 </html>
